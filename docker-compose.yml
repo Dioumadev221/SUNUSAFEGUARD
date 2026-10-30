@@ -1,0 +1,64 @@
+# SunuSafeguard AI — environnement complet
+#   docker compose up -d --build                     # app + base + redis
+#   docker compose --profile llm up -d               # + Ollama (LLM local)
+#   docker compose --profile monitoring up -d        # + Prometheus / Grafana
+name: sunusafeguard
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sunusafeguard}
+      POSTGRES_USER: ${POSTGRES_USER:-sunu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sunu_dev_password}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]  # cache volatil, aucune persistance
+
+  backend:
+    build: { context: ., dockerfile: backend/Dockerfile }
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sunu}:${POSTGRES_PASSWORD:-sunu_dev_password}@postgres:5432/${POSTGRES_DB:-sunusafeguard}
+      OLLAMA_URL: http://ollama:11434
+      ENVIRONMENT: docker
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_started }
+    ports: ["8000:8000"]
+
+  frontend:
+    build: { context: ., dockerfile: infrastructure/docker/frontend.Dockerfile }
+    depends_on: [backend]
+    ports: ["8080:80"]
+
+  ollama:
+    image: ollama/ollama:0.5.4
+    profiles: ["llm"]
+    volumes: [ollama:/root/.ollama]
+    ports: ["11434:11434"]
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    profiles: ["monitoring"]
+    volumes: [./infrastructure/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro]
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:11.3.1
+    profiles: ["monitoring"]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-change-me}
+    ports: ["3000:3000"]
+
+volumes:
+  pgdata:
+  ollama:

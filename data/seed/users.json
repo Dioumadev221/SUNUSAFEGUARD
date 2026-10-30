@@ -1,0 +1,10 @@
+[
+  {"email": "superadmin@sunusafeguard.local", "full_name": "Super Admin (démo)", "role": "super_admin"},
+  {"email": "tech@sunusafeguard.local", "full_name": "Admin technique (démo)", "role": "admin_technique"},
+  {"email": "impact@sunusafeguard.local", "full_name": "Responsable institutionnel (démo)", "role": "responsable_institutionnel"},
+  {"email": "analyste@sunusafeguard.local", "full_name": "Analyste (démo)", "role": "analyste"},
+  {"email": "partenaire@sunusafeguard.local", "full_name": "Responsable partenaire (démo)", "role": "responsable_partenaire", "organization": "Centre d'écoute Jàmm (DÉMO)"},
+  {"email": "social@sunusafeguard.local", "full_name": "Travailleuse sociale (démo)", "role": "travailleur_social", "organization": "Centre d'écoute Jàmm (DÉMO)"},
+  {"email": "expert@sunusafeguard.local", "full_name": "Experte documentaire (démo)", "role": "expert_documentaire"},
+  {"email": "linguiste@sunusafeguard.local", "full_name": "Expert linguistique (démo)", "role": "expert_linguistique"}
+]

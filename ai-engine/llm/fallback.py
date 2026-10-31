@@ -21,6 +21,15 @@ MESSAGES = {
             "Du sa tooñ, te yaa ngi wéet. Man maa ngi lay may xibaar rekk, mënuma la wallu ci sa place."
         ),
     },
+    # Danger signalé pour un proche : on s'adresse à la personne qui aide, pas à la victime.
+    "urgent_third_party": {
+        "fr": (
+            "Ce que vit votre proche semble très grave. S'il ou elle risque de passer à l'acte ou est en danger "
+            "immédiat, contactez maintenant les secours ci-dessous et, si possible, ne la laissez pas seule. "
+            "Vous avez bien fait d'en parler. Prenez aussi soin de vous : vous n'avez pas à porter cela seul·e. "
+            "Je suis un assistant d'information : je ne peux pas intervenir ni prévenir quelqu'un à votre place."
+        ),
+    },
     "refuse_injection": {
         "fr": "Je ne peux pas modifier mes règles de fonctionnement. Je suis là pour vous informer et vous orienter "
               "sur le bien-être, vos droits et les structures d'aide. Comment puis-je vous aider ?",
@@ -43,6 +52,10 @@ MESSAGES = {
         "wo": "Gisuma xibaar bu wóor ngir tontu sa laaj. Ngir bañ a la nax, seetal annuaire bi ngir gis "
               "bérab yu am ñu xam-xam ñuy mëna tontu.",
     },
+    "wolof_intro": {
+        "fr": "",
+        "wo": "Maa ngi lay tontu ci français ngir xibaar bi wóor. Su la soxla, laajal ndimbal ci kenn ku xam wolof.",
+    },
     "fallback_intro": {
         "fr": "Voici ce que disent les ressources validées de la plateforme :",
         "wo": "Lii la téere yi ñu wóorlu wax :",
@@ -60,10 +73,13 @@ def template_message(key: str, lang: str) -> str:
     return entry.get(lang) or entry["fr"]
 
 
-def extractive_answer(results: list[ScoredChunk], lang: str, max_sentences: int = 4) -> str:
-    """Réponse de repli sans LLM : phrases-clés des meilleurs segments, avec références."""
+def extractive_answer(results: list[ScoredChunk], lang: str, max_sentences: int = 4,
+                      ref_of: dict[int, int] | None = None) -> str:
+    """Réponse de repli sans LLM : phrases-clés des meilleurs segments, avec références.
+    `ref_of` : numéro de référence de chaque segment (voir rag.build_context)."""
     lines = [template_message("fallback_intro", lang)]
     for i, r in enumerate(results[:3], start=1):
+        i = ref_of.get(r.chunk.id, i) if ref_of else i
         sentences = [s.strip() for s in r.chunk.text.replace("\n", " ").split(". ") if len(s.strip()) > 30]
         excerpt = ". ".join(sentences[: max(1, max_sentences // 2)]).rstrip(".") + "."
         lines.append(f"• {excerpt} [{i}]")

@@ -1,6 +1,6 @@
 """Indicateurs agrégés avec seuil de publication (k-anonymat, CDC §3.3)."""
 from collections import Counter
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -27,35 +27,63 @@ def suppress(counter: Counter, k: int) -> list[dict]:
     return out
 
 
-def _events(db: Session, days: int, **filters) -> list[UsageEvent]:
-    since = datetime.now(timezone.utc) - timedelta(days=days)
-    q = select(UsageEvent).where(UsageEvent.hour >= since)
+def _events(db: Session, days: int, offset_days: int = 0, **filters) -> list[UsageEvent]:
+    """Événements de la fenêtre [maintenant - offset - days, maintenant - offset[."""
+    until = datetime.now(timezone.utc) - timedelta(days=offset_days)
+    q = select(UsageEvent).where(UsageEvent.hour >= until - timedelta(days=days))
+    if offset_days:
+        q = q.where(UsageEvent.hour < until)
     for col, val in filters.items():
         if val:
             q = q.where(getattr(UsageEvent, col) == val)
     return list(db.scalars(q))
 
 
-def overview(db: Session, days: int = 30, channel: str | None = None, language: str | None = None,
-             region: str | None = None) -> dict:
-    k = get_settings().k_anonymity_threshold
-    ev = _events(db, days, channel=channel, language=language, region=region)
-    since = datetime.now(timezone.utc) - timedelta(days=days)
-    referrals = list(db.scalars(select(ReferralRequest).where(ReferralRequest.created_at >= since)))
-    confirmed = sum(1 for r in referrals if r.status in {"prise_en_charge_confirmee", "cloturee"})
+def _bucket(day: date, granularity: str) -> str:
+    if granularity == "week":
+        return (day - timedelta(days=day.weekday())).isoformat()
+    if granularity == "month":
+        return day.replace(day=1).isoformat()
+    return day.isoformat()
 
-    daily = Counter(e.hour.date().isoformat() for e in ev)
+
+def _kpis(ev: list[UsageEvent], referrals: list[ReferralRequest], k: int) -> dict:
     total = len(ev)
+    confirmed = sum(1 for r in referrals if r.status in {"prise_en_charge_confirmee", "cloturee"})
     return {
-        "period_days": days,
-        "k_threshold": k,
         "total_interactions": total if total >= k else None,
         "grounded_rate": round(sum(e.grounded for e in ev) / total, 3) if total >= k else None,
         "directory_suggested": sum(e.directory_suggested for e in ev) if total >= k else None,
         "referrals_proposed": len(referrals) if len(referrals) >= k else None,
         "referrals_confirmed": confirmed if confirmed >= k else None,
         "completion_rate": round(confirmed / len(referrals), 3) if len(referrals) >= k else None,
-        "timeseries": [{"date": d, "count": n if n >= k else None} for d, n in sorted(daily.items())],
+    }
+
+
+def _referrals(db: Session, days: int, offset_days: int = 0) -> list[ReferralRequest]:
+    until = datetime.now(timezone.utc) - timedelta(days=offset_days)
+    q = select(ReferralRequest).where(ReferralRequest.created_at >= until - timedelta(days=days))
+    if offset_days:
+        q = q.where(ReferralRequest.created_at < until)
+    return list(db.scalars(q))
+
+
+def overview(db: Session, days: int = 30, channel: str | None = None, language: str | None = None,
+             region: str | None = None, granularity: str = "day") -> dict:
+    """KPI de la période, mêmes KPI sur la période précédente de même durée (comparaison, CDC §3.2)."""
+    k = get_settings().k_anonymity_threshold
+    filters = {"channel": channel, "language": language, "region": region}
+    ev = _events(db, days, **filters)
+    previous = _kpis(_events(db, days, offset_days=days, **filters), _referrals(db, days, offset_days=days), k)
+
+    series = Counter(_bucket(e.hour.date(), granularity) for e in ev)
+    return {
+        "period_days": days,
+        "k_threshold": k,
+        **_kpis(ev, _referrals(db, days), k),
+        "previous": previous,
+        "granularity": granularity,
+        "timeseries": [{"date": d, "count": n if n >= k else None} for d, n in sorted(series.items())],
         "by_channel": suppress(Counter(e.channel for e in ev), k),
         "by_language": suppress(Counter(e.language for e in ev), k),
         "by_category": suppress(Counter(e.category for e in ev), k),

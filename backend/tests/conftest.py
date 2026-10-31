@@ -4,7 +4,8 @@ import tempfile
 _db = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
 os.environ["DATABASE_URL"] = f"sqlite:///{_db.name}"
 os.environ["LLM_PROVIDER"] = "none"   # Tests déterministes, sans LLM.
-os.environ["ENVIRONMENT"] = "development"
+os.environ["EMBEDDING_PROVIDER"] = "hashing"
+os.environ["ENVIRONMENT"] = "test"
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

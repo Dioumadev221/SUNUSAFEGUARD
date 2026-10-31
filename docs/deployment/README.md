@@ -6,7 +6,7 @@
 cp .env.example .env
 # Obligatoire : JWT_SECRET, DATA_ENCRYPTION_KEY, POSTGRES_PASSWORD, GRAFANA_PASSWORD, ENVIRONMENT=production
 docker compose up -d --build
-docker compose --profile llm up -d ollama && docker compose exec ollama ollama pull llama3.1:8b
+# Ollama démarre avec le reste ; le backend télécharge qwen2.5:3b et paraphrase-multilingual (~3 Go)
 docker compose --profile monitoring up -d     # Prometheus :9090, Grafana :3000
 ```
 
@@ -20,7 +20,8 @@ démonstration et l'activité synthétique : `python -m app.cli seed --no-synthe
 | Profil | CPU | RAM | Remarque |
 |---|---|---|---|
 | Sans LLM (repli extractif) | 2 vCPU | 2 Go | Suffisant pour une démonstration |
-| Avec Ollama `llama3.1:8b` | 8 vCPU ou GPU | 16 Go | Latence de génération à mesurer |
+| Avec Ollama `qwen2.5:3b` + embeddings | 4 vCPU | 8 Go | Profil par défaut ; ~5-20 s par réponse sur CPU |
+| Avec Ollama `qwen2.5:7b` / `llama3.1:8b` | 8 vCPU ou GPU | 16 Go | Réponses plus fines, latence à mesurer |
 
 ## Checklist de mise en service
 

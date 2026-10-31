@@ -15,4 +15,6 @@ Règles impératives :
 
 
 def build_user_prompt(question: str, context: str) -> str:
-    return f"CONTEXTE :\n{context}\n\nQUESTION DE LA PERSONNE :\n<<<\n{question}\n>>>"
+    return (f"CONTEXTE :\n{context}\n\nQUESTION DE LA PERSONNE :\n<<<\n{question}\n>>>\n\n"
+            "Réponds en t'appuyant sur le contexte et termine chaque information par le numéro "
+            "de l'extrait utilisé, par exemple [1] ou [2].")

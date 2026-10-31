@@ -13,13 +13,15 @@ const read = (k: string, d: string) => {
 };
 
 export function PrefsProvider({ children }: { children: ReactNode }) {
-  // Mode sombre par défaut : consultation discrète (CDC charte UI).
-  const [dark, setDark] = useState(read("ssg_dark", "1") === "1");
-  const [lang, setLangState] = useState<Lang>(read("ssg_lang", "fr") as Lang);
+  // Mode discret (sombre) : suit le réglage du téléphone, puis le choix de la personne — accessible en un clic (charte UI).
+  const systemDark = typeof matchMedia === "function" && matchMedia("(prefers-color-scheme: dark)").matches;
+  const [dark, setDark] = useState(read("ssg_discret", systemDark ? "1" : "0") === "1");
+  // Français uniquement tant que l'assistant en wolof n'est pas prêt (sélecteur masqué dans l'en-tête).
+  const [lang, setLangState] = useState<Lang>("fr");
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
-    try { localStorage.setItem("ssg_dark", dark ? "1" : "0"); } catch { /* stockage indisponible */ }
+    try { localStorage.setItem("ssg_discret", dark ? "1" : "0"); } catch { /* stockage indisponible */ }
   }, [dark]);
 
   const setLang = (l: Lang) => {

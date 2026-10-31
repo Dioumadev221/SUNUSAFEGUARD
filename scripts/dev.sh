@@ -3,8 +3,9 @@
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT/backend"
-[ -d .venv ] || { python3 -m venv .venv && .venv/bin/pip install -r requirements.txt; }
+[ -d .venv ] || python3 -m venv .venv
+.venv/bin/pip install -q -r requirements.txt
 .venv/bin/uvicorn app.main:app --reload --port 8000 &
 cd "$ROOT/frontend"
-[ -d node_modules ] || npm install
+npm install --no-audit --no-fund
 npm run dev

@@ -58,4 +58,6 @@ export const REGIONS = [
 ];
 
 export const cat = (k: string) => CATEGORY_LABELS[k] ?? k;
+// Retire à l'affichage les marqueurs « (DÉMO) » des données d'exemple, sans modifier la base.
+export const clean = (s?: string | null) => (s ?? "").replace(/\s*\(d[ée]mo\)\s*/gi, " ").trim();
 export const fmtDate = (d?: string | null) => (d ? new Date(d).toLocaleString("fr-SN", { dateStyle: "short", timeStyle: "short" }) : "—");

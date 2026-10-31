@@ -23,11 +23,17 @@ from safety.rules import RULES_VERSION  # noqa: E402
 
 
 def _front_matter(text: str) -> tuple[dict, str]:
+    text = text.replace("\r\n", "\n").lstrip("\ufeff")
     m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
     if not m:
         return {}, text
     meta = dict(line.split(":", 1) for line in m.group(1).splitlines() if ":" in line)
-    return {k.strip(): v.strip() for k, v in meta.items()}, m.group(2).strip()
+    return {k.strip(): v.strip().strip('"').strip("'") for k, v in meta.items()}, m.group(2).strip()
+
+
+def _manifest(folder: Path) -> dict:
+    path = folder / "_manifest.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
 
 
 def seed_organizations(db: Session, data_dir: Path) -> dict[str, Organization]:
@@ -56,17 +62,21 @@ def seed_users(db: Session, data_dir: Path, orgs: dict[str, Organization]) -> No
 
 def seed_knowledge(db: Session, data_dir: Path) -> int:
     count = 0
-    for path in sorted((data_dir / "knowledge_base").glob("*.md")):
+    root = data_dir / "knowledge_base"
+    for path in sorted(root.rglob("*.md")):
         if path.name.lower() == "readme.md":
             continue
         meta, body = _front_matter(path.read_text(encoding="utf-8"))
-        if db.scalar(select(KnowledgeDocument).where(KnowledgeDocument.filename == path.name)):
+        # Un manifeste par dossier peut compléter les en-têtes (catégorie, statut).
+        meta = {**meta, **_manifest(path.parent).get(path.name, {})}
+        filename = path.relative_to(root).as_posix()
+        if db.scalar(select(KnowledgeDocument).where(KnowledgeDocument.filename == filename)):
             continue
-        published = datetime.fromisoformat(meta["published_at"]).replace(tzinfo=timezone.utc) \
-            if meta.get("published_at") else None
+        date = meta.get("published_at") or meta.get("last_reviewed")
+        published = datetime.fromisoformat(date).replace(tzinfo=timezone.utc) if date else None
         doc = KnowledgeDocument(
             title=meta.get("title", path.stem), source=meta.get("source", ""), category=meta.get("category", "autre"),
-            language=meta.get("language", "fr"), status=meta.get("status", "a_verifier"), filename=path.name,
+            language=meta.get("language", "fr"), status=meta.get("status", "a_verifier"), filename=filename,
             content=body, published_at=published, verified_at=published,
         )
         db.add(doc)

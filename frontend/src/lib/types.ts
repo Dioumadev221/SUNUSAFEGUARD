@@ -4,6 +4,11 @@ export type User = {
   full_name: string;
   role: string;
   organization_id: number | null;
+  is_active: boolean;
+  must_change_password: boolean;
+  mfa_active: boolean;
+  mfa_setup_required: boolean;
+  last_login_at: string | null;
   dashboards: string[];
 };
 
@@ -39,6 +44,8 @@ export type Organization = {
   capacity: number;
   availability: string;
   validated: boolean;
+  /** Vrai seulement si la structure a un compte actif pour recevoir les demandes de rappel. */
+  accepts_referrals: boolean;
   last_verified_at: string | null;
   updated_at: string;
 };

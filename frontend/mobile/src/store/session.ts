@@ -1,0 +1,40 @@
+import { create } from "zustand";
+import type { Message } from "@/types";
+
+/**
+ * État de la session active, en mémoire uniquement (CDC mobile §3.1 D) :
+ * la conversation disparaît à la fermeture de l'app, à la sortie rapide et à l'effacement.
+ */
+type ThemeMode = "auto" | "dark" | "light";
+
+type SessionState = {
+  messages: Message[];
+  draft: string;
+  stealth: boolean;
+  speakingId: string | null;
+  autoRead: boolean;
+  themeMode: ThemeMode;
+  addMessage: (m: Message) => void;
+  clearConversation: () => void;
+  setDraft: (text: string) => void;
+  setStealth: (on: boolean) => void;
+  setSpeaking: (id: string | null) => void;
+  setAutoRead: (on: boolean) => void;
+  setThemeMode: (mode: ThemeMode) => void;
+};
+
+export const useSession = create<SessionState>((set) => ({
+  messages: [],
+  draft: "",
+  stealth: false,
+  speakingId: null,
+  autoRead: false,
+  themeMode: "dark", // choix de Diouma : le thème sombre par défaut
+  addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
+  clearConversation: () => set({ messages: [], draft: "", speakingId: null }),
+  setDraft: (text) => set({ draft: text }),
+  setStealth: (on) => set({ stealth: on }),
+  setSpeaking: (id) => set({ speakingId: id }),
+  setAutoRead: (on) => set({ autoRead: on }),
+  setThemeMode: (mode) => set({ themeMode: mode }),
+}));

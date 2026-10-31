@@ -1,0 +1,9 @@
+# Reconnaissance vocale locale et gratuite (application mobile, micro).
+# Installation (sans carte graphique) :
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch
+#   pip install -r requirements-voice.txt
+# Modèles téléchargés au premier usage depuis Hugging Face (~1 Go) :
+#   openai/whisper-small (français) et M9and2M/whisper-small-wolof (wolof), licence MIT.
+transformers>=4.45
+av>=12
+numpy>=1.26

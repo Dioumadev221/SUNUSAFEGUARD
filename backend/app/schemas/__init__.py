@@ -20,20 +20,59 @@ class UserOut(ORM):
     role: str
     organization_id: int | None
     is_active: bool
+    must_change_password: bool = False
+    mfa_active: bool = False
+    mfa_setup_required: bool = False
+    last_login_at: datetime | None = None
     dashboards: list[str] = []
 
 
 class TokenOut(BaseModel):
-    access_token: str
+    access_token: str | None = None
     token_type: str = "bearer"
-    expires_in: int
+    expires_in: int = 0
+    user: UserOut | None = None
+    mfa_required: bool = False
+    mfa_token: str | None = None
+
+
+class MfaVerifyIn(BaseModel):
+    mfa_token: str
+    code: str = Field(min_length=6, max_length=8)
+
+
+class MfaCodeIn(BaseModel):
+    code: str = Field(min_length=6, max_length=8)
+
+
+class PasswordChangeIn(BaseModel):
+    current_password: str
+    new_password: str = Field(max_length=200)
+
+
+class UserCreateIn(BaseModel):
+    email: str = Field(max_length=200, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+    full_name: str = Field(min_length=2, max_length=200)
+    role: str
+    organization_id: int | None = None
+
+
+class UserUpdateIn(BaseModel):
+    full_name: str | None = Field(default=None, max_length=200)
+    role: str | None = None
+    organization_id: int | None = None
+    is_active: bool | None = None
+
+
+class UserCreatedOut(BaseModel):
     user: UserOut
+    temporary_password: str
 
 
 # --- Chat -------------------------------------------------------------------------
 class ChatIn(BaseModel):
     message: str = Field(min_length=1, max_length=2000)
-    channel: str = Field(default="web", pattern="^(web|pwa|voix)$")
+    channel: str = Field(default="web", pattern="^(web|pwa|mobile|voix)$")
     region: str | None = Field(default=None, max_length=100)
 
 
@@ -56,6 +95,7 @@ class ChatOut(BaseModel):
     suggest_directory: bool
     safety_action: str
     disclaimer: str
+    generated: bool = False   # réponse rédigée par le LLM (sinon : extraits des documents)
 
 
 # --- Annuaire ---------------------------------------------------------------------
@@ -89,6 +129,8 @@ class OrganizationOut(OrganizationBase, ORM):
     validated: bool
     last_verified_at: datetime | None
     updated_at: datetime
+    # Vrai si la structure a un compte actif pour recevoir les demandes (sinon : l'appeler directement).
+    accepts_referrals: bool = False
 
 
 class AvailabilityIn(BaseModel):

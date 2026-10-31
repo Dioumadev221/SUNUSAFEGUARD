@@ -1,12 +1,18 @@
-"""Recherche vectorielle sur les segments indexés.
+"""Recherche documentaire hybride : similarité sémantique (embeddings) + lexicale.
 
-Le prototype calcule la similarité cosinus en Python sur les segments chargés
-depuis la base (volume de démonstration). Pour la production : déléguer à
-pgvector (`ORDER BY embedding <=> :q`) ou Qdrant via la même interface.
+Score final = 0,75 × sémantique + 0,25 × lexical lorsque des embeddings sémantiques
+sont disponibles ; lexical seul sinon (mode dégradé, sans modèle). La combinaison
+rattrape à la fois les reformulations (sémantique) et les termes précis comme un
+numéro de loi (lexical).
+
+Le prototype calcule les similarités en Python (volume de démonstration). Pour un
+grand corpus : déléguer la partie sémantique à pgvector ou Qdrant.
 """
 from dataclasses import dataclass, field
 
 from embeddings.base import cosine
+
+SEMANTIC_WEIGHT = 0.75
 
 
 @dataclass
@@ -14,18 +20,31 @@ class Chunk:
     id: int
     document_id: int
     text: str
-    embedding: list[float]
+    embedding: list[float] | None          # sémantique (None si indisponible)
     metadata: dict = field(default_factory=dict)
+    lexical: list[float] | None = None     # vecteur lexical (hashing)
 
 
 @dataclass
 class ScoredChunk:
     chunk: Chunk
     score: float
+    semantic: float | None = None
+    lexical: float | None = None
 
 
-def search(query_vec: list[float], chunks: list[Chunk], top_k: int = 4, min_score: float = 0.0) -> list[ScoredChunk]:
-    scored = [ScoredChunk(c, round(cosine(query_vec, c.embedding), 4)) for c in chunks]
+def search(query_vec: list[float] | None, chunks: list[Chunk], top_k: int = 4, min_score: float = 0.0,
+           query_lex: list[float] | None = None) -> list[ScoredChunk]:
+    scored = []
+    for c in chunks:
+        sem = cosine(query_vec, c.embedding) if query_vec is not None and c.embedding else None
+        lex = cosine(query_lex, c.lexical) if query_lex is not None and c.lexical else None
+        if sem is not None and lex is not None:
+            score = SEMANTIC_WEIGHT * sem + (1 - SEMANTIC_WEIGHT) * lex
+        else:
+            score = sem if sem is not None else (lex or 0.0)
+        scored.append(ScoredChunk(c, round(score, 4), None if sem is None else round(sem, 4),
+                                  None if lex is None else round(lex, 4)))
     scored = [s for s in scored if s.score >= min_score]
     scored.sort(key=lambda s: s.score, reverse=True)
     # Diversité : au plus 2 segments par document.

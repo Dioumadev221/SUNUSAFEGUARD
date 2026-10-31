@@ -5,22 +5,39 @@ import { usePrefs } from "@/lib/prefs";
 
 type Contact = { label: string; number: string };
 
-export default function EmergencyPanel() {
+export default function EmergencyPanel({ note }: { note?: string }) {
   const { t } = usePrefs();
   const [contacts, setContacts] = useState<Contact[]>([]);
   useEffect(() => {
     api<Contact[]>("/emergency-contacts").then(setContacts).catch(() => setContacts([]));
   }, []);
   return (
-    <div role="alert" className="rounded-2xl border border-alert/40 bg-alert/10 p-4">
-      <p className="mb-3 font-semibold text-alert">{t("emergencyTitle")}</p>
-      <div className="flex flex-wrap gap-2">
-        {contacts.map((c) => (
-          <a key={c.number} href={`tel:${c.number}`} className="btn bg-alert text-white hover:bg-alert/90">
-            <Phone size={16} aria-hidden /> {c.label} · {c.number}
-          </a>
-        ))}
+    <section role="alert" className="overflow-hidden rounded-[2rem] border border-alert/15 bg-white shadow-soft dark:border-alert/20 dark:bg-night-850 dark:shadow-none">
+      <div className="grid lg:grid-cols-[0.85fr_1.6fr]">
+        <div className="flex flex-col justify-center gap-4 bg-alert/[0.06] p-6 sm:p-8">
+          <span className="relative grid h-12 w-12 place-items-center rounded-full bg-alert text-white">
+            <span className="absolute inset-0 animate-ping rounded-full bg-alert/30 motion-reduce:hidden" aria-hidden />
+            <Phone size={20} aria-hidden />
+          </span>
+          <div>
+            <h2 className="text-3xl text-alert sm:text-4xl">{t("emergencyTitle")}</h2>
+            <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">{note ?? "Appelez maintenant."} Touchez un numéro pour appeler.</p>
+          </div>
+        </div>
+        <ul className="grid gap-px bg-sand-200 sm:grid-cols-2 dark:bg-white/[0.06]">
+          {contacts.map((c) => (
+            <li key={c.number} className="bg-white dark:bg-night-850">
+              <a href={`tel:${c.number}`} className="group flex h-full items-center gap-4 px-5 py-5 transition hover:bg-alert/[0.04] sm:px-6">
+                <span className="min-w-[4.5rem] font-display text-4xl font-semibold tabular-nums leading-none">{c.number}</span>
+                <span className="min-w-0 flex-1 text-sm font-semibold leading-snug text-slate-600 dark:text-slate-300">{c.label}</span>
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-alert/10 text-alert transition group-hover:bg-alert group-hover:text-white" aria-hidden>
+                  <Phone size={18} />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
+    </section>
   );
 }

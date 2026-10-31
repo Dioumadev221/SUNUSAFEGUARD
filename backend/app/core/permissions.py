@@ -33,7 +33,15 @@ PERMISSIONS: dict[str, set[str]] = {
     "monitoring:read": DASHBOARDS["tech"],
     "audit:read": DASHBOARDS["tech"],
     "users:manage": {"super_admin"},
+    "users:manage_org": {"super_admin", "responsable_partenaire"},
+    "retention:manage": {"super_admin", "admin_technique"},
 }
+
+# Comptes privilégiés : double authentification obligatoire (CDC §8.3).
+MFA_REQUIRED_ROLES = {"super_admin", "admin_technique"}
+
+# Rôles qu'un responsable partenaire peut attribuer dans sa structure.
+ORG_ASSIGNABLE_ROLES = {"responsable_partenaire", "travailleur_social"}
 
 
 def has_permission(role: str, permission: str) -> bool:

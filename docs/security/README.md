@@ -13,7 +13,10 @@
 | Données d'orientation chiffrées (§11.1) | Fernet (`DATA_ENCRYPTION_KEY`), effacées à la clôture | — |
 | Isolation des partenaires (§4.4) | Filtrage serveur par `organization_id` | `test_partner_isolation` |
 | RBAC côté serveur (§8) | `require(permission)` sur chaque route | `test_dashboard_permissions` |
-| Protection contre la force brute (§8.3) | Verrouillage 15 min après 5 échecs | — |
+| Protection contre la force brute (§8.3) | Verrouillage 15 min après 5 échecs + limitation de débit par IP hachée | `test_rate_limit_on_chat` |
+| MFA pour comptes privilégiés (§8.3) | TOTP (RFC 6238) ; jeton intermédiaire 5 min sans accès aux API | `test_mfa_enrolment_and_login` |
+| Gestion des comptes (§4.4, §8) | Mot de passe provisoire à changer, désactivation, réinitialisation, périmètre partenaire | `test_partner_manages_only_own_org_and_roles` |
+| Conservation et purge (§6.4) | Purge quotidienne + manuelle, contacts effacés à la clôture | `test_retention_purge` |
 | Pas de signalement automatique (§6.3) | Aucune intégration sortante ; garde-fou de sortie | `test_output_guard` |
 | Prompt injection (§6.3) | Règles déterministes + consignes système + texte utilisateur délimité | `test_prompt_injection_refused` |
 | Documents non validés exclus (§5.2) | Seul le statut `publie` est chargé | `test_unpublished_document_not_used` |
@@ -21,9 +24,8 @@
 
 ## À faire avant production
 
-- MFA effective pour les comptes privilégiés (le drapeau `mfa_enabled` existe ; TOTP en Phase 3).
 - TLS, rotation des secrets, sauvegardes chiffrées (`infrastructure/scripts/backup-postgres.sh`).
-- Politique de conservation : purge planifiée de `usage_events` et `security_events`.
-- Limitation de débit sur `/api/chat` et `/api/auth/login` (nginx `limit_req` ou Redis).
+- Valider les durées de conservation avec le responsable de traitement.
+- Avec plusieurs instances backend : déplacer la limitation de débit vers Redis.
 - Tests d'intrusion, revue des règles d'urgence avec des professionnel·les.
 - Protocole spécifique mineures avant toute ouverture (CDC §7.4).

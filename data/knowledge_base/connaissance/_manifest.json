@@ -1,0 +1,10 @@
+{
+  "_note": "Fiches importées de la base « connaissance » d'un projet précédent. Leur en-tête d'origine est conservé ; ce manifeste ajoute la catégorie et le statut de publication utilisés par SunuSafeguard AI.",
+  "00_intro.md": {"category": "ecoute_psychosociale", "status": "publie"},
+  "01_bien_etre.md": {"category": "ecoute_psychosociale", "status": "publie"},
+  "02_stress.md": {"category": "ecoute_psychosociale", "status": "publie"},
+  "03_soutenir_proche.md": {"category": "ecoute_psychosociale", "status": "publie"},
+  "04_idees_suicidaires.md": {"category": "ecoute_psychosociale", "status": "publie"},
+  "05_ressources_senegal.md": {"category": "hebergement_protection", "status": "publie"},
+  "06_confidentialite.md": {"category": "autre", "status": "a_verifier", "reason": "Décrit un prototype sans authentification : à mettre à jour avant publication."}
+}

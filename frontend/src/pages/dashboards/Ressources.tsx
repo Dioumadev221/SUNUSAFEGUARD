@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { FlaskConical, Upload } from "lucide-react";
+import { FlaskConical, Upload, X } from "lucide-react";
 import { PageHeader } from "@/components/DashboardLayout";
 import { Badge, Count, ErrorNote, Loading, Stat, Tabs } from "@/components/ui";
 import { api } from "@/lib/api";
@@ -9,7 +9,7 @@ import { useFetch } from "@/lib/useFetch";
 type Doc = { id: number; title: string; source: string; category: string; language: string; status: string; version: number; index_status: string; chunk_count: number; updated_at: string; published_at: string | null };
 type DocDetail = { document: Doc; chunks: { id: number; section: string; text: string }[]; reviews: { decision: string; comment: string; created_at: string }[]; allowed_transitions: string[] };
 
-const STATUS_TONE: Record<string, string> = { publie: "bg-success/15 text-success", rejete: "bg-alert/15 text-alert", en_validation: "bg-warn/15 text-warn", a_verifier: "bg-warn/15 text-warn" };
+const STATUS_TONE: Record<string, string> = { publie: "bg-success/10 text-success", rejete: "bg-alert/10 text-alert", en_validation: "bg-warn/10 text-warn", a_verifier: "bg-warn/10 text-warn" };
 
 export default function Ressources() {
   const [tab, setTab] = useState<"kb" | "playground" | "gaps">("kb");
@@ -28,31 +28,37 @@ function KnowledgeBase() {
   const docs = useFetch<Doc[]>("/knowledge/documents");
   const [selected, setSelected] = useState<number | null>(null);
   return (
-    <div className="grid gap-4 lg:grid-cols-5">
-      <div className="space-y-4 lg:col-span-3">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm muted">Seuls les documents publiés alimentent l'assistant.</p>
         <UploadForm onDone={docs.reload} />
-        <ErrorNote error={docs.error} />
-        {!docs.data ? <Loading /> : (
-          <div className="card overflow-x-auto">
-            <table className="table">
-              <thead><tr><th>Document</th><th>Catégorie</th><th>Statut</th><th>Segments</th><th>MAJ</th></tr></thead>
-              <tbody>
-                {docs.data.map((d) => (
-                  <tr key={d.id} onClick={() => setSelected(d.id)} className={`cursor-pointer ${selected === d.id ? "bg-teal/10" : "hover:bg-sand-200/50 dark:hover:bg-night-700/50"}`}>
-                    <td><p className="font-medium">{d.title}</p><p className="text-xs muted">{d.source} · v{d.version} · {d.language}</p></td>
-                    <td className="text-xs">{cat(d.category)}</td>
-                    <td><Badge tone={STATUS_TONE[d.status]}>{DOC_STATUS[d.status] ?? d.status}</Badge></td>
-                    <td>{d.chunk_count}</td>
-                    <td className="text-xs">{fmtDate(d.updated_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        <p className="text-xs muted">Seuls les documents « Publié » sont utilisés par l'assistant.</p>
       </div>
-      <div className="lg:col-span-2">{selected ? <DocPanel id={selected} onChange={docs.reload} /> : <div className="card muted text-sm">Sélectionnez un document pour voir ses segments et son workflow de validation.</div>}</div>
+      <ErrorNote error={docs.error} />
+      {!docs.data ? <Loading /> : (
+        <div className="card overflow-x-auto p-2 sm:p-3">
+          <table className="table">
+            <thead><tr><th>Document</th><th>Statut</th><th className="text-right">Segments</th><th className="text-right">Mis à jour</th></tr></thead>
+            <tbody>
+              {docs.data.map((d) => (
+                <tr key={d.id} onClick={() => setSelected(d.id)} className="cursor-pointer transition hover:bg-sand-100 dark:hover:bg-white/[0.03]">
+                  <td><p className="font-semibold">{d.title}</p><p className="text-xs muted">{cat(d.category)}</p></td>
+                  <td><Badge tone={STATUS_TONE[d.status] ?? "bg-slate-500/10 text-slate-500"}>{DOC_STATUS[d.status] ?? d.status}</Badge></td>
+                  <td className="text-right tabular-nums">{d.chunk_count}</td>
+                  <td className="whitespace-nowrap text-right text-xs muted">{fmtDate(d.updated_at).split(" ")[0]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {selected && (
+        <div className="fixed inset-0 z-40 flex justify-end bg-night-950/50 backdrop-blur-sm" onClick={() => setSelected(null)}>
+          <div className="h-full w-full max-w-lg overflow-y-auto bg-white p-6 shadow-2xl dark:bg-night-900" onClick={(e) => e.stopPropagation()}>
+            <button className="btn-ghost mb-2 -ml-3 h-9 min-h-0 px-3" onClick={() => setSelected(null)}><X size={16} /> Fermer</button>
+            <DocPanel id={selected} onChange={docs.reload} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -73,7 +79,7 @@ function UploadForm({ onDone }: { onDone: () => void }) {
   }
   if (!open) return <button className="btn-primary" onClick={() => setOpen(true)}><Upload size={16} /> Importer un document</button>;
   return (
-    <form onSubmit={submit} className="card grid gap-3 sm:grid-cols-2">
+    <form onSubmit={submit} className="card grid w-full gap-4 sm:grid-cols-2">
       <div className="sm:col-span-2"><label className="label">Fichier (PDF, DOCX, TXT, MD — 10 Mo max)</label><input name="file" type="file" accept=".pdf,.docx,.txt,.md" required className="input" /></div>
       <div><label className="label">Titre</label><input name="title" required className="input" /></div>
       <div><label className="label">Organisme source</label><input name="source" className="input" /></div>
@@ -103,19 +109,20 @@ function DocPanel({ id, onChange }: { id: number; onChange: () => void }) {
   if (error) return <ErrorNote error={error} />;
   if (!data) return <Loading />;
   return (
-    <div className="card space-y-4">
+    <div className="space-y-5">
       <div>
-        <h2 className="font-semibold">{data.document.title}</h2>
+        <Badge tone={STATUS_TONE[data.document.status] ?? "bg-slate-500/10 text-slate-500"}>{DOC_STATUS[data.document.status] ?? data.document.status}</Badge>
+        <h2 className="mt-2 text-xl font-bold">{data.document.title}</h2>
         <p className="text-xs muted">Indexation : {data.document.index_status} · {data.chunks.length} segments</p>
       </div>
       <div className="space-y-2">
         <textarea className="input" rows={2} placeholder="Commentaire de validation" value={comment} onChange={(e) => setComment(e.target.value)} />
-        <div className="flex flex-wrap gap-2">{data.allowed_transitions.map((s) => <button key={s} className="btn-ghost text-sm" onClick={() => move(s)}>→ {DOC_STATUS[s]}</button>)}</div>
+        <div className="flex flex-wrap gap-2">{data.allowed_transitions.map((s) => <button key={s} className={s === "publie" ? "btn-primary" : "btn-outline"} onClick={() => move(s)}>{DOC_STATUS[s]}</button>)}</div>
         <ErrorNote error={err} />
       </div>
       <details>
         <summary className="cursor-pointer text-sm font-medium">Segments indexés</summary>
-        <ol className="mt-2 max-h-80 space-y-2 overflow-y-auto text-xs">{data.chunks.map((c) => <li key={c.id} className="rounded-lg bg-sand-200/50 p-2 dark:bg-night"><strong>{c.section}</strong><p className="mt-1 muted">{c.text}</p></li>)}</ol>
+        <ol className="mt-2 max-h-80 space-y-2 overflow-y-auto text-xs">{data.chunks.map((c) => <li key={c.id} className="rounded-2xl bg-sand-100 p-3 dark:bg-white/[0.03]"><strong>{c.section}</strong><p className="mt-1 muted">{c.text}</p></li>)}</ol>
       </details>
       {data.reviews.length > 0 && (
         <div><p className="text-sm font-medium">Historique</p><ul className="text-xs muted">{data.reviews.map((r, i) => <li key={i}>{fmtDate(r.created_at)} — {DOC_STATUS[r.decision] ?? r.decision}{r.comment && ` : ${r.comment}`}</li>)}</ul></div>
@@ -125,8 +132,8 @@ function DocPanel({ id, onChange }: { id: number; onChange: () => void }) {
 }
 
 type PlaygroundResult = {
-  language: { lang: string; confidence: number }; expanded_query: string; embedder: string; min_score_threshold: number;
-  candidates: { chunk_id: number; title: string; section: string; score: number; above_threshold: boolean; text: string }[];
+  language: { lang: string; confidence: number }; expanded_query: string; embedder: string; retrieval_mode: string; min_score_threshold: number;
+  candidates: { chunk_id: number; title: string; section: string; score: number; semantic: number | null; lexical: number | null; above_threshold: boolean; text: string }[];
   context: string; response: { answer: string; used_llm: boolean; grounded: boolean; safety_action: string; category: string; timings_ms: Record<string, number> } | null; warning: string;
 };
 
@@ -155,17 +162,19 @@ function Playground() {
         <>
           <div className="grid gap-4 sm:grid-cols-3">
             <Stat label="Langue détectée" value={res.language.lang.toUpperCase()} hint={`confiance ${Math.round(res.language.confidence * 100)} %`} />
-            <Stat label="Embeddings" value={<span className="text-lg">{res.embedder}</span>} hint={`seuil de pertinence ${res.min_score_threshold}`} />
+            <Stat label={`Recherche ${res.retrieval_mode}`} value={<span className="text-lg">{res.embedder}</span>} hint={`seuil de pertinence ${res.min_score_threshold}`} />
             <Stat label="Réponse" value={<span className="text-lg">{res.response?.grounded ? "Sourcée" : "Sans source"}</span>} hint={res.response ? `${res.response.used_llm ? "LLM" : "Repli extractif"} · ${res.response.safety_action}` : ""} />
           </div>
           <div className="card text-sm"><p className="font-medium">Requête après expansion linguistique</p><p className="mt-1 font-mono text-xs muted">{res.expanded_query}</p></div>
           <div className="card overflow-x-auto">
             <h3 className="mb-2 font-semibold">Segments candidats</h3>
             <table className="table">
-              <thead><tr><th>Score</th><th>Document / section</th><th>Extrait</th></tr></thead>
+              <thead><tr><th>Score</th><th>Sémantique</th><th>Lexical</th><th>Document / section</th><th>Extrait</th></tr></thead>
               <tbody>{res.candidates.map((c) => (
                 <tr key={c.chunk_id} className={c.above_threshold ? "" : "opacity-50"}>
                   <td><Badge tone={c.above_threshold ? "bg-success/15 text-success" : "bg-slate-500/15 text-slate-500"}>{c.score.toFixed(3)}</Badge></td>
+                  <td className="text-xs muted">{c.semantic == null ? "—" : c.semantic.toFixed(3)}</td>
+                  <td className="text-xs muted">{c.lexical == null ? "—" : c.lexical.toFixed(3)}</td>
                   <td className="text-xs"><p className="font-medium">{c.title}</p><p className="muted">{c.section}</p></td>
                   <td className="text-xs muted">{c.text.slice(0, 220)}…</td>
                 </tr>
@@ -204,7 +213,7 @@ function Gaps() {
       </div>
       <div className="card space-y-3">
         <h2 className="font-semibold">Évaluation du RAG</h2>
-        <p className="text-xs muted">Jeu de tests : data/evaluation/rag_testset.json (questions FR, WO, hors périmètre).</p>
+        <p className="text-xs muted">Jeu de questions de référence : français, wolof et questions hors périmètre.</p>
         <button className="btn-primary" onClick={evaluate}>Lancer l'évaluation</button>
         {evalRes && (
           <>

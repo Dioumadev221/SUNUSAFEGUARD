@@ -6,11 +6,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import require
-from app.core.ai import get_ai_embedder
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.models import RAGEvaluation, User
 from app.schemas import PlaygroundIn
+from app.services.ai_state import state
 from app.services.audit import audit
 from app.services.knowledge import get_pipeline
 from app.services.metrics import knowledge_gaps
@@ -34,12 +34,13 @@ def playground(data: PlaygroundIn, user: User = Depends(require("rag:playground"
     return {
         "language": lang_info,
         "expanded_query": query,
-        "embedder": get_ai_embedder().name,
+        "embedder": state.embedder_name,
+        "retrieval_mode": pipeline.mode,
         "min_score_threshold": pipeline.min_score,
         "candidates": [
             {"chunk_id": r.chunk.id, "document_id": r.chunk.document_id, "title": r.chunk.metadata.get("title"),
              "section": r.chunk.metadata.get("section"), "status": r.chunk.metadata.get("status"),
-             "score": r.score, "above_threshold": r.score >= pipeline.min_score, "text": r.chunk.text}
+             "score": r.score, "semantic": r.semantic, "lexical": r.lexical, "above_threshold": r.score >= pipeline.min_score, "text": r.chunk.text}
             for r in results
         ],
         "context": context,
@@ -58,7 +59,8 @@ def run_evaluation(user: User = Depends(require("rag:playground")), db: Session 
     s = get_settings()
     testset = json.loads((Path(s.data_dir) / "evaluation" / "rag_testset.json").read_text(encoding="utf-8"))
     report = evaluate_retrieval(get_pipeline(), testset, k=s.rag_top_k)
-    config = {"embedder": get_ai_embedder().name, "top_k": s.rag_top_k, "min_score": s.rag_min_score}
+    config = {"embedder": state.embedder_name, "top_k": s.rag_top_k, "min_score": state.threshold,
+              "llm": s.ollama_model if state.llm_ready() else None}
     db.add(RAGEvaluation(config=config, recall_at_k=report["recall_at_k"], mrr=report["mrr"], results=report))
     audit(db, user, "rag_evaluation", recall=report["recall_at_k"])
     db.commit()

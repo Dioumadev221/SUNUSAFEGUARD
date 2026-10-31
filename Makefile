@@ -3,7 +3,7 @@ PY ?= python
 VENV = backend/.venv
 BIN = $(VENV)/bin
 
-.PHONY: install backend frontend dev test eval seed docker-up docker-down docker-llm lint
+.PHONY: install backend frontend dev test eval seed docker-up docker-down docker-llm llm-local lint
 
 install:            ## Installe les dépendances backend et frontend
 	$(PY) -m venv $(VENV)
@@ -29,9 +29,14 @@ seed:               ## Recharge les données de démonstration
 docker-up:          ## Démarre la pile complète (http://localhost:8080)
 	docker compose up -d --build
 
-docker-llm:         ## Démarre Ollama et télécharge le modèle
-	docker compose --profile llm up -d ollama
-	docker compose exec ollama ollama pull llama3.1:8b
+docker-llm:         ## Télécharge les modèles dans le conteneur Ollama (sinon fait au démarrage du backend)
+	docker compose up -d ollama
+	docker compose exec ollama ollama pull qwen2.5:3b
+	docker compose exec ollama ollama pull paraphrase-multilingual
+
+llm-local:          ## Télécharge les modèles dans un Ollama installé sur la machine
+	ollama pull qwen2.5:3b
+	ollama pull paraphrase-multilingual
 
 docker-down:
 	docker compose down

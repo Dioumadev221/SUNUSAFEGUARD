@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_DIR = Path(__file__).resolve().parents[3]
@@ -26,12 +27,35 @@ class Settings(BaseSettings):
     # IA
     ai_engine_path: str = str(ROOT_DIR / "ai-engine")
     llm_provider: str = "ollama"          # ollama | none
-    ollama_url: str = "http://localhost:11434"
-    ollama_model: str = "llama3.1:8b"
-    embedding_provider: str = "hashing"   # hashing | ollama
-    embedding_model: str = "nomic-embed-text"
-    rag_min_score: float = 0.12
+    # 127.0.0.1 plutôt que localhost : sous Windows, « localhost » essaie d'abord IPv6 et
+    # perd ~2 s par requête quand Ollama n'écoute qu'en IPv4.
+    ollama_url: str = "http://127.0.0.1:11434"
+
+    @field_validator("ollama_url")
+    @classmethod
+    def _ipv4_localhost(cls, v: str) -> str:
+        return v.replace("://localhost", "://127.0.0.1")
+    ollama_model: str = "qwen2.5:3b"
+    ollama_timeout: float = 120
+    ollama_auto_pull: bool = True         # télécharge les modèles manquants au démarrage
+    embedding_provider: str = "auto"      # auto (Ollama si joignable, sinon lexical) | ollama | hashing
+    embedding_model: str = "paraphrase-multilingual"
+    rag_min_score: float | None = None    # None = calibrage automatique sur le jeu de tests
+    rag_lexical_min_score: float = 0.12   # seuil en mode lexical (sans modèle d'embeddings)
     rag_top_k: int = 4
+
+    # Limitation de débit (requêtes / fenêtre en secondes, par adresse IP hachée)
+    rate_limit_chat: str = "30/60"
+    rate_limit_login: str = "10/60"
+
+    # Orientations : alerte si une demande transmise n'est pas reçue après N heures
+    referral_alert_hours: int = 24
+
+    # Politique de conservation (jours)
+    retention_usage_days: int = 395
+    retention_security_days: int = 180
+    retention_audit_days: int = 730
+    retention_referral_days: int = 365
 
     # Confidentialité
     k_anonymity_threshold: int = 5

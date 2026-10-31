@@ -15,6 +15,7 @@ const Impact = lazy(() => import("@/pages/dashboards/Impact"));
 const Orientation = lazy(() => import("@/pages/dashboards/Orientation"));
 const Ressources = lazy(() => import("@/pages/dashboards/Ressources"));
 const Tech = lazy(() => import("@/pages/dashboards/Tech"));
+const Account = lazy(() => import("@/pages/dashboards/Account"));
 
 function DashboardIndex() {
   const { user } = useAuth();
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="orientation" element={<Orientation />} />
             <Route path="ressources" element={<Ressources />} />
             <Route path="tech" element={<Tech />} />
+            <Route path="compte" element={<Account />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

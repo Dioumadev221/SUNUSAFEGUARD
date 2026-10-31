@@ -30,7 +30,12 @@ def _get(db: Session, org_id: int) -> Organization:
 def public_directory(region: str | None = None, domain: str | None = None, db: Session = Depends(get_db)):
     """Annuaire public : uniquement les structures validées."""
     orgs = db.scalars(select(Organization).where(Organization.validated.is_(True)).order_by(Organization.region))
-    return [o for o in orgs if (not region or o.region == region) and (not domain or domain in o.domains)]
+    receiving = set(db.scalars(select(User.organization_id).where(User.is_active.is_(True), User.organization_id.is_not(None))))
+    return [
+        OrganizationOut.model_validate(o).model_copy(update={"accepts_referrals": o.id in receiving})
+        for o in orgs
+        if (not region or o.region == region) and (not domain or domain in o.domains)
+    ]
 
 
 @router.get("/manage", response_model=list[OrganizationOut])

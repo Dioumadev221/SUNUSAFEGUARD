@@ -6,11 +6,11 @@ from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.api.deps import require
-from app.core.ai import get_ai_embedder, get_llm
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.models import AuditLog, KnowledgeChunk, SecurityEvent, User
-from app.services import metrics
+from app.services import metrics, retention
+from app.services.ai_state import reconnect, state
 
 from safety.rules import RULES_VERSION  # noqa: E402
 
@@ -34,10 +34,12 @@ def services(user: User = Depends(require("monitoring:read")), db: Session = Dep
     except Exception:  # noqa: BLE001
         db_ok = False
     db_ms = round((time.perf_counter() - t0) * 1000, 1)
-    llm = get_llm()
+    llm = state.llm
     t1 = time.perf_counter()
-    llm_ok = llm.is_available() if llm else None
+    llm_up = llm.is_available() if llm else None
+    llm_ok = llm_up and state.llm_ready()
     llm_ms = round((time.perf_counter() - t1) * 1000, 1)
+    pulling = ", ".join(state.pulling)
     vm = psutil.virtual_memory()
     disk = psutil.disk_usage("/")
     return {
@@ -46,9 +48,12 @@ def services(user: User = Depends(require("monitoring:read")), db: Session = Dep
             {"name": "Base relationnelle", "status": "up" if db_ok else "down",
              "detail": s.database_url.split("://")[0], "latency_ms": db_ms},
             {"name": "Index vectoriel", "status": "up",
-             "detail": f"{db.scalar(select(func.count()).select_from(KnowledgeChunk))} segments · {get_ai_embedder().name}"},
-            {"name": "Moteur LLM", "status": "disabled" if llm is None else ("up" if llm_ok else "down"),
-             "detail": f"{s.ollama_model} @ {s.ollama_url}" if llm else "LLM désactivé (mode repli extractif)",
+             "detail": f"{db.scalar(select(func.count()).select_from(KnowledgeChunk))} segments · "
+                       f"{state.embedder_name} · recherche {('hybride' if state.semantic else 'lexicale')} · seuil {state.threshold}"},
+            {"name": "Moteur LLM", "status": "disabled" if llm is None else ("up" if llm_ok else ("pulling" if pulling else "down")),
+             "detail": ("LLM désactivé (mode repli extractif)" if llm is None else
+                        f"{s.ollama_model} @ {s.ollama_url}" + (f" · téléchargement : {pulling}" if pulling else
+                        "" if llm_ok else (" · modèle absent" if llm_up else " · Ollama injoignable"))),
              "latency_ms": llm_ms if llm else None},
             {"name": "Services vocaux (STT/TTS)", "status": "planned", "detail": "Phase 4"},
         ],
@@ -83,3 +88,24 @@ def audit_log(user: User = Depends(require("audit:read")), db: Session = Depends
                       .order_by(AuditLog.id.desc()).limit(100)).all()
     return [{"id": a.id, "actor": email, "action": a.action, "target": a.target, "details": a.details,
              "created_at": a.created_at} for a, email in rows]
+
+
+@router.get("/monitoring/retention")
+def retention_status(user: User = Depends(require("monitoring:read")), db: Session = Depends(get_db)):
+    return {"policy": retention.policy(), "last_purge": retention.last_purge(db)}
+
+
+@router.post("/monitoring/retention/purge")
+def retention_purge(user: User = Depends(require("retention:manage")), db: Session = Depends(get_db)):
+    return retention.purge(db, user)
+
+
+@router.get("/monitoring/ai-engine")
+def ai_engine(user: User = Depends(require("monitoring:read"))):
+    return state.snapshot()
+
+
+@router.post("/monitoring/ai-engine/reconnect")
+def ai_reconnect(user: User = Depends(require("retention:manage"))):
+    """Relance la détection d'Ollama et le téléchargement des modèles."""
+    return reconnect()

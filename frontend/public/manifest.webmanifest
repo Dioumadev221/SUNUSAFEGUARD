@@ -3,6 +3,8 @@
   "short_name": "Sunu",
   "start_url": "/",
   "display": "standalone",
+  "description": "Informations fiables et orientation, en toute discrétion.",
+  "lang": "fr",
   "background_color": "#0F172A",
   "theme_color": "#0F172A",
   "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]

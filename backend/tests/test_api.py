@@ -1,3 +1,4 @@
+from datetime import date
 """Tests fonctionnels et de sécurité de l'API (CDC §15.1, §15.3)."""
 from sqlalchemy import select
 
@@ -87,6 +88,16 @@ def test_k_anonymity_suppression(client, login):
     data = client.get("/api/metrics/overview?days=1&region=Kédougou", headers=login("analyste@sunusafeguard.local")).json()
     for row in data["by_category"]:
         assert row["count"] is None or row["count"] >= data["k_threshold"]
+
+
+def test_overview_comparison_and_granularity(client, login):
+    analyst = login("analyste@sunusafeguard.local")
+    data = client.get("/api/metrics/overview?days=30&granularity=week", headers=analyst).json()
+    assert data["granularity"] == "week"
+    assert set(data["previous"]) >= {"total_interactions", "completion_rate"}
+    for p in data["timeseries"]:
+        assert date.fromisoformat(p["date"]).weekday() == 0
+    assert client.get("/api/metrics/overview?granularity=year", headers=analyst).status_code == 422
 
 
 def test_document_workflow(client, login):

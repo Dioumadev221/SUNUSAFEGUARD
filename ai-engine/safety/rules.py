@@ -10,7 +10,7 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
-RULES_VERSION = "2026.10-phase1"
+RULES_VERSION = "2026.10-phase2"
 
 
 def _norm(text: str) -> str:
@@ -23,10 +23,18 @@ def _norm(text: str) -> str:
 URGENT_PATTERNS = [
     r"\b(me|nous) (tuer|suicider)\b", r"\bsuicid", r"\ben finir\b", r"\bplus envie de vivre\b",
     r"\bje veux mourir\b", r"\bme faire du mal\b", r"\bme blesser\b",
+    # Idées suicidaires d'un proche (« mon amie parle de mourir », « il veut se tuer »)
+    r"\bse (tuer|suicider|faire du mal)\b", r"\b(parle|parlait|pense|veut|voulait|envie) (de |a )?(mourir|en finir)\b",
+    r"\bidees? (noires|de mort)\b", r"\benvie de mourir\b",
     r"\bva me tuer\b", r"\bmenace de (me )?tuer\b", r"\bdanger (de mort|immediat)\b",
     r"\bil me frappe (maintenant|en ce moment)\b", r"\bje suis enfermee?\b",
     r"\bsequestr", r"\bviol(ee|e)? (maintenant|ce soir|en ce moment)\b",
     r"\bsaignement abondant\b", r"\bperdu connaissance\b",
+    # Menace armée ou danger déclaré (« il me menace avec un couteau », « je suis en danger »)
+    r"\bmenac\w*\b.{0,25}\b(couteau|arme|machette|coupe-coupe|fusil|pistolet)\b",
+    r"\b(couteau|arme|machette|coupe-coupe|fusil|pistolet)\b.{0,30}\b(maintenant|en ce moment|ce soir)\b",
+    r"\bje suis en danger\b", r"\ben danger (maintenant|en ce moment|ce soir)\b",
+    r"\bpeur pour ma vie\b", r"\bau secours\b",
     # Wolof (provisoire, à valider par des linguistes)
     r"\bdinaa dee\b", r"\bdafay rey\b", r"\bbëgg naa dee\b", r"\bbegg naa dee\b",
     r"\bwallu leen\b", r"\bwallu ma\b",
@@ -57,7 +65,7 @@ MEDICAL_PATTERNS = [
 
 # Catégories analytiques (CDC §3.2) — jamais présentées comme des diagnostics.
 CATEGORIES: dict[str, list[str]] = {
-    "ecoute_psychosociale": ["stress", "angoisse", "triste", "tristesse", "seule", "seul", "deprim", "anxi",
+    "ecoute_psychosociale": ["mourir", "suicid", "idees noires", "en finir", "stress", "angoisse", "triste", "tristesse", "seule", "seul", "deprim", "anxi",
                              "dormir", "pleure", "mal-etre", "ecoute", "parler a quelqu", "tiit", "metti", "xel"],
     "violences_physiques_verbales": ["frappe", "coups", "battue", "violence", "insulte", "menace", "gifle",
                                      "door", "xeex", "agress", "viol"],
@@ -74,11 +82,21 @@ CATEGORIES: dict[str, list[str]] = {
 }
 
 
+# La personne parle d'un proche (adapte le message d'urgence, sans changer la priorité).
+THIRD_PARTY_PATTERNS = [
+    r"\b(mon|ma|mes) (amie?s?|soeur|frere|fille|fils|mere|pere|cousine?|voisine?|collegue|copine?|enfant|niece|neveu|tante|oncle)\b",
+    r"\b(une amie?|un proche|une proche|quelqu'un que je connais)\b",
+]
+FIRST_PERSON_PATTERNS = [r"\bje (veux|vais|voudrais) (mourir|en finir)\b", r"\b(me|nous) (tuer|suicider|faire du mal)\b",
+                         r"\bplus envie de vivre\b", r"\bva me tuer\b", r"\bmenace de (me )?tuer\b"]
+
+
 @dataclass
 class SafetyDecision:
     action: str = "allow"          # allow | urgent | refuse_injection | out_of_scope | redirect_professional
     reasons: list[str] = field(default_factory=list)
     rules_version: str = RULES_VERSION
+    third_party: bool = False      # danger concernant un proche
 
     @property
     def blocks_llm(self) -> bool:
@@ -93,7 +111,8 @@ def check_input(text: str) -> SafetyDecision:
     t = _norm(text)
     if hits := _match(URGENT_PATTERNS, t):
         # L'urgence prime toujours : on ne refuse jamais une personne en danger.
-        return SafetyDecision("urgent", hits)
+        third = bool(_match(THIRD_PARTY_PATTERNS, t)) and not _match(FIRST_PERSON_PATTERNS, t)
+        return SafetyDecision("urgent", hits, third_party=third)
     if hits := _match(INJECTION_PATTERNS, t):
         return SafetyDecision("refuse_injection", hits)
     if hits := _match(OUT_OF_SCOPE_PATTERNS, t):

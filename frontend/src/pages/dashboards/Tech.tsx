@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Activity, AlertTriangle, CheckCircle2, CircleDashed, XCircle } from "lucide-react";
+import { Activity, AlertTriangle, CheckCircle2, ChevronRight, CircleDashed, Download, RefreshCw, Trash2, XCircle } from "lucide-react";
+import UsersManager from "@/components/UsersManager";
+import { api } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { PageHeader } from "@/components/DashboardLayout";
 import { Badge, ErrorNote, Loading, Stat, Tabs } from "@/components/ui";
 import { fmtDate } from "@/lib/labels";
@@ -20,17 +23,28 @@ const STATUS_ICON: Record<string, JSX.Element> = {
   down: <XCircle className="text-alert" size={18} />,
   disabled: <CircleDashed className="text-warn" size={18} />,
   planned: <CircleDashed className="text-slate-400" size={18} />,
+  pulling: <Download className="animate-pulse text-warn" size={18} />,
+};
+
+type AIEngine = {
+  retrieval_mode: string; embedder: string; embedding_provider: string; threshold: number | null;
+  calibration: { method: string; threshold?: number; inside_min?: number | null; outside_max?: number | null } | null;
+  llm_provider: string; llm_model: string | null; llm_ready: boolean; pulling: string[];
+  events: { at: string; level: string; message: string }[];
 };
 
 export default function Tech() {
-  const [tab, setTab] = useState<"ai" | "safety" | "infra">("ai");
+  const { user } = useAuth();
+  const [tab, setTab] = useState<"ai" | "safety" | "infra" | "users">("ai");
   return (
     <>
       <PageHeader title="Sunu Tech" subtitle="Supervision technique, qualité de l'IA, garde-fous et journaux." />
-      <Tabs value={tab} onChange={setTab} tabs={[{ id: "ai", label: "4.1 Performance RAG & IA" }, { id: "safety", label: "4.2 Garde-fous" }, { id: "infra", label: "4.3 Infrastructure & journaux" }]} />
+      <Tabs value={tab} onChange={setTab} tabs={[{ id: "ai", label: "4.1 Performance RAG & IA" }, { id: "safety", label: "4.2 Garde-fous" }, { id: "infra", label: "4.3 Infrastructure & journaux" },
+        ...(user?.role === "super_admin" ? [{ id: "users" as const, label: "Comptes & accès" }] : [])]} />
       {tab === "ai" && <AI />}
       {tab === "safety" && <Safety />}
       {tab === "infra" && <Infra />}
+      {tab === "users" && <UsersManager />}
     </>
   );
 }
@@ -43,22 +57,86 @@ function AI() {
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Interactions (7 j)" value={data.interactions} />
-        <Stat label="Réponses sourcées" value={pct(data.grounded_rate)} />
-        <Stat label="Réponses sans source suffisante" value={pct(data.no_source_rate)} hint="Repli honnête plutôt qu'invention" />
-        <Stat label="Score moyen de récupération" value={data.avg_top_score.toFixed(2)} />
-        <Stat label="Latence p50" value={`${Math.round(data.latency_p50_ms)} ms`} />
-        <Stat label="Latence p95" value={`${Math.round(data.latency_p95_ms)} ms`} />
-        <Stat label="Réponses via LLM" value={pct(data.llm_usage_rate)} hint="Le reste : repli extractif" />
+        <Stat label="Réponses sourcées" value={pct(data.grounded_rate)} hint={`${pct(data.no_source_rate)} sans source suffisante`} />
+        <Stat label="Rédigées par le LLM" value={pct(data.llm_usage_rate)} hint="Le reste : extraits des documents" />
+        <Stat label="Temps de réponse" value={`${(data.latency_p50_ms / 1000).toFixed(1)} s`} hint={`médiane · p95 ${(data.latency_p95_ms / 1000).toFixed(1)} s`} />
       </div>
-      <div className="card text-sm">
-        <h2 className="mb-2 font-semibold">Chaîne technique</h2>
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          {["STT (Phase 4)", "Détection langue", "Embeddings", "RAG Retrieval", "LLM Inference", "Contrôle sécurité", "TTS (Phase 4)"].map((s, i, a) => (
-            <span key={s} className="flex items-center gap-2"><Badge tone={s.includes("Phase") ? "bg-slate-500/15 text-slate-400" : undefined}>{s}</Badge>{i < a.length - 1 && "→"}</span>
-          ))}
-        </div>
-        <p className="mt-3 text-xs muted">La fidélité des réponses générées (« groundedness ») doit être mesurée sur jeu de tests annoté : la cible &gt; 99 % est un objectif expérimental, pas une garantie.</p>
+      <Pipeline score={data.avg_top_score} />
+      <Engine />
+    </div>
+  );
+}
+
+const PIPELINE: { step: string; live: boolean }[] = [
+  { step: "Voix → texte (STT)", live: false },
+  { step: "Détection de la langue", live: true },
+  { step: "Embeddings", live: true },
+  { step: "Recherche documentaire", live: true },
+  { step: "Génération LLM", live: true },
+  { step: "Contrôle de sécurité", live: true },
+  { step: "Texte → voix (TTS)", live: false },
+];
+
+function Pipeline({ score }: { score: number }) {
+  return (
+    <div className="card">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="text-base font-bold">Chaîne technique</h2>
+        <p className="text-xs muted">Score moyen de récupération : <strong className="text-current">{score.toFixed(2)}</strong></p>
       </div>
+      <ol className="mt-4 flex flex-wrap items-center gap-2">
+        {PIPELINE.map(({ step, live }, i) => (
+          <li key={step} className="flex items-center gap-2">
+            <span className={`rounded-full px-3 py-1.5 text-xs font-semibold ${live ? "bg-teal/10 text-teal dark:text-teal-light" : "border border-dashed border-sand-300 muted dark:border-white/15"}`}>
+              {step}{!live && " · bientôt"}
+            </span>
+            {i < PIPELINE.length - 1 && <ChevronRight size={14} className="muted" aria-hidden />}
+          </li>
+        ))}
+      </ol>
+      <p className="mt-4 text-xs muted">La fidélité des réponses est mesurée sur un jeu de questions de référence annoté ; l'objectif de 99 % n'est pas une garantie.</p>
+    </div>
+  );
+}
+
+function Engine() {
+  const { user } = useAuth();
+  const { data, error, reload } = useFetch<AIEngine>("/monitoring/ai-engine");
+  const [busy, setBusy] = useState(false);
+  async function reconnect() {
+    setBusy(true);
+    try { await api("/monitoring/ai-engine/reconnect", { method: "POST" }); reload(); } finally { setBusy(false); }
+  }
+  if (error) return <ErrorNote error={error} />;
+  if (!data) return <Loading />;
+  const c = data.calibration;
+  return (
+    <div className="card space-y-4 text-sm">
+      <div className="flex flex-wrap items-center gap-2">
+        <h2 className="mr-1 text-base font-bold">Moteur IA</h2>
+        <Badge tone={data.retrieval_mode === "hybride" ? "bg-success/15 text-success" : "bg-warn/15 text-warn"}>Recherche {data.retrieval_mode === "hybride" ? "hybride" : "lexicale"}</Badge>
+        <Badge tone={data.llm_ready ? "bg-success/15 text-success" : "bg-warn/15 text-warn"}>{data.llm_ready ? `LLM ${data.llm_model}` : data.llm_provider === "none" ? "LLM désactivé" : "LLM indisponible : repli extractif"}</Badge>
+        {data.pulling.map((m) => <Badge key={m} tone="bg-warn/15 text-warn">Téléchargement {m}…</Badge>)}
+        {(user?.role === "super_admin" || user?.role === "admin_technique") && <button className="btn-ghost ml-auto" disabled={busy} onClick={reconnect}><RefreshCw size={16} className={busy ? "animate-spin" : ""} /> Reconnecter</button>}
+      </div>
+      <dl className="grid gap-3 sm:grid-cols-3">
+        {[
+          ["Modèle d'embeddings", data.embedder, `fournisseur : ${data.embedding_provider}`],
+          ["Seuil de pertinence", String(data.threshold ?? "—"), c?.method ?? ""],
+          ["Calibration", c?.inside_min != null && c?.outside_max != null ? `${c.outside_max} → ${c.inside_min}` : "—", "hors périmètre → pertinent"],
+        ].map(([k, v, h]) => (
+          <div key={k} className="card-flat">
+            <dt className="text-xs muted">{k}</dt>
+            <dd className="mt-1 truncate font-bold">{v}</dd>
+            <dd className="mt-0.5 truncate text-xs muted" title={h}>{h}</dd>
+          </div>
+        ))}
+      </dl>
+      {data.events.length > 0 && (
+        <ul className="max-h-40 space-y-1 overflow-y-auto text-xs">
+          {data.events.map((e, i) => <li key={i} className={e.level === "warning" ? "text-warn" : "muted"}>{fmtDate(e.at)} — {e.message}</li>)}
+        </ul>
+      )}
     </div>
   );
 }
@@ -112,6 +190,7 @@ function Infra() {
           </div>
         </>
       )}
+      <Retention />
       <div className="card overflow-x-auto">
         <h2 className="mb-2 font-semibold">Journal d'administration</h2>
         {!audit.data ? <Loading /> : (
@@ -120,6 +199,29 @@ function Infra() {
           </table>
         )}
       </div>
+    </div>
+  );
+}
+
+type RetentionStatus = { policy: Record<string, number | string>; last_purge: { at: string; counts: Record<string, number> } | null };
+
+function Retention() {
+  const { data, reload } = useFetch<RetentionStatus>("/monitoring/retention");
+  const [busy, setBusy] = useState(false);
+  const labels: Record<string, string> = { usage_events_days: "Indicateurs d'usage anonymes", security_events_days: "Événements de sécurité", audit_logs_days: "Journal d'administration", closed_referrals_days: "Orientations clôturées", conversations: "Conversations" };
+  async function purge() {
+    setBusy(true);
+    try { await api("/monitoring/retention/purge", { method: "POST" }); reload(); } finally { setBusy(false); }
+  }
+  if (!data) return <Loading />;
+  return (
+    <div className="card space-y-3">
+      <h2 className="font-semibold">Conservation et purge</h2>
+      <ul className="grid gap-x-8 gap-y-1 text-sm sm:grid-cols-2">
+        {Object.entries(data.policy).map(([k, v]) => <li key={k} className="flex justify-between gap-2 border-b border-sand-200 py-1 dark:border-night-700"><span className="muted">{labels[k] ?? k}</span><span>{typeof v === "number" ? `${v} jours` : v}</span></li>)}
+      </ul>
+      <p className="text-xs muted">Purge automatique toutes les 24 h. Dernière : {data.last_purge ? `${fmtDate(data.last_purge.at)} (${Object.entries(data.last_purge.counts).map(([k, v]) => `${k} ${v}`).join(", ")})` : "jamais"}</p>
+      <button className="btn-ghost" disabled={busy} onClick={purge}><Trash2 size={16} /> Lancer la purge maintenant</button>
     </div>
   );
 }

@@ -25,4 +25,8 @@ activée dans `infrastructure/postgres/init.sql`) :
 
 1. Ajouter une colonne `embedding_vec vector(768)` à `knowledge_chunks` (migration Alembic).
 2. Remplacer `rag/retriever.search` par une requête `ORDER BY embedding_vec <=> :q LIMIT :k`.
-3. Passer à `EMBEDDING_PROVIDER=ollama` (`nomic-embed-text`) puis `python -m app.cli reindex`.
+3. Adapter la dimension au modèle actif (`paraphrase-multilingual` : 768).
+
+Chaque segment enregistre le nom de l'embedder qui l'a produit (`embedder`). Au démarrage, les
+segments produits par un autre modèle sont réindexés automatiquement ; tant qu'aucun modèle
+sémantique n'est disponible, la recherche se fait sur des vecteurs lexicaux calculés en mémoire.

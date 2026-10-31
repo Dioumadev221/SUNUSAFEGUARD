@@ -1,4 +1,5 @@
 import secrets
+from datetime import datetime, timedelta, timezone
 from statistics import median
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -6,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import require
+from app.core.config import get_settings
 from app.core.security import decrypt, encrypt
 from app.db.session import get_db
 from app.models import Organization, ReferralEvent, ReferralRequest, User
@@ -33,6 +35,9 @@ def create_referral(data: ReferralIn, db: Session = Depends(get_db)):
     org = db.get(Organization, data.organization_id)
     if not org or not org.validated:
         raise HTTPException(404, "Structure introuvable")
+    # Sans compte actif, personne à la structure ne verrait la demande : on ne prétend pas la transmettre.
+    if db.scalar(select(User.id).where(User.organization_id == org.id, User.is_active.is_(True)).limit(1)) is None:
+        raise HTTPException(409, "Cette structure ne reçoit pas encore de demandes en ligne. Appelez-la directement.")
     code = "SSG-" + secrets.token_hex(4).upper()
     ref = ReferralRequest(public_code=code, organization_id=org.id, category=data.category, region=data.region,
                           status="transmise", consent_given=True, contact_encrypted=encrypt(data.contact))
@@ -109,3 +114,21 @@ def delays(user: User = Depends(require("referrals:manage")), db: Session = Depe
         "median_hours_to_confirmation": round(median(to_conf), 1) if to_conf else None,
         "pending_without_reception": by_status.get("transmise", 0),
     }
+
+
+@router.get("/alerts")
+def alerts(user: User = Depends(require("referrals:manage")), db: Session = Depends(get_db)):
+    """Demandes transmises sans accusé de réception au-delà du délai configuré.
+    Alerte interne uniquement : aucune relance n'est envoyée à la personne (CDC §4.3)."""
+    hours = get_settings().referral_alert_hours
+    limit = datetime.now(timezone.utc) - timedelta(hours=hours)
+    q = select(ReferralRequest).where(ReferralRequest.status == "transmise")
+    if user.role != "super_admin":
+        q = q.where(ReferralRequest.organization_id == user.organization_id)
+    late = []
+    for ref in db.scalars(q):
+        created = ref.created_at if ref.created_at.tzinfo else ref.created_at.replace(tzinfo=timezone.utc)
+        if created < limit:
+            late.append({"id": ref.id, "public_code": ref.public_code, "organization": ref.organization.name,
+                         "hours_waiting": round((datetime.now(timezone.utc) - created).total_seconds() / 3600)})
+    return {"threshold_hours": hours, "late": sorted(late, key=lambda x: -x["hours_waiting"])}

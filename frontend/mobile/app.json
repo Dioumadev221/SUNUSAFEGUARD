@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "Sunu",
+    "slug": "sunusafeguard",
+    "scheme": "sunusafeguard",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#08131A",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "sn.greent.sunusafeguard"
+    },
+    "android": {
+      "package": "sn.greent.sunusafeguard",
+      "adaptiveIcon": {
+        "backgroundColor": "#08131A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "blockedPermissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.READ_CONTACTS"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Le micro sert uniquement quand vous appuyez pour parler. Rien n'est enregistré en continu."
+        }
+      ],
+      "expo-asset"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

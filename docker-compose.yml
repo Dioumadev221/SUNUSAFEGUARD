@@ -1,6 +1,5 @@
 # SunuSafeguard AI — environnement complet
 #   docker compose up -d --build                     # app + base + redis
-#   docker compose --profile llm up -d               # + Ollama (LLM local)
 #   docker compose --profile monitoring up -d        # + Prometheus / Grafana
 name: sunusafeguard
 
@@ -33,6 +32,7 @@ services:
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_started }
+      ollama: { condition: service_started }
     ports: ["8000:8000"]
 
   frontend:
@@ -40,11 +40,11 @@ services:
     depends_on: [backend]
     ports: ["8080:80"]
 
+  # LLM + embeddings. Les modèles (OLLAMA_MODEL, EMBEDDING_MODEL) sont téléchargés
+  # automatiquement par le backend au premier démarrage (~3 Go, volume persistant).
   ollama:
     image: ollama/ollama:0.5.4
-    profiles: ["llm"]
     volumes: [ollama:/root/.ollama]
-    ports: ["11434:11434"]
 
   prometheus:
     image: prom/prometheus:v2.55.1

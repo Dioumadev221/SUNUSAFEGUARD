@@ -27,4 +27,6 @@ def evaluate_retrieval(pipeline, testset: list[dict], k: int = 4) -> dict:
         cases.append({"id": case["id"], "ok": ok, "rank": rank,
                       "top_score": results[0].score if results else 0.0, "top_title": titles[0] if titles else None})
     n = len(testset) or 1
-    return {"n": len(testset), "recall_at_k": round(hits / n, 3), "mrr": round(rr / n, 3), "k": k, "cases": cases}
+    # MRR calculé sur les seules questions qui attendent une source.
+    n_inside = sum(not c.get("expect_no_source") for c in testset) or 1
+    return {"n": len(testset), "recall_at_k": round(hits / n, 3), "mrr": round(rr / n_inside, 3), "k": k, "cases": cases}

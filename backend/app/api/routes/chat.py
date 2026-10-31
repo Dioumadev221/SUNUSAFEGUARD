@@ -35,6 +35,7 @@ def chat(data: ChatIn, db: Session = Depends(get_db)):
         answer=result.answer, language=result.language, category=result.category, sources=result.sources,
         grounded=result.grounded, show_emergency=result.show_emergency,
         suggest_directory=result.suggest_directory, safety_action=result.safety_action, disclaimer=DISCLAIMER,
+        generated=result.used_llm,
     )
 
 

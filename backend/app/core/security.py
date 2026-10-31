@@ -27,15 +27,28 @@ def verify_password(password: str, stored: str) -> bool:
         return False
 
 
-def create_access_token(subject: str, role: str) -> tuple[str, int]:
+def create_access_token(subject: str, role: str, scope: str = "access", minutes: int | None = None) -> tuple[str, int]:
     s = get_settings()
-    expires = datetime.now(timezone.utc) + timedelta(minutes=s.jwt_expire_minutes)
-    token = jwt.encode({"sub": subject, "role": role, "exp": expires}, s.jwt_secret, algorithm="HS256")
-    return token, s.jwt_expire_minutes * 60
+    minutes = minutes or s.jwt_expire_minutes
+    expires = datetime.now(timezone.utc) + timedelta(minutes=minutes)
+    token = jwt.encode({"sub": subject, "role": role, "scope": scope, "exp": expires}, s.jwt_secret, algorithm="HS256")
+    return token, minutes * 60
 
 
-def decode_token(token: str) -> dict:
-    return jwt.decode(token, get_settings().jwt_secret, algorithms=["HS256"])
+def decode_token(token: str, scope: str = "access") -> dict:
+    payload = jwt.decode(token, get_settings().jwt_secret, algorithms=["HS256"])
+    if payload.get("scope", "access") != scope:
+        raise jwt.InvalidTokenError("Portée du jeton invalide")
+    return payload
+
+
+def password_problems(password: str) -> list[str]:
+    problems = []
+    if len(password) < 12:
+        problems.append("12 caractères minimum")
+    if not any(c.isdigit() for c in password) or not any(c.isalpha() for c in password):
+        problems.append("lettres et chiffres")
+    return problems
 
 
 def _fernet() -> Fernet:

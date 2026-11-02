@@ -177,3 +177,20 @@ def test_petites_tournures_corrigees():
                               "que vous pouvez confier vos sentiments. Vous n'êtes pas seule·e.", "")
     assert cleaned == ("Il existe des recours pour vous aider. Parlez à quelqu'un à qui vous pouvez confier "
                        "vos sentiments. Vous n'êtes pas seule.")
+
+
+def test_question_sur_l_annuaire_donne_le_vrai_chemin(client):
+    r = client.post("/api/chat", json={"message": "et comment je Consulte cet annuaire"}).json()
+    assert "« Trouver de l'aide »" in r["answer"] and r["suggest_directory"]
+    assert "gauche" not in r["answer"]
+    r = client.post("/api/chat", json={"message": "Mon mari me frappe, où trouver de l'aide ?"}).json()
+    assert "Trouver une structure d'aide" not in r["answer"]
+
+
+def test_annuaire_nomme_comme_sur_le_site():
+    from llm.postprocess import clean_answer
+
+    cleaned, reasons = clean_answer("Changez votre mot de passe. Vous pouvez contacter l'annuaire des services de "
+                                    "l'État. Cliquez sur le bouton Annuaire en haut à gauche de l'écran.", "")
+    assert cleaned == "Changez votre mot de passe. Vous pouvez consulter la page « Trouver de l'aide »."
+    assert "interface_inventee" in reasons

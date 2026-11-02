@@ -2,21 +2,36 @@
   {
     "name": "Association des Juristes Sénégalaises (AJS) — Boutique de droit",
     "org_type": "Association",
-    "description": "Association de femmes juristes : conseils et assistance juridique gratuits, notamment pour les femmes victimes de violences.",
+    "description": "Association de femmes juristes : conseils et assistance juridique gratuits, notamment pour les femmes victimes de violences. Numéro vert gratuit 800 805 805 pour une assistance juridique par téléphone, y compris là où il n'y a pas de boutique de droit.",
     "address": "Cité Sonatel I, en face du SAMU municipal, Grand-Yoff",
     "region": "Dakar",
     "department": "Dakar",
-    "phone": "+221 33 867 34 39",
+    "phone": "800 805 805 (numéro vert gratuit) / +221 33 867 34 39",
     "email": "",
-    "domains": ["information_juridique", "violences_physiques_verbales", "violences_economiques"],
-    "publics": ["femmes", "familles"],
-    "services": ["Conseil juridique", "Accompagnement dans les démarches", "Consultations gratuites"],
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Conseil juridique",
+      "Accompagnement dans les démarches",
+      "Consultations gratuites"
+    ],
     "hours": "",
     "access": "Gratuit",
     "capacity": 0,
     "availability": "non_communique",
     "validated": true,
-    "_sources": ["https://www.privatesecurityobservatory.org/about/members/ajs.html", "https://soawr.org/soawr-members/association-des-juristes-senegalaises-ajs/"]
+    "_sources": [
+      "https://www.privatesecurityobservatory.org/about/members/ajs.html",
+      "https://soawr.org/soawr-members/association-des-juristes-senegalaises-ajs/",
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
   },
   {
     "name": "Maison Rose (Unies Vers'Elle)",
@@ -27,15 +42,30 @@
     "department": "Guédiawaye",
     "phone": "+221 77 819 36 27",
     "email": "contacts@uniesverselle.org",
-    "domains": ["hebergement_protection", "ecoute_psychosociale", "violences_physiques_verbales"],
-    "publics": ["femmes", "adolescentes", "enfants"],
-    "services": ["Hébergement", "Écoute", "Suivi social et juridique"],
+    "domains": [
+      "hebergement_protection",
+      "ecoute_psychosociale",
+      "violences_physiques_verbales"
+    ],
+    "publics": [
+      "femmes",
+      "adolescentes",
+      "enfants"
+    ],
+    "services": [
+      "Hébergement",
+      "Écoute",
+      "Suivi social et juridique"
+    ],
     "hours": "",
     "access": "Après une première écoute et un entretien social",
     "capacity": 0,
     "availability": "non_communique",
     "validated": true,
-    "_sources": ["https://uniesverselle.org/contact/", "https://uniesverselle.org/notre-programmes/maison-rose/"]
+    "_sources": [
+      "https://uniesverselle.org/contact/",
+      "https://uniesverselle.org/notre-programmes/maison-rose/"
+    ]
   },
   {
     "name": "La Palabre — Centre d'accueil Mame Diarra Diallo",
@@ -46,15 +76,29 @@
     "department": "Thiès",
     "phone": "+221 77 398 34 11",
     "email": "thieslapalabre@gmail.com",
-    "domains": ["hebergement_protection", "violences_physiques_verbales", "sante_reproductive"],
-    "publics": ["adolescentes", "jeunes femmes"],
-    "services": ["Hébergement", "Suivi psychologique", "Suivi médical"],
+    "domains": [
+      "hebergement_protection",
+      "violences_physiques_verbales",
+      "sante_reproductive"
+    ],
+    "publics": [
+      "adolescentes",
+      "jeunes femmes"
+    ],
+    "services": [
+      "Hébergement",
+      "Suivi psychologique",
+      "Suivi médical"
+    ],
     "hours": "",
     "access": "",
     "capacity": 0,
     "availability": "non_communique",
     "validated": true,
-    "_sources": ["https://www.lapalabre.org/le-centre-d-accueil", "https://carterosesenegal.com/directory/clvf-comite-de-lutte-contre-les-violences-faites-aux-femmes-et-aux-filles/"]
+    "_sources": [
+      "https://www.lapalabre.org/le-centre-d-accueil",
+      "https://carterosesenegal.com/directory/clvf-comite-de-lutte-contre-les-violences-faites-aux-femmes-et-aux-filles/"
+    ]
   },
   {
     "name": "CLVF Kédougou — Comité de lutte contre les violences faites aux femmes et aux filles",
@@ -65,15 +109,28 @@
     "department": "Saraya",
     "phone": "+221 77 865 62 75",
     "email": "",
-    "domains": ["violences_physiques_verbales", "information_juridique"],
-    "publics": ["femmes", "adolescentes", "enfants"],
-    "services": ["Aide juridique", "Médiation", "Conseil"],
+    "domains": [
+      "violences_physiques_verbales",
+      "information_juridique"
+    ],
+    "publics": [
+      "femmes",
+      "adolescentes",
+      "enfants"
+    ],
+    "services": [
+      "Aide juridique",
+      "Médiation",
+      "Conseil"
+    ],
     "hours": "Répond à tout moment",
     "access": "Gratuit",
     "capacity": 0,
     "availability": "non_communique",
     "validated": true,
-    "_sources": ["https://carterosesenegal.com/directory/clvf-comite-de-lutte-contre-les-violences-faites-aux-femmes-et-aux-filles/"]
+    "_sources": [
+      "https://carterosesenegal.com/directory/clvf-comite-de-lutte-contre-les-violences-faites-aux-femmes-et-aux-filles/"
+    ]
   },
   {
     "name": "CEGID — Centre de Guidance Infantile et Familiale de Dakar",
@@ -84,14 +141,376 @@
     "department": "Pikine",
     "phone": "",
     "email": "cegid.senegal@gmail.com",
-    "domains": ["ecoute_psychosociale", "violences_physiques_verbales"],
-    "publics": ["familles", "femmes", "enfants"],
-    "services": ["Écoute", "Accompagnement psychosocial"],
+    "domains": [
+      "ecoute_psychosociale",
+      "violences_physiques_verbales"
+    ],
+    "publics": [
+      "familles",
+      "femmes",
+      "enfants"
+    ],
+    "services": [
+      "Écoute",
+      "Accompagnement psychosocial"
+    ],
     "hours": "",
     "access": "",
     "capacity": 0,
     "availability": "non_communique",
     "validated": true,
-    "_sources": ["https://cegid-senegal.com/nous-contacter/"]
+    "_sources": [
+      "https://cegid-senegal.com/nous-contacter/"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit Médina (Marie Delphine Ndiaye)",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Rue 25 x 10, Médina",
+    "region": "Dakar",
+    "department": "Dakar",
+    "phone": "+221 33 821 40 66 / +221 76 555 65 91",
+    "email": "boutiquededroitdakar@yahoo.fr",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit Gueule Tapée-Fass-Colobane (Guichet unique)",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Mairie de Gueule Tapée-Fass-Colobane",
+    "region": "Dakar",
+    "department": "Dakar",
+    "phone": "+221 76 640 26 26",
+    "email": "guichetunique.gtfc@gmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Pikine",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Maison de la Femme de Pikine Icotaf Est, face à l'ancien Trésor de Pikine et à la station Orix",
+    "region": "Dakar",
+    "department": "Pikine",
+    "phone": "+221 76 555 65 92 / +221 33 834 24 30",
+    "email": "boutiquededroitdepikine@outlook.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Thiès",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "CEDAF, sur les 2 voies vers la Zac (Thionakh)",
+    "region": "Thiès",
+    "department": "Thiès",
+    "phone": "+221 76 555 65 95",
+    "email": "boutiquededroitdethies@gmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Kaolack",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Ancien bâtiment des travaux publics, face à la gendarmerie nationale",
+    "region": "Kaolack",
+    "department": "Kaolack",
+    "phone": "+221 33 942 22 67 / +221 76 555 65 96",
+    "email": "boutiquededroitkaoalck@gmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Kolda",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "CEDAF, Sare Kemo",
+    "region": "Kolda",
+    "department": "Kolda",
+    "phone": "+221 76 555 65 93 / +221 33 885 79 83",
+    "email": "ajsboutiquekold@gmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Kébémer",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Quartier Galla, face au lycée de Kébémer, BP 55",
+    "region": "Louga",
+    "department": "Kébémer",
+    "phone": "+221 33 969 12 07 / +221 76 555 65 98",
+    "email": "Kebemerajs2020@gmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Sédhiou",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Quartier Masacounda, face à la SENELEC",
+    "region": "Sédhiou",
+    "department": "Sédhiou",
+    "phone": "+221 76 555 65 97 / +221 33 995 04 63",
+    "email": "boutiquedroitsedhiou@gmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Ziguinchor",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Tilène-Kadior, lot 53 Bis C",
+    "region": "Ziguinchor",
+    "department": "Ziguinchor",
+    "phone": "+221 76 555 65 94 / +221 33 992 52 63",
+    "email": "boutiquededroitdeziguinchor@hotmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "AJS — Boutique de droit de Kédougou",
+    "org_type": "Boutique de droit (association)",
+    "description": "Espace d'écoute, d'accompagnement et d'orientation juridique et judiciaire de l'Association des Juristes Sénégalaises. Consultations assurées par des juristes formées à l'écoute : droit de la famille, violences physiques ou sexuelles, droit du travail, foncier, numérique.",
+    "address": "Quartier Gomba, à côté de la DER, derrière la Banque Baobab, près de la pharmacie Kékéa",
+    "region": "Kédougou",
+    "department": "Kédougou",
+    "phone": "+221 33 902 40 69 / +221 76 640 27 27",
+    "email": "boutiquededroitdekedoudou@gmail.com",
+    "domains": [
+      "information_juridique",
+      "violences_physiques_verbales",
+      "violences_economiques"
+    ],
+    "publics": [
+      "femmes",
+      "familles"
+    ],
+    "services": [
+      "Consultation juridique gratuite",
+      "Écoute et orientation",
+      "Accompagnement dans les démarches judiciaires"
+    ],
+    "hours": "",
+    "access": "Gratuit",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": true,
+    "_sources": [
+      "https://femmesjuristes.org/?page_id=4330"
+    ]
+  },
+  {
+    "name": "Centre hospitalier national psychiatrique de Thiaroye",
+    "org_type": "Hôpital public",
+    "description": "Hôpital psychiatrique public national : consultations et hospitalisation en santé mentale.",
+    "address": "Thiaroye",
+    "region": "Dakar",
+    "department": "Pikine",
+    "phone": "+221 33 879 80 80",
+    "email": "",
+    "domains": [
+      "ecoute_psychosociale"
+    ],
+    "publics": [
+      "adultes",
+      "familles"
+    ],
+    "services": [
+      "Consultations psychiatriques",
+      "Hospitalisation"
+    ],
+    "hours": "",
+    "access": "",
+    "capacity": 0,
+    "availability": "non_communique",
+    "validated": false,
+    "_note": "Numéro trouvé sur une source secondaire : à confirmer par appel avant de passer validated à true.",
+    "_sources": [
+      "https://au-senegal.com/hopital-psychiatrique-de-thiaroye,3448.html"
+    ]
   }
 ]

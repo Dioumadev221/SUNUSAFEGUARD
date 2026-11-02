@@ -109,6 +109,14 @@ class AssistantPipeline:
             safety_action=decision.action, safety_reasons=decision.reasons,
         )
 
+        if category == "autre" and decision.action not in {"urgent", "redirect_professional"} \
+                and asks_for_directory(message):
+            # Question sur l'utilisation du site : réponse fixe et exacte, sans génération.
+            return PipelineResult(
+                answer=template_message("site_directory", lang), sources=[], grounded=False, used_llm=False,
+                show_emergency=False, suggest_directory=True, top_score=0.0, timings_ms=_round(t), **base,
+            )
+
         if decision.blocks_llm:
             return PipelineResult(
                 answer=template_message(decision.action, lang), sources=[], grounded=False, used_llm=False,
@@ -208,6 +216,18 @@ class AssistantPipeline:
             top_score=top_score, timings_ms=_round(t),
             debug={"query": query, "context": context, "retrieval_mode": self.mode} if debug else {}, **base,
         )
+
+
+_DIRECTORY_WORDS = re.compile(r"\b(annuaire|repertoire|liste des structures|structures? d'aide|trouver de l'aide)\b")
+_HOW_WORDS = re.compile(r"\b(comment|ou|naka|fan|consulter|consulte|acceder|ouvrir|trouver|trouve|voir|utiliser)\b")
+
+
+def asks_for_directory(message: str) -> bool:
+    """« Comment je consulte cet annuaire ? » : question sur le site, pas sur une situation."""
+    import unicodedata
+    t = unicodedata.normalize("NFKD", message.lower()).encode("ascii", "ignore").decode()
+    t = t.replace("’", "'")
+    return bool(_DIRECTORY_WORDS.search(t) and _HOW_WORDS.search(t)) and len(t.split()) <= 20
 
 
 def _round(t: dict) -> dict:

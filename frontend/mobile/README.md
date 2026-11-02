@@ -35,6 +35,7 @@ Spécification : cahier des charges mobile v1.0. Guide utilisatrice : `docs/user
 
 ## Confidentialité, côté téléphone
 
+- Affichage en français ou en anglais (bouton FR / EN en haut à droite, mémorisé) ; le chat reste en français ou en wolof.
 - Conversation en mémoire seulement (effacée à la fermeture, à « Sortir », à l'effacement).
 - Codes de suivi, réglages : stockage chiffré du système (`expo-secure-store`). Demande close effacée 30 jours après, toute demande après 180 jours.
 - Annuaire public copié localement pour le hors connexion (aucune donnée personnelle), effacé par « Effacer toute trace ».

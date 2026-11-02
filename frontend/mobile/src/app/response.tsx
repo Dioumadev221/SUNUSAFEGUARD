@@ -13,9 +13,10 @@ import { ApiError } from "@/services/api";
 import { forSpeech, speak, stopSpeaking } from "@/services/voice.service";
 import { setItem, KEYS } from "@/services/secure";
 import { useSession } from "@/store/session";
+import { useLang } from "@/i18n";
 import { fonts, palette, softShadow, useColors } from "@/theme";
 
-// Mêmes suggestions que la page Assistant du site.
+// Mêmes suggestions que la page Assistant du site. Elles restent en français : le chat parle français ou wolof.
 const SUGGESTIONS = [
   "Mon mari me frappe, est-ce que je peux porter plainte ?",
   "Quelqu'un menace de publier mes photos",
@@ -26,6 +27,7 @@ const SUGGESTIONS = [
 /** Page Assistant : Sunu Écoute (micro) tant que rien n'est dit, puis Sunu Réponse (le chat du site). */
 export default function ResponseScreen() {
   const c = useColors();
+  const { lang, tx } = useLang();
   const { focus } = useLocalSearchParams<{ focus?: string }>();
   const messages = useSession((s) => s.messages);
   const addMessage = useSession((s) => s.addMessage);
@@ -68,7 +70,7 @@ export default function ResponseScreen() {
       setError(
         e instanceof ApiError && e.status !== 0
           ? e.message
-          : "Le service ne répond pas pour le moment. Si vous êtes en danger, appelez les numéros d'urgence.",
+          : tx("Le service ne répond pas pour le moment. Si vous êtes en danger, appelez les numéros d'urgence.", "The service is not responding right now. If you are in danger, call the emergency numbers."),
       );
       setDraft(q);
     } finally {
@@ -93,19 +95,19 @@ export default function ResponseScreen() {
           ref={inputRef}
           value={draft}
           onChangeText={setDraft}
-          placeholder="Écrivez votre question…"
+          placeholder={tx("Écrivez votre question…", "Type your question…")}
           placeholderTextColor={palette.slate400}
           multiline
           maxLength={2000}
           style={[styles.input, { color: c.text }]}
-          accessibilityLabel="Votre message"
+          accessibilityLabel={tx("Votre message", "Your message")}
         />
         {!empty && !draft.trim() && (
           <VoiceButton compact onTranscript={(text) => void send(text, true)} onError={setError} />
         )}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Envoyer"
+          accessibilityLabel={tx("Envoyer", "Send")}
           disabled={!draft.trim() || pending}
           onPress={() => void send()}
           style={[styles.send, { backgroundColor: !draft.trim() || pending ? (c.dark ? "rgba(255,255,255,0.1)" : palette.slate300) : c.accent }]}
@@ -114,10 +116,10 @@ export default function ResponseScreen() {
         </Pressable>
       </View>
       <View style={{ alignItems: "center", marginTop: 8, gap: 2 }}>
-        <T variant="caption" style={{ fontSize: 11, textAlign: "center" }}>Assistant d'information : il ne remplace pas un·e professionnel·le.</T>
+        <T variant="caption" style={{ fontSize: 11, textAlign: "center" }}>{tx("Assistant d'information : il ne remplace pas un·e professionnel·le.", "Information assistant: it does not replace a professional.")}</T>
         <Pressable accessibilityRole="switch" accessibilityState={{ checked: autoRead }} onPress={toggleAutoRead} hitSlop={6}>
           <T variant="caption" style={{ fontSize: 11, color: c.accent, fontFamily: fonts.semibold }}>
-            Lecture à voix haute : {autoRead ? "activée" : "désactivée"}
+            {tx("Lecture à voix haute", "Read aloud")} : {autoRead ? tx("activée", "on") : tx("désactivée", "off")}
           </T>
         </Pressable>
       </View>
@@ -130,17 +132,16 @@ export default function ResponseScreen() {
         {!empty && (
           <Pressable accessibilityRole="button" onPress={() => { stopSpeaking(); clearConversation(); }} style={{ alignSelf: "flex-end", flexDirection: "row", gap: 4, alignItems: "center" }} hitSlop={8}>
             <RotateCcw size={13} color={c.muted} />
-            <T variant="caption" style={{ fontFamily: fonts.semibold }}>Effacer la conversation</T>
+            <T variant="caption" style={{ fontFamily: fonts.semibold }}>{tx("Effacer la conversation", "Clear the conversation")}</T>
           </Pressable>
         )}
 
-        {showEmergency && <SafetyAlert note="Si vous ou un proche êtes en danger, appelez maintenant." />}
+        {showEmergency && <SafetyAlert note={tx("Si vous ou un proche êtes en danger, appelez maintenant.", "If you or someone close to you is in danger, call now.")} />}
 
         {empty && (
           <View style={{ alignItems: "center", paddingTop: 8 }}>
             <T variant="title" style={{ fontSize: 40, lineHeight: 46, textAlign: "center" }}>
-              Bonjour,{"\n"}
-              <Em>je vous écoute.</Em>
+              {lang === "en" ? <>Hello,{"\n"}<Em>I am listening.</Em></> : <>Bonjour,{"\n"}<Em>je vous écoute.</Em></>}
             </T>
             {/* Sunu Écoute (CDC mobile §3.1) : on parle au micro ou on choisit d'écrire. */}
             <View style={{ paddingTop: 22, paddingBottom: 6 }}>
@@ -149,7 +150,12 @@ export default function ResponseScreen() {
                 onTranscript={(text) => void send(text, true)}
               />
             </View>
-            <Text style={[styles.kicker, { color: palette.slate400 }]}>POUR COMMENCER</Text>
+            {lang === "en" && (
+              <T variant="caption" style={{ marginTop: 18, textAlign: "center" }}>
+                The assistant answers in French or Wolof.
+              </T>
+            )}
+            <Text style={[styles.kicker, { color: palette.slate400 }]}>{tx("POUR COMMENCER", "TO GET STARTED")}</Text>
             <View style={{ alignSelf: "stretch", gap: 10 }}>
               {SUGGESTIONS.map((s) => (
                 <Pressable
@@ -195,6 +201,7 @@ export default function ResponseScreen() {
 /** Trois points ocre qui sautillent, comme sur le site. */
 function Typing() {
   const c = useColors();
+  const { tx } = useLang();
   const dots = useRef([0, 1, 2].map(() => new Animated.Value(0))).current;
   useEffect(() => {
     const loops = dots.map((v, i) =>
@@ -211,7 +218,7 @@ function Typing() {
     return () => loops.forEach((l) => l.stop());
   }, [dots]);
   return (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }} accessibilityLabel="L'assistant prépare une réponse">
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }} accessibilityLabel={tx("L'assistant prépare une réponse", "The assistant is preparing an answer")}>
       <LogoMark size={30} />
       <View style={[{ flexDirection: "row", gap: 6, backgroundColor: c.surface, borderRadius: 999, paddingHorizontal: 16, paddingVertical: 13 }, !c.dark && softShadow]}>
         {dots.map((v, i) => (

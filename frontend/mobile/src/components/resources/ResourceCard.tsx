@@ -7,16 +7,18 @@ import { domainStyle } from "@/constants/domains";
 import { Button } from "@/components/common/ui";
 import AvailabilityIndicator from "./AvailabilityIndicator";
 import { fonts, softShadow, useColors } from "@/theme";
+import { useLang } from "@/i18n";
 
 /** Carte d'une structure, comme OrgCard sur le site : pictogramme du domaine, disponibilité, Appeler / Être rappelée. */
 export default function ResourceCard({ org }: { org: Organization }) {
   const c = useColors();
+  const { tx } = useLang();
   const style = domainStyle(org.domains[0]);
   const Icon = style.icon;
   const open = () => router.push({ pathname: "/resources/[id]", params: { id: String(org.id) } });
   return (
     <View style={[{ backgroundColor: c.dark ? c.surface : "rgba(255,255,255,0.85)", borderColor: c.border, borderWidth: 1, borderRadius: 28, overflow: "hidden" }, !c.dark && softShadow]}>
-      <Pressable accessibilityRole="button" accessibilityLabel={`${clean(org.name)}, voir la fiche`} onPress={open} style={{ padding: 20, gap: 4 }}>
+      <Pressable accessibilityRole="button" accessibilityLabel={`${clean(org.name)}, ${tx("voir la fiche", "see details")}`} onPress={open} style={{ padding: 20, gap: 4 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
           <View style={{ width: 48, height: 48, borderRadius: 16, alignItems: "center", justifyContent: "center", backgroundColor: c.dark ? style.bgDark : style.bg }}>
             <Icon size={22} strokeWidth={1.8} color={c.dark ? style.fgDark : style.fg} />
@@ -60,7 +62,7 @@ export default function ResourceCard({ org }: { org: Organization }) {
           <Button
             kind="outline"
             style={{ flex: 1, paddingHorizontal: 12 }}
-            label="Appeler"
+            label={tx("Appeler", "Call")}
             icon={<Phone size={16} color={c.text} />}
             onPress={() => void Linking.openURL(`tel:${org.phone.replace(/\s/g, "")}`)}
           />
@@ -68,14 +70,14 @@ export default function ResourceCard({ org }: { org: Organization }) {
         {org.accepts_referrals ? (
           <Button
             style={{ flex: 1, paddingHorizontal: 12 }}
-            label="Être rappelée"
+            label={tx("Être rappelée", "Get a call back")}
             onPress={() => router.push({ pathname: "/referral/[id]", params: { id: String(org.id) } })}
           />
         ) : !org.phone && !!org.email ? (
           <Button
             kind="outline"
             style={{ flex: 1, paddingHorizontal: 12 }}
-            label="Écrire"
+            label={tx("Écrire", "Write")}
             icon={<Mail size={16} color={c.text} />}
             onPress={() => void Linking.openURL(`mailto:${org.email}`)}
           />

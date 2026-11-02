@@ -1,14 +1,14 @@
 import { HeartHandshake, House, LayoutGrid, Scale, ShieldAlert, Smartphone, Stethoscope, type LucideIcon } from "lucide-react-native";
 
 /** Besoins et couleurs par domaine, repris de la page « Trouver de l'aide » du site (Directory.tsx). */
-export const NEEDS: { id: string; label: string; icon: LucideIcon; domains: string[] }[] = [
-  { id: "", label: "Tout", icon: LayoutGrid, domains: [] },
-  { id: "ecoute", label: "Écoute", icon: HeartHandshake, domains: ["ecoute_psychosociale"] },
-  { id: "violences", label: "Violences", icon: ShieldAlert, domains: ["violences_physiques_verbales", "violences_economiques"] },
-  { id: "droit", label: "Droits et justice", icon: Scale, domains: ["information_juridique"] },
-  { id: "sante", label: "Santé", icon: Stethoscope, domains: ["sante_reproductive"] },
-  { id: "hebergement", label: "Hébergement", icon: House, domains: ["hebergement_protection"] },
-  { id: "numerique", label: "Harcèlement en ligne", icon: Smartphone, domains: ["cyberharcelement"] },
+export const NEEDS: { id: string; label: string; en: string; icon: LucideIcon; domains: string[] }[] = [
+  { id: "", label: "Tout", en: "All", icon: LayoutGrid, domains: [] },
+  { id: "ecoute", label: "Écoute", en: "Listening", icon: HeartHandshake, domains: ["ecoute_psychosociale"] },
+  { id: "violences", label: "Violences", en: "Violence", icon: ShieldAlert, domains: ["violences_physiques_verbales", "violences_economiques"] },
+  { id: "droit", label: "Droits et justice", en: "Rights and justice", icon: Scale, domains: ["information_juridique"] },
+  { id: "sante", label: "Santé", en: "Health", icon: Stethoscope, domains: ["sante_reproductive"] },
+  { id: "hebergement", label: "Hébergement", en: "Shelter", icon: House, domains: ["hebergement_protection"] },
+  { id: "numerique", label: "Harcèlement en ligne", en: "Online harassment", icon: Smartphone, domains: ["cyberharcelement"] },
 ];
 
 /** Besoin correspondant à une catégorie renvoyée par le chat (pour « Être orientée »). */

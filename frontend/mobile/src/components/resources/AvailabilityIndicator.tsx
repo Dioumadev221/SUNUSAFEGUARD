@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { availabilityOf } from "@/constants/labels";
+import { useLang } from "@/i18n";
 import { fonts, palette } from "@/theme";
 
 const TONES = {
@@ -11,11 +12,12 @@ const TONES = {
 
 /** Pastille de disponibilité (style du site). Une information de plus de 7 jours n'est jamais présentée comme actuelle. */
 export default function AvailabilityIndicator({ status, verifiedAt }: { status: string; verifiedAt: string | null }) {
-  const a = availabilityOf(status, verifiedAt);
+  const { lang, tx } = useLang();
+  const a = availabilityOf(status, verifiedAt, lang);
   const t = TONES[a.tone];
   return (
     <View
-      accessibilityLabel={`Disponibilité : ${a.label}`}
+      accessibilityLabel={`${tx("Disponibilité", "Availability")} : ${a.label}`}
       style={{ flexDirection: "row", alignItems: "center", gap: 6, alignSelf: "flex-start", backgroundColor: t.bg, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5 }}
     >
       <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: t.fg }} />

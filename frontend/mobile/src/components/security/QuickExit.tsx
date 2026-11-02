@@ -1,20 +1,22 @@
 import { Pressable, StyleSheet, Text } from "react-native";
 import { quickExit } from "@/services/session.service";
 import { fonts, radius, useColors } from "@/theme";
+import { useLang } from "@/i18n";
 
 /** Bouton « Sortir », en haut à droite de chaque écran, identique à celui du site. */
 export default function QuickExit() {
   const c = useColors();
+  const { tx } = useLang();
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel="Sortir rapidement"
-      accessibilityHint="Efface la conversation et ferme l'application"
+      accessibilityLabel={tx("Sortir rapidement", "Quick exit")}
+      accessibilityHint={tx("Efface la conversation et ferme l'application", "Erases the conversation and closes the app")}
       hitSlop={8}
       onPress={() => void quickExit()}
       style={({ pressed }) => [styles.btn, { backgroundColor: c.alert, opacity: pressed ? 0.9 : 1 }]}
     >
-      <Text style={styles.text}>Sortir</Text>
+      <Text style={styles.text}>{tx("Sortir", "Exit")}</Text>
     </Pressable>
   );
 }

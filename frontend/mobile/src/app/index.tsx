@@ -9,21 +9,24 @@ import { Button, Em, Eyebrow, T } from "@/components/common/ui";
 import SafetyAlert from "@/components/response/SafetyAlert";
 import ConnectionNotice from "@/components/common/ConnectionNotice";
 import { useSession } from "@/store/session";
+import { useLang } from "@/i18n";
 import { fonts, palette, softShadow, useColors } from "@/theme";
 
 // Mêmes sujets et mêmes photos que l'accueil du site (frontend/public/illustrations/sujets).
-const TOPICS: { icon: LucideIcon; title: string; ask: string; img: ImageSourcePropType }[] = [
-  { icon: HeartHandshake, title: "Moral et bien-être", ask: "Je me sens triste et angoissée", img: require("../../assets/illustrations/sujets/moral.jpg") },
-  { icon: ShieldAlert, title: "Violences à la maison", ask: "Mon mari me frappe, est-ce que je peux porter plainte ?", img: require("../../assets/illustrations/sujets/violences.jpg") },
-  { icon: Scale, title: "Droits et justice", ask: "Mon mari garde tout mon salaire. Est-ce que c'est normal ?", img: require("../../assets/illustrations/sujets/droits.jpg") },
-  { icon: Stethoscope, title: "Santé et corps", ask: "Où trouver un suivi de santé reproductive confidentiel ?", img: require("../../assets/illustrations/sujets/sante.jpg") },
-  { icon: House, title: "Un endroit sûr", ask: "Je dois quitter la maison, où puis-je être hébergée ?", img: require("../../assets/illustrations/sujets/abri.jpg") },
-  { icon: Smartphone, title: "Harcèlement en ligne", ask: "Quelqu'un menace de publier mes photos", img: require("../../assets/illustrations/sujets/numerique.jpg") },
+// Les questions pré-remplies restent en français : elles partent dans le chat (français ou wolof).
+const TOPICS: { icon: LucideIcon; title: string; en: string; ask: string; img: ImageSourcePropType }[] = [
+  { icon: HeartHandshake, title: "Moral et bien-être", en: "Mood and well-being", ask: "Je me sens triste et angoissée", img: require("../../assets/illustrations/sujets/moral.jpg") },
+  { icon: ShieldAlert, title: "Violences à la maison", en: "Violence at home", ask: "Mon mari me frappe, est-ce que je peux porter plainte ?", img: require("../../assets/illustrations/sujets/violences.jpg") },
+  { icon: Scale, title: "Droits et justice", en: "Rights and justice", ask: "Mon mari garde tout mon salaire. Est-ce que c'est normal ?", img: require("../../assets/illustrations/sujets/droits.jpg") },
+  { icon: Stethoscope, title: "Santé et corps", en: "Health and body", ask: "Où trouver un suivi de santé reproductive confidentiel ?", img: require("../../assets/illustrations/sujets/sante.jpg") },
+  { icon: House, title: "Un endroit sûr", en: "A safe place", ask: "Je dois quitter la maison, où puis-je être hébergée ?", img: require("../../assets/illustrations/sujets/abri.jpg") },
+  { icon: Smartphone, title: "Harcèlement en ligne", en: "Online harassment", ask: "Quelqu'un menace de publier mes photos", img: require("../../assets/illustrations/sujets/numerique.jpg") },
 ];
 
 /** Accueil : le même que sur le site. Le micro (Sunu Écoute) est sur la page Assistant. */
 export default function Home() {
   const c = useColors();
+  const { lang, tx } = useLang();
   const setDraft = useSession((s) => s.setDraft);
   const account = useSession((s) => s.account);
   // Comme sur le site : un sujet pré-remplit la question sans l'envoyer, la personne garde la main.
@@ -38,28 +41,32 @@ export default function Home() {
 
       <View style={{ gap: 18, paddingTop: 8 }}>
         <T variant="title" style={{ fontSize: 44, lineHeight: 48 }}>
-          Parlez en confiance.{"\n"}Trouvez de <Em scribble>l'aide</Em>.
+          {lang === "en" ? (
+            <>Speak with confidence.{"\n"}Find <Em scribble>help</Em>.</>
+          ) : (
+            <>Parlez en confiance.{"\n"}Trouvez de <Em scribble>l'aide</Em>.</>
+          )}
         </T>
         <T variant="muted" style={{ fontSize: 17, lineHeight: 27 }}>
-          Bien-être, violences, droits, santé : faites-vous aider en toute discrétion. Sunu répond avec des informations vérifiées et vous oriente vers des personnes qui peuvent vous accompagner.
+          {tx("Bien-être, violences, droits, santé : faites-vous aider en toute discrétion. Sunu répond avec des informations vérifiées et vous oriente vers des personnes qui peuvent vous accompagner.", "Well-being, violence, rights, health: get help discreetly. Sunu answers with verified information and points you to people who can support you.")}
         </T>
       </View>
 
       <View style={{ gap: 12, marginTop: 8 }}>
-        <Button big label="Parler à l'assistant" iconRight={<ArrowRight size={18} color={c.accentText} />} onPress={() => router.push("/response")} />
-        <Button big kind="outline" label="Trouver une structure" onPress={() => router.push("/resources")} />
+        <Button big label={tx("Parler à l'assistant", "Talk to the assistant")} iconRight={<ArrowRight size={18} color={c.accentText} />} onPress={() => router.push("/response")} />
+        <Button big kind="outline" label={tx("Trouver une structure", "Find an organisation")} onPress={() => router.push("/resources")} />
       </View>
 
       <View style={{ marginTop: 40, gap: 10 }}>
-        <Eyebrow>Vous pouvez tout dire</Eyebrow>
-        <T variant="title" style={{ fontSize: 34, lineHeight: 39 }}>De quoi voulez-vous parler ?</T>
+        <Eyebrow>{tx("Vous pouvez tout dire", "You can say anything")}</Eyebrow>
+        <T variant="title" style={{ fontSize: 34, lineHeight: 39 }}>{tx("De quoi voulez-vous parler ?", "What would you like to talk about?")}</T>
       </View>
       <View style={{ gap: 14 }}>
-        {TOPICS.map(({ icon: Icon, title, ask, img }) => (
+        {TOPICS.map(({ icon: Icon, title, en, ask, img }) => (
           <Pressable
             key={title}
             accessibilityRole="button"
-            accessibilityLabel={`${title} : ${ask}`}
+            accessibilityLabel={`${tx(title, en)} : ${ask}`}
             onPress={() => openTopic(ask)}
             style={({ pressed }) => [styles.topic, !c.dark && softShadow, { opacity: pressed ? 0.92 : 1 }]}
           >
@@ -72,7 +79,7 @@ export default function Home() {
             <View style={styles.topicIcon}>
               <Icon size={20} color="#FFFFFF" strokeWidth={1.8} />
             </View>
-            <Text style={styles.topicTitle}>{title}</Text>
+            <Text style={styles.topicTitle}>{tx(title, en)}</Text>
             <Text style={styles.topicAsk}>« {ask} »</Text>
           </Pressable>
         ))}
@@ -87,9 +94,9 @@ export default function Home() {
           <ShieldCheck size={19} color={c.dark ? palette.ochreDark : palette.ochreLight} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontFamily: fonts.bold, fontSize: 15, color: c.text }}>Mes demandes et confidentialité</Text>
+          <Text style={{ fontFamily: fonts.bold, fontSize: 15, color: c.text }}>{tx("Mes demandes et confidentialité", "My requests and privacy")}</Text>
           <T variant="caption" style={{ fontSize: 13, lineHeight: 19 }}>
-            Vos conversations ne sont pas stockées sur nos serveurs par défaut. Suivez vos demandes ou effacez toute trace.
+            {tx("Vos conversations ne sont pas stockées sur nos serveurs par défaut. Suivez vos demandes ou effacez toute trace.", "Your conversations are not stored on our servers by default. Track your requests or erase all traces.")}
           </T>
         </View>
         <ArrowRight size={18} color={c.accent} />
@@ -97,10 +104,10 @@ export default function Home() {
 
       <Pressable accessibilityRole="link" onPress={() => router.push("/account")} style={{ flexDirection: "row", alignItems: "center", gap: 8, alignSelf: "center", padding: 8 }}>
         <UserRound size={16} color={c.accent} />
-        <T variant="small" style={{ color: c.accent, fontFamily: fonts.semibold }}>{account ? `Mon compte · ${account.name}` : "Mon compte (facultatif)"}</T>
+        <T variant="small" style={{ color: c.accent, fontFamily: fonts.semibold }}>{account ? `${tx("Mon compte", "My account")} · ${account.name}` : tx("Mon compte (facultatif)", "My account (optional)")}</T>
       </Pressable>
 
-      <SafetyAlert note="Appel gratuit, 24 h/24." />
+      <SafetyAlert note={tx("Appel gratuit, 24 h/24.", "Free call, 24/7.")} />
     </Screen>
   );
 }

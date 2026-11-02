@@ -7,6 +7,7 @@ import { Pill } from "@/components/common/ui";
 import { forSpeech, speak, stopSpeaking } from "@/services/voice.service";
 import { useSession } from "@/store/session";
 import { fonts, softShadow, useColors } from "@/theme";
+import { useLang } from "@/i18n";
 
 /**
  * Bulle de l'assistant, comme sur le site (AssistantMessage) : avatar cœur, carte blanche,
@@ -14,6 +15,7 @@ import { fonts, softShadow, useColors } from "@/theme";
  */
 export default function ResponseCard({ id, response, onAskAnother }: { id: string; response: ChatResponse; onAskAnother: () => void }) {
   const c = useColors();
+  const { tx } = useLang();
   const speakingId = useSession((s) => s.speakingId);
   const setSpeaking = useSession((s) => s.setSpeaking);
   const speaking = speakingId === id;
@@ -53,18 +55,18 @@ export default function ResponseCard({ id, response, onAskAnother }: { id: strin
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 14, paddingTop: 12, borderTopWidth: 1, borderColor: c.border }}>
           <Pill
             tone="ochre"
-            label="Être orientée"
+            label={tx("Être orientée", "Get referred")}
             icon={(col) => <HeartHandshake size={14} color={col} />}
             onPress={() =>
               router.push({ pathname: "/resources", params: response.category !== "autre" ? { domain: response.category } : {} })
             }
           />
           <Pill
-            label={speaking ? "Arrêter" : "Réécouter"}
+            label={speaking ? tx("Arrêter", "Stop") : tx("Réécouter", "Listen again")}
             icon={(col) => (speaking ? <Square size={13} color={col} fill={col} /> : <Volume2 size={14} color={col} />)}
             onPress={toggleSpeech}
           />
-          <Pill label="Autre question" icon={(col) => <MessageCircleQuestion size={14} color={col} />} onPress={onAskAnother} />
+          <Pill label={tx("Autre question", "Another question")} icon={(col) => <MessageCircleQuestion size={14} color={col} />} onPress={onAskAnother} />
         </View>
       </View>
     </View>

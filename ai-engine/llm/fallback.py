@@ -51,7 +51,7 @@ MESSAGES = {
     "no_source": {
         "fr": "Je n'ai pas encore d'information vérifiée pour répondre précisément à votre question, et je préfère "
               "ne pas vous donner une réponse inexacte. Vous pouvez reformuler votre question avec d'autres mots, "
-              "ou ouvrir l'annuaire : des professionnel·les près de chez vous pourront vous écouter et vous répondre.",
+              "ou ouvrir la page « Trouver de l'aide » : des professionnel·les près de chez vous pourront vous écouter et vous répondre.",
         "wo": "Gisuma xibaar bu wóor ngir tontu sa laaj. Ngir bañ a la nax, seetal annuaire bi ngir gis "
               "bérab yu am ñu xam-xam ñuy mëna tontu.",
     },
@@ -59,12 +59,23 @@ MESSAGES = {
         "fr": "",
         "wo": "Maa ngi lay tontu ci français ngir xibaar bi wóor. Su la soxla, laajal ndimbal ci kenn ku xam wolof.",
     },
+    "site_directory": {
+        "fr": "Pour voir les structures d'aide, ouvrez la page « Trouver de l'aide » (« Find help » si le site est "
+              "affiché en anglais). Elle se trouve dans le menu en haut de l'écran, et vous pouvez aussi toucher "
+              "le lien « Trouver une structure d'aide » juste sous ce message.\n\n"
+              "Sur cette page, choisissez votre besoin (écoute, violences, droits et justice, santé, hébergement, "
+              "harcèlement en ligne) et votre région. Pour chaque structure, vous pouvez l'appeler directement, "
+              "ou demander à être rappelée quand c'est proposé. C'est vous qui décidez.",
+        "wo": "Ngir gis bérab yi di dimbali, ubbil xët wi « Trouver de l'aide » ci kaw, walla bësal "
+              "« Trouver une structure d'aide » ci suufu bataaxal bii. Tànnal li nga soxla ak sa diwaan, "
+              "te mën ngaa woo bérab bi ci saa si.",
+    },
     "fallback_intro": {
         "fr": "Voici ce qui peut vous aider, d'après nos fiches d'information :",
         "wo": "Lii la téere yi ñu wóorlu wax :",
     },
     "fallback_outro": {
-        "fr": "Vous pouvez avancer à votre rythme. Si vous souhaitez en parler à quelqu'un, l'annuaire vous indique "
+        "fr": "Vous pouvez avancer à votre rythme. Si vous souhaitez en parler à quelqu'un, la page « Trouver de l'aide » vous indique "
               "les structures proches de chez vous, et vous pouvez continuer à me poser vos questions.",
         "wo": "Xibaar yii du wuutu kàddug ku xam-xam. Mën ngaa seet annuaire bi ngir gis bérab bu la jege.",
     },

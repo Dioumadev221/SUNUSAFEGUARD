@@ -40,6 +40,22 @@ FIXES = [
     (re.compile(r"\s*(décrits?|décrites?|mentionnée?s?|présentée?s?)? ?dans le contexte\b"), ""),
     (re.compile(r"\bdérangeé\b"), "dérangée"),
 ]
+# L'annuaire s'appelle « Trouver de l'aide » sur le site : on le nomme comme la personne le voit.
+DIRECTORY_PAGE = "la page « Trouver de l'aide »"
+DIRECTORY_VERB = re.compile(r"\b(consult|ouvr|contact|voi|utilis|appel)(ez|er|ir) (à |a )?l'annuaire"
+                            r"( des services de l'[ÉE]tat| SunuSafeguard| des structures(?: d'aide)?)?", re.I)
+DIRECTORY_NOUN = re.compile(r"\bl'annuaire( des services de l'[ÉE]tat| SunuSafeguard| des structures(?: d'aide)?)?", re.I)
+# Le modèle ne voit pas l'écran : toute description de bouton ou de position est inventée.
+INTERFACE = re.compile(r"\b(bouton|cliquez|cliquer|en haut à|en bas à|à gauche de l'écran|à droite de l'écran|menu)\b", re.I)
+
+
+def name_directory(text: str) -> str:
+    def verb(m: re.Match) -> str:
+        word = "Consult" if m.group(1)[0].isupper() else "consult"
+        return f"{word}{'er' if m.group(2).lower() in ('er', 'ir') else 'ez'} {DIRECTORY_PAGE}"
+    text = DIRECTORY_VERB.sub(verb, text)
+    text = DIRECTORY_NOUN.sub(DIRECTORY_PAGE, text)
+    return re.sub(r"\b(de|à) la page", lambda m: f"{m.group(1)} la page", text)
 # Phrase qui ne se comprend qu'avec la précédente (« Si cela ne fonctionne pas… »).
 DEPENDENT_START = re.compile(r"^(si (cela|ca|ce n'est|elle|il)|sinon|ensuite|dans ce cas|puis|apres cela)\b")
 IMPERATIVES = {"prends": "prenez", "fais": "faites", "essaie": "essayez", "parle": "parlez", "respire": "respirez",
@@ -115,11 +131,13 @@ def clean_answer(text: str, context: str) -> tuple[str | None, list[str]]:
     text = DOUBLED_FEMININE.sub(r"\1", text)
     for pattern, repl in FIXES:
         text = pattern.sub(repl, text)
+    text = name_directory(text)
     previous_removed = False
     for line in text.split("\n"):
         parts = []
         for s in _sentences(line):
             reason = ("confrontation" if _is_confrontation(s) else
+                      "interface_inventee" if INTERFACE.search(s) else
                       "organisation_inconnue" if _unknown_acronyms(s, context) else
                       "suite_orpheline" if previous_removed and DEPENDENT_START.match(_norm(s.strip())) else None)
             if reason is None:

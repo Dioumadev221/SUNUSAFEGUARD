@@ -5,19 +5,21 @@ import { router, usePathname } from "expo-router";
 import { ArrowLeft, Moon, Sun } from "lucide-react-native";
 import Logo from "./Logo";
 import QuickExit from "@/components/security/QuickExit";
+import LanguageSwitch from "./LanguageSwitch";
 import { setItem, KEYS } from "@/services/secure";
 import { useSession } from "@/store/session";
 import { fonts, radius, useColors } from "@/theme";
+import { useLang } from "@/i18n";
 
 const NAV = [
-  { href: "/", label: "Accueil" },
-  { href: "/response", label: "Assistant" },
-  { href: "/resources", label: "Trouver de l'aide" },
+  { href: "/", fr: "Accueil", en: "Home" },
+  { href: "/response", fr: "Assistant", en: "Assistant" },
+  { href: "/resources", fr: "Trouver de l'aide", en: "Find help" },
 ] as const;
 
 /**
  * Cadre commun, calqué sur l'en-tête du site (PublicLayout) :
- * logo « Sunu », bouton Discret (mode sombre), bouton « Sortir », puis la navigation en pastilles.
+ * logo « Sunu », choix FR / EN, bouton Discret (mode sombre), bouton « Sortir », puis la navigation en pastilles.
  */
 export default function Screen({
   children,
@@ -36,6 +38,7 @@ export default function Screen({
   const insets = useSafeAreaInsets();
   const pathname = usePathname();
   const setThemeMode = useSession((s) => s.setThemeMode);
+  const { tx } = useLang();
 
   const toggleDiscreet = () => {
     const next = c.dark ? "light" : "dark";
@@ -65,7 +68,7 @@ export default function Screen({
           {back ? (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Retour"
+              accessibilityLabel={tx("Retour", "Back")}
               hitSlop={10}
               onPress={() => (router.canGoBack() ? router.back() : router.replace("/"))}
               style={[styles.round, { borderColor: c.dark ? "rgba(255,255,255,0.1)" : "rgba(12,27,36,0.1)" }]}
@@ -73,14 +76,15 @@ export default function Screen({
               <ArrowLeft size={18} color={c.text} />
             </Pressable>
           ) : (
-            <Pressable accessibilityRole="link" accessibilityLabel="Accueil" onPress={() => router.dismissTo("/")}>
+            <Pressable accessibilityRole="link" accessibilityLabel={tx("Accueil", "Home")} onPress={() => router.dismissTo("/")}>
               <Logo />
             </Pressable>
           )}
           <View style={{ flex: 1 }} />
+          <LanguageSwitch />
           <Pressable
             accessibilityRole="switch"
-            accessibilityLabel="Mode sombre"
+            accessibilityLabel={tx("Mode sombre", "Dark mode")}
             accessibilityState={{ checked: c.dark }}
             onPress={toggleDiscreet}
             hitSlop={6}
@@ -102,7 +106,7 @@ export default function Screen({
                   onPress={() => (active ? null : n.href === "/" ? router.dismissTo("/") : router.navigate(n.href))}
                   style={[styles.navItem, active && { backgroundColor: c.dark ? "#FBF8F2" : "#0C1B24" }]}
                 >
-                  <Text style={{ fontFamily: fonts.semibold, fontSize: 14, color: active ? (c.dark ? "#0C1B24" : "#FBF8F2") : c.muted }}>{n.label}</Text>
+                  <Text style={{ fontFamily: fonts.semibold, fontSize: 14, color: active ? (c.dark ? "#0C1B24" : "#FBF8F2") : c.muted }}>{tx(n.fr, n.en)}</Text>
                 </Pressable>
               );
             })}

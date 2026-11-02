@@ -6,6 +6,7 @@ import type { Message } from "@/types";
  * la conversation disparaît à la fermeture de l'app, à la sortie rapide et à l'effacement.
  */
 type ThemeMode = "auto" | "dark" | "light";
+export type Lang = "fr" | "en";
 
 export type Account = { name: string; email: string; role: string };
 
@@ -18,6 +19,9 @@ type SessionState = {
   speakingId: string | null;
   autoRead: boolean;
   themeMode: ThemeMode;
+  /** Langue d'affichage de l'app. Le chat, lui, reste en français ou en wolof. */
+  lang: Lang;
+  setLang: (lang: Lang) => void;
   voiceLang: "fr" | "wo";
   setVoiceLang: (lang: "fr" | "wo") => void;
   addMessage: (m: Message) => void;
@@ -39,6 +43,8 @@ export const useSession = create<SessionState>((set) => ({
   autoRead: false,
   themeMode: "dark", // choix de Diouma : le thème sombre par défaut
   voiceLang: "fr",
+  lang: "fr",
+  setLang: (lang) => set({ lang }),
   setVoiceLang: (lang) => set({ voiceLang: lang }),
   addMessage: (m) => set((s) => ({ messages: [...s.messages, m] })),
   clearConversation: () => set({ messages: [], draft: "", speakingId: null }),

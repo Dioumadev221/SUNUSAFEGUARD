@@ -37,6 +37,7 @@ export default function RootLayout() {
       clearLegacyStealth(),
       restoreAccount(),
       getItem(KEYS.autoRead).then((v) => useSession.getState().setAutoRead(v === "1")),
+      getItem(KEYS.lang).then((v) => useSession.getState().setLang(v === "en" ? "en" : "fr")),
       getItem(KEYS.theme).then((v) => useSession.getState().setThemeMode(v === "light" ? "light" : "dark")),
     ]).finally(() => setReady(true));
   }, []);

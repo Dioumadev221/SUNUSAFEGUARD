@@ -16,6 +16,7 @@ export const KEYS = {
   stealth: "ssg.stealth",
   autoRead: "ssg.autoRead",
   theme: "ssg.theme",
+  lang: "ssg.lang",
   token: "ssg.token",
 } as const;
 

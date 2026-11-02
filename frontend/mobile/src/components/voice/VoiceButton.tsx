@@ -8,6 +8,7 @@ import { ApiError } from "@/services/api";
 import { deleteRecording, registerRecording, stopSpeaking, transcribe } from "@/services/voice.service";
 import { useSession } from "@/store/session";
 import { fonts, palette, useColors } from "@/theme";
+import { useLang } from "@/i18n";
 
 type Status = "ready" | "listening" | "processing" | "error";
 const MAX_MS = 60_000;
@@ -31,6 +32,7 @@ export default function VoiceButton({
   onError?: (message: string | null) => void;
 }) {
   const c = useColors();
+  const { tx } = useLang();
   const recorder = useAudioRecorder({ ...RecordingPresets.HIGH_QUALITY, isMeteringEnabled: true });
   const recState = useAudioRecorderState(recorder, 120);
   const [status, setStatus] = useState<Status>("ready");
@@ -65,7 +67,7 @@ export default function VoiceButton({
     const perm = await AudioModule.requestRecordingPermissionsAsync();
     if (!perm.granted) {
       setStatus("error");
-      report("L'accès au micro a été refusé. Vous pouvez l'autoriser dans les réglages du téléphone, ou écrire votre question.");
+      report(tx("L'accès au micro a été refusé. Vous pouvez l'autoriser dans les réglages du téléphone, ou écrire votre question.", "Microphone access was denied. You can allow it in the phone settings, or type your question."));
       return;
     }
     try {
@@ -84,7 +86,7 @@ export default function VoiceButton({
       timer.current = setTimeout(() => void stop(), MAX_MS);
     } catch {
       setStatus("error");
-      report("Le micro n'a pas pu démarrer. Réessayez ou écrivez votre question.");
+      report(tx("Le micro n'a pas pu démarrer. Réessayez ou écrivez votre question.", "The microphone could not start. Try again or type your question."));
     }
   };
 
@@ -101,14 +103,14 @@ export default function VoiceButton({
       const result = await transcribe(uri, language);
       if (!result.text) {
         setStatus("error");
-        report("Je n'ai rien entendu. Parlez un peu plus près du téléphone et réessayez.");
+        report(tx("Je n'ai rien entendu. Parlez un peu plus près du téléphone et réessayez.", "I did not hear anything. Speak a little closer to the phone and try again."));
         return;
       }
       setStatus("ready");
       onTranscript(result.text);
     } catch (e) {
       setStatus("error");
-      report(e instanceof ApiError ? e.message : "La reconnaissance vocale n'a pas fonctionné. Réessayez ou écrivez votre question.");
+      report(e instanceof ApiError ? e.message : tx("La reconnaissance vocale n'a pas fonctionné. Réessayez ou écrivez votre question.", "Voice recognition did not work. Try again or type your question."));
     } finally {
       void deleteRecording(uri);
     }
@@ -118,8 +120,8 @@ export default function VoiceButton({
   const processing = status === "processing";
   const hint = {
     ready: "",
-    listening: "Je vous écoute… Appuyez pour terminer.",
-    processing: "Je transcris votre message…",
+    listening: tx("Je vous écoute… Appuyez pour terminer.", "I am listening… Tap to finish."),
+    processing: tx("Je transcris votre message…", "Transcribing your message…"),
     error: message ?? "",
   }[status];
 
@@ -127,7 +129,7 @@ export default function VoiceButton({
     return (
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={listening ? "Arrêter et envoyer le message vocal" : "Parler"}
+        accessibilityLabel={listening ? tx("Arrêter et envoyer le message vocal", "Stop and send the voice message") : tx("Parler", "Speak")}
         disabled={processing}
         onPress={() => void (listening ? stop() : start())}
         style={[styles.small, { backgroundColor: listening ? palette.alert : c.accentSoft }]}
@@ -148,7 +150,7 @@ export default function VoiceButton({
         <View style={[styles.inner, { borderColor: listening ? c.accent : c.dark ? "rgba(79,209,190,0.2)" : "rgba(14,124,112,0.18)" }]}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={listening ? "Arrêter et envoyer le message vocal" : "Parler à l'assistant"}
+            accessibilityLabel={listening ? tx("Arrêter et envoyer le message vocal", "Stop and send the voice message") : tx("Parler à l'assistant", "Talk to the assistant")}
             disabled={processing}
             onPress={() => void (listening ? stop() : start())}
             style={({ pressed }) => [
@@ -181,9 +183,9 @@ export default function VoiceButton({
 
       {!listening && !processing && (
         <View style={{ alignItems: "center", gap: 10 }}>
-          <Text style={{ fontFamily: fonts.semibold, fontSize: 14, color: c.muted }}>Je parle</Text>
+          <Text style={{ fontFamily: fonts.semibold, fontSize: 14, color: c.muted }}>{tx("Je parle", "I speak")}</Text>
           <View style={{ flexDirection: "row", gap: 10 }}>
-            <Chip label="Français" active={language === "fr"} onPress={() => setLanguage("fr")} />
+            <Chip label={tx("Français", "French")} active={language === "fr"} onPress={() => setLanguage("fr")} />
             <Chip label="Wolof" active={language === "wo"} onPress={() => setLanguage("wo")} />
           </View>
         </View>
@@ -191,7 +193,7 @@ export default function VoiceButton({
 
       {status === "error" && !!onUseText && (
         <Pressable accessibilityRole="button" onPress={onUseText} hitSlop={8}>
-          <Text style={{ fontFamily: fonts.semibold, fontSize: 15, color: c.accent, textDecorationLine: "underline" }}>Écrire ma question</Text>
+          <Text style={{ fontFamily: fonts.semibold, fontSize: 15, color: c.accent, textDecorationLine: "underline" }}>{tx("Écrire ma question", "Type my question")}</Text>
         </Pressable>
       )}
     </View>

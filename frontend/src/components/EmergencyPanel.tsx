@@ -26,10 +26,20 @@ export default function EmergencyPanel({ note }: { note?: string }) {
         </div>
         <ul className="grid gap-px bg-sand-200 sm:grid-cols-2 dark:bg-white/[0.06]">
           {contacts.map((c) => (
-            <li key={c.number} className="bg-white dark:bg-night-850">
+            <li key={c.number} className="bg-white dark:bg-night-850 sm:[&:last-child:nth-child(odd)]:col-span-2">
               <a href={`tel:${c.number}`} className="group flex h-full items-center gap-4 px-5 py-5 transition hover:bg-alert/[0.04] sm:px-6">
-                <span className="min-w-[4.5rem] font-display text-4xl font-semibold tabular-nums leading-none">{c.number}</span>
-                <span className="min-w-0 flex-1 text-sm font-semibold leading-snug text-slate-600 dark:text-slate-300">{c.label}</span>
+                {c.number.replace(/\s/g, "").length > 4 ? (
+                  // Numéro long (ex. 800 805 805) : le numéro sur une ligne, la phrase en dessous, sur toute la largeur.
+                  <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                    <span className="whitespace-nowrap font-display text-3xl font-semibold tabular-nums leading-none">{c.number}</span>
+                    <span className="text-sm font-semibold leading-snug text-slate-600 dark:text-slate-300">{c.label}</span>
+                  </span>
+                ) : (
+                  <>
+                    <span className="min-w-[4.5rem] font-display text-4xl font-semibold tabular-nums leading-none">{c.number}</span>
+                    <span className="min-w-0 flex-1 text-sm font-semibold leading-snug text-slate-600 dark:text-slate-300">{c.label}</span>
+                  </>
+                )}
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-alert/10 text-alert transition group-hover:bg-alert group-hover:text-white" aria-hidden>
                   <Phone size={18} />
                 </span>

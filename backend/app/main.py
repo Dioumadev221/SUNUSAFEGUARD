@@ -18,8 +18,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 
 app = FastAPI(
     title="SunuSafeguard AI — API",
-    version="0.1.0",
-    description="API de la plateforme SunuSafeguard AI (Phase 1 — prototype fonctionnel).",
+    version="1.0.0",
+    description="API de la plateforme SunuSafeguard AI.",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
 )

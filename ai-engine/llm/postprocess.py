@@ -18,7 +18,6 @@ CONFRONTATION = [
     re.compile(rf"\b(demandez|demander)[- ]lui\b"),
     re.compile(rf"\b(envoyez|ecrivez)[- ]lui\b"),
 ]
-NEGATION = re.compile(r"\b(ne|n')\s*\w*\s*(pas|jamais|plus)\b|\bevitez\b|\bsans\b")
 
 # Sigles toujours admis (services publics, plateformes, sigles des fiches du projet).
 KNOWN_ACRONYMS = {"SAMU", "AJS", "ONG", "OMS", "CEGID", "CLVF", "IST", "VIH", "SIDA", "CDP", "SMS", "PDF", "UNICEF",
@@ -42,6 +41,16 @@ IMPERATIVES = {"prends": "prenez", "fais": "faites", "essaie": "essayez", "parle
                "planifie": "planifiez", "va": "allez", "rapproche-toi": "rapprochez-vous", "oublie": "oubliez"}
 IMPERATIVE_RE = re.compile(r"(^|[.!?]\s+|,\s*(?:et\s+)?|\bet\s+|\bn')(" + "|".join(map(re.escape, IMPERATIVES)) + r")\b",
                            re.I)
+# Impératif de 2e personne en début de phrase ou d'élément de liste (« 1. Essaye de… », « Partage tes… »).
+START = r"(^|[.!?:]\s+|\d[.)]\s+|[-•]\s+)"
+IRREGULAR_IMPERATIVES = {"prends": "prenez", "fais": "faites", "va": "allez", "sois": "soyez", "écris": "écrivez",
+                         "dis": "dites", "mets": "mettez", "bois": "buvez", "prévois": "prévoyez", "fixe-toi": "fixez-vous",
+                         "accorde-toi": "accordez-vous", "rapproche-toi": "rapprochez-vous", "repose-toi": "reposez-vous"}
+NOT_VERBS = {"une", "cette", "votre", "notre", "chaque", "elle", "comme", "lorsque", "puisque", "quelque", "même",
+             "personne", "parce", "presque", "une", "bonne", "autre", "seule", "toute", "aucune", "chose", "comme"}
+ER_IMPERATIVE_RE = re.compile(START + r"([A-ZÉÈ][a-zéèêàçï]+e)(?=\s+(de|d'|à|au|aux|des|les|la|le|un|une|avec|vos|votre|"
+                              r"quelqu|régulièrement|ce|ces|tes|ta|ton|en|toujours|chaque)\b)")
+IRREGULAR_RE = re.compile(START + r"(" + "|".join(map(re.escape, IRREGULAR_IMPERATIVES)) + r")\b", re.I)
 TU_LEFT = re.compile(r"\b(tu|te|toi|ton|ta|tes)\b", re.I)
 
 
@@ -56,8 +65,17 @@ def _sentences(text: str) -> list[str]:
 
 
 def _is_confrontation(sentence: str) -> bool:
+    """Conseil de contacter l'auteur, sauf si c'est ce verbe-là qui est nié (« ne lui écrivez pas »)."""
     t = _norm(sentence)
-    return any(p.search(t) for p in CONFRONTATION) and not NEGATION.search(t)
+    for pattern in CONFRONTATION:
+        for m in pattern.finditer(t):
+            before, after = t[max(0, m.start() - 25):m.start()], t[m.start():m.start() + 40]
+            negated = (re.search(r"\b(ne|n')\s*(lui |leur |l')?$", before)
+                       or re.search(r"\b(evitez|eviter|sans|refusez)\b[^.!?]*$", before)
+                       or re.search(r"^\S+\s+(pas|jamais|plus)\b", after))
+            if not negated:
+                return True
+    return False
 
 
 def _unknown_acronyms(sentence: str, context: str) -> list[str]:
@@ -71,9 +89,13 @@ def _same_case(source: str, repl: str) -> str:
 
 def to_vous(text: str) -> str | None:
     """Convertit les formes de tutoiement courantes ; None s'il en reste (phrase à retirer)."""
-    if TU_LEFT.search(text) or re.search(r"\b(n'hésite|prends soin)\b", text, re.I):
-        text = IMPERATIVE_RE.sub(
-            lambda m: m.group(1) + _same_case(m.group(2), IMPERATIVES[m.group(2).lower()]), text)
+    text = re.sub(r"\bEncourage-vous à\b", "Je vous encourage à", text)
+    text = IMPERATIVE_RE.sub(
+        lambda m: m.group(1) + _same_case(m.group(2), IMPERATIVES[m.group(2).lower()]), text)
+    text = IRREGULAR_RE.sub(
+        lambda m: m.group(1) + _same_case(m.group(2), IRREGULAR_IMPERATIVES[m.group(2).lower()]), text)
+    text = ER_IMPERATIVE_RE.sub(
+        lambda m: m.group(0) if m.group(2).lower() in NOT_VERBS else m.group(1) + m.group(2) + "z", text)
     for pattern, repl in TU_REPLACEMENTS:
         text = re.sub(pattern, lambda m, r=repl: _same_case(m.group(0), r), text, flags=re.I)
     return None if TU_LEFT.search(text) else text

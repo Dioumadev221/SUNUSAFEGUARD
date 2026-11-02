@@ -90,3 +90,11 @@ def test_accueil_chaleureux_selon_le_besoin():
     assert "pas votre faute" in opening_message("violences_physiques_verbales", "fr")
     assert opening_message("autre", "fr") == ""
     assert "reformuler" in template_message("no_source", "fr")
+
+
+def test_consigne_selon_le_besoin_et_sans_renvois():
+    from llm.prompts import SYSTEM_PROMPT, build_user_prompt
+
+    prompt = build_user_prompt("Mon ex publie mes photos", "[1] extrait", "cyberharcelement")
+    assert "ne pas répondre à l'auteur" in prompt
+    assert "confronter l'auteur" in SYSTEM_PROMPT

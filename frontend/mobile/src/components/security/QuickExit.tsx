@@ -9,7 +9,7 @@ export default function QuickExit() {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel="Sortir rapidement"
-      accessibilityHint="Ferme l'assistant et affiche un écran neutre"
+      accessibilityHint="Efface la conversation et ferme l'application"
       hitSlop={8}
       onPress={() => void quickExit()}
       style={({ pressed }) => [styles.btn, { backgroundColor: c.alert, opacity: pressed ? 0.9 : 1 }]}

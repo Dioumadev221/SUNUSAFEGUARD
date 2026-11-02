@@ -70,6 +70,17 @@ MESSAGES = {
               "lien bi ci suufu bataaxal bii. Tànnal li nga soxla ak sa diwaan, "
               "te mën ngaa woo bérab bi ci saa si.",
     },
+    "thanks": {
+        "fr": "Avec plaisir, je suis ravie d'avoir pu vous aider. Prenez bien soin de vous. "
+              "Si vous avez besoin de parler à nouveau, je suis là, à toute heure.",
+        "wo": "Amul solo, bég naa ci li ma la mëna dimbali. Toppatool sa bopp. "
+              "Su la soxla waxtaan ak man ati, maa ngi fi.",
+    },
+    "greeting": {
+        "fr": "Bonjour, je suis contente de vous lire. Je suis là pour vous écouter, sans jugement. "
+              "Dites-moi ce qui vous amène, à votre rythme.",
+        "wo": "Salaam aleekum, bég naa ci sa bataaxal. Maa ngi fi ngir déglu la. Wax ma li la indi, ndànk ndànk.",
+    },
     "fallback_intro": {
         "fr": "Voici ce qui peut vous aider, d'après nos fiches d'information :",
         "wo": "Lii la téere yi ñu wóorlu wax :",

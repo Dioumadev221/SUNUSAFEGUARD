@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 import { router } from "expo-router";
 import Screen from "@/components/common/Screen";
 import { Button, Card, Em, Eyebrow, Notice, T } from "@/components/common/ui";
@@ -7,10 +7,10 @@ import { RefreshCw, ShieldCheck, Trash2, UserRound } from "lucide-react-native";
 import { loadReferrals, mergeServerReferrals, refreshReferral, removeReferral } from "@/services/referrals.service";
 import { myReferrals } from "@/services/auth.service";
 import { useSession } from "@/store/session";
-import { DEFAULT_EXIT_CODE, getExitCode, panicWipe, setExitCode } from "@/services/session.service";
+import { panicWipe } from "@/services/session.service";
 import { fmtDate, fmtDateTime } from "@/constants/labels";
 import type { StoredReferral } from "@/types";
-import { fonts, radius, useColors } from "@/theme";
+import { fonts, useColors } from "@/theme";
 
 const STATUS_TONE: Record<string, "ok" | "wait" | "end"> = {
   transmise: "wait",
@@ -29,9 +29,6 @@ export default function Session() {
   const [items, setItems] = useState<StoredReferral[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [offline, setOffline] = useState(false);
-  const [exitCode, setCode] = useState("");
-  const [editingCode, setEditingCode] = useState(false);
-  const [draftCode, setDraftCode] = useState("");
   const [confirmWipe, setConfirmWipe] = useState(false);
   const [wiping, setWiping] = useState(false);
 
@@ -62,15 +59,7 @@ export default function Session() {
 
   useEffect(() => {
     void refreshAll();
-    void getExitCode().then(setCode);
   }, [refreshAll, account]);
-
-  const saveCode = async () => {
-    if (!/^\d{3,8}$/.test(draftCode)) return;
-    await setExitCode(draftCode);
-    setCode(draftCode);
-    setEditingCode(false);
-  };
 
   const wipe = async () => {
     setWiping(true);
@@ -138,40 +127,17 @@ export default function Session() {
       <T variant="heading" style={{ marginTop: 8 }}>Sortie rapide</T>
       <Card style={{ gap: 10 }}>
         <T variant="small">
-          Le bouton « Sortir » affiche une calculatrice ordinaire et efface la conversation. Pour revenir ici, tapez votre code puis « = ».
+          Le bouton rouge « Sortir », en haut de chaque écran, efface la conversation et ferme l'application aussitôt.
         </T>
-        {editingCode ? (
-          <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
-            <TextInput
-              value={draftCode}
-              onChangeText={(t) => setDraftCode(t.replace(/\D/g, ""))}
-              keyboardType="number-pad"
-              maxLength={8}
-              placeholder="3 à 8 chiffres"
-              placeholderTextColor={c.muted}
-              style={{ flex: 1, borderWidth: 1, borderColor: c.border, borderRadius: radius.sm, padding: 12, color: c.text, fontFamily: fonts.semibold, fontSize: 18 }}
-              accessibilityLabel="Nouveau code de retour"
-            />
-            <Button label="OK" onPress={() => void saveCode()} disabled={!/^\d{3,8}$/.test(draftCode)} />
-          </View>
-        ) : (
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-            <T>
-              Votre code : <T style={{ fontFamily: fonts.bold }}>{exitCode} =</T>
-              {exitCode === DEFAULT_EXIT_CODE ? <T variant="muted"> (par défaut)</T> : null}
-            </T>
-            <Button kind="soft" label="Changer" onPress={() => { setDraftCode(""); setEditingCode(true); }} />
-          </View>
-        )}
         <T variant="muted" style={{ fontSize: 13 }}>
-          Ce mode cache l'écran, mais il ne rend pas l'app invisible : elle reste dans la liste des applications du téléphone.
+          Sur iPhone, le système ne laisse pas une application se fermer seule : l'écran devient noir et vide. Touchez-le pour revenir à l'accueil.
         </T>
       </Card>
 
       <T variant="heading" style={{ marginTop: 8 }}>Effacer toute trace</T>
       <Card style={{ gap: 10 }}>
         <T variant="small">
-          Supprime de ce téléphone : la conversation, les codes de suivi, votre code de retour et vos réglages.
+          Supprime de ce téléphone : la conversation, les codes de suivi et vos réglages.
         </T>
         <T variant="small" style={{ fontFamily: fonts.semibold }}>
           Une demande déjà envoyée reste chez la structure : l'effacement ne l'annule pas.

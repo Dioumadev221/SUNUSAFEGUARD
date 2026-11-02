@@ -117,6 +117,14 @@ class AssistantPipeline:
                 show_emergency=False, suggest_directory=True, top_score=0.0, timings_ms=_round(t), **base,
             )
 
+        social = small_talk(message) if decision.action not in {"urgent", "redirect_professional"} else None
+        if social:
+            # Remerciement, au revoir ou simple salutation : réponse chaleureuse, sans recherche documentaire.
+            return PipelineResult(
+                answer=template_message(social, lang), sources=[], grounded=False, used_llm=False,
+                show_emergency=False, suggest_directory=False, top_score=0.0, timings_ms=_round(t), **base,
+            )
+
         if decision.blocks_llm:
             return PipelineResult(
                 answer=template_message(decision.action, lang), sources=[], grounded=False, used_llm=False,
@@ -228,6 +236,38 @@ def asks_for_directory(message: str) -> bool:
     t = unicodedata.normalize("NFKD", message.lower()).encode("ascii", "ignore").decode()
     t = t.replace("’", "'")
     return bool(_DIRECTORY_WORDS.search(t) and _HOW_WORDS.search(t)) and len(t.split()) <= 20
+
+
+_THANKS = re.compile(r"\b(merci|mersi|jerejef|jere jef|jerrejef|thanks?|thank you|au revoir|bonne (journee|soiree|nuit)|ba beneen|ba suba)\b")
+_GREETING = re.compile(r"^(bonjour|bonsoir|salut|coucou|hello|salam|salaam|salamaleykoum|salaam aleekum|asalaa?m(ou)? ?aleykoum|nanga def|na nga def)\b")
+# Mots qui signalent une vraie demande : la réponse doit alors passer par le parcours normal.
+_SMALL_TALK_FILLER = {
+    "merci", "mersi", "beaucoup", "bien", "tres", "ok", "okay", "d'accord", "daccord", "super", "parfait",
+    "genial", "top", "cool", "c'est", "cest", "vraiment", "infiniment", "pour", "tout", "votre", "ton", "ta",
+    "aide", "l'aide", "vos", "conseils", "reponse", "reponses", "jerejef", "jere", "jef", "jerrejef", "bu", "baax",
+    "thanks", "thank", "you", "so", "much", "very", "good", "great", "au", "revoir", "bonne", "journee", "soiree",
+    "nuit", "ba", "beneen", "suba", "bonjour", "bonsoir", "salut", "coucou", "hello", "salam", "salaam", "aleekum",
+    "salamaleykoum", "asalam", "asalaam", "aleykoum", "nanga", "def", "na", "nga", "madame", "monsieur", "sunu",
+    "et", "a", "vous", "toi", "aussi", "encore", "oui", "ca", "va", "m'a", "ma", "aidee",
+}
+
+
+def small_talk(message: str) -> str | None:
+    """« Très bien, merci beaucoup » : remerciement ou salutation seule, sans autre demande.
+
+    Renvoie le nom du modèle de réponse (« thanks » ou « greeting »), ou None.
+    """
+    import unicodedata
+    t = unicodedata.normalize("NFKD", message.lower()).encode("ascii", "ignore").decode()
+    t = re.sub(r"[^a-z' ]+", " ", t.replace("’", "'")).strip()
+    words = t.split()
+    if not words or len(words) > 12 or any(w not in _SMALL_TALK_FILLER for w in words):
+        return None
+    if _THANKS.search(t):
+        return "thanks"
+    if _GREETING.search(t):
+        return "greeting"
+    return None
 
 
 def _round(t: dict) -> dict:

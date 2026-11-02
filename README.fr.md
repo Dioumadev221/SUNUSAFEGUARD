@@ -178,7 +178,7 @@ Chaque exigence de ces documents est tracée dans le code et la documentation (l
 | **Réponses uniquement à partir de documents validés** | Évite toute information inventée sur des sujets sensibles comme le droit, la santé et les violences. |
 | **IA locale et open source** (Ollama, Whisper) | Aucun service payant, aucun message envoyé à un fournisseur étranger, maîtrise complète des données. |
 | **Repli par extraits** | L'assistant continue de fonctionner même si le modèle de langage s'arrête. |
-| **Sortie rapide et mode discret** | Une personne peut être surveillée. Un geste masque tout ; l'application mobile devient une vraie calculatrice. |
+| **Sortie rapide et mode discret** | Une personne peut être surveillée. Un geste efface la conversation et ferme l'application ou l'onglet. |
 | **Consentement avant orientation, coordonnées chiffrées** | La personne garde la maîtrise de ce qui est transmis, à qui et pour combien de temps. |
 | **Seuil de publication N ≥ 5** | Empêche d'identifier quelqu'un à travers les statistiques d'une petite région. |
 | **Permissions contrôlées par le serveur** | La sécurité ne peut pas dépendre de ce qu'affiche l'interface. |
@@ -227,7 +227,7 @@ La charte complète se trouve dans [`docs/user-guides/charte-ui.md`](docs/user-g
 | Composant | Ce qu'il apporte |
 |---|---|
 | **Site public** | Assistant conversationnel (français / wolof), annuaire des structures, mise en relation avec consentement, suivi par code, page confidentialité, bouton Sortie rapide, installable sur téléphone (PWA) |
-| **Application mobile « Sunu »** | Application Android et iOS avec saisie vocale, réponses, ressources, suivi des demandes et mode discret déguisé en calculatrice |
+| **Application mobile « Sunu »** | Application Android et iOS avec saisie vocale, réponses, ressources, suivi des demandes et sortie rapide en un geste |
 | **Sunu Impact** | Indicateurs anonymes, évolution, besoins, langues, carte des régions, rapports PDF et Excel |
 | **Sunu Orientation** | Fiches des structures, disponibilités, demandes de mise en relation reçues, délais, gestion d'équipe |
 | **Sunu Ressources** | Import de documents, circuit de validation par les expert·es, publication, test de l'assistant, évaluation |
@@ -358,7 +358,7 @@ dans l'historique du navigateur.
 | **Sunu Ressources** | Chercher dans l'annuaire par région, département ou besoin ; appeler une structure ; l'annuaire fonctionne aussi hors connexion. |
 | **Mise en relation** | Choisir ce qui est transmis, donner son consentement, recevoir un code de suivi. |
 | **Sunu Session** | Suivre ses demandes, et utiliser **« Effacer toute trace »** pour supprimer tout ce qui est gardé sur le téléphone. |
-| **Sunu Discret** | Le bouton **« Sortir »** transforme l'application en vraie calculatrice. Pour revenir, taper son code suivi de **« = »** (code par défaut `1234`). |
+| **Sortie rapide** | Le bouton **« Sortir »** efface la conversation et ferme l'application. Sur iPhone, où une application ne peut pas se fermer seule, l'écran devient noir et vide ; un toucher ramène à l'accueil. |
 
 ### Pour les professionnel·les
 
@@ -681,7 +681,7 @@ make eval    # évaluation de la qualité de la recherche
 | Confidentialité | Messages jamais stockés, seuil d'anonymat, consentement obligatoire, isolation des partenaires |
 | Accès | Permissions par espace, inscription publique sans privilège, déconnexion, double authentification, verrouillage et limitation de débit |
 | Exploitation | Rapports, purge des données, comptes |
-| Mobile | Canal mobile, limites de l'API vocale, calculatrice, conservation locale |
+| Mobile | Canal mobile, limites de l'API vocale, sortie rapide, conservation locale |
 
 Qualité de la recherche sur le jeu de référence (14 questions) : **rappel@4 = 93 %**, **MRR = 0,82**.
 

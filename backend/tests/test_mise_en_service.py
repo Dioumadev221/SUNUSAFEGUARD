@@ -194,3 +194,16 @@ def test_annuaire_nomme_comme_sur_le_site():
                                     "l'État. Cliquez sur le bouton Annuaire en haut à gauche de l'écran.", "")
     assert cleaned == "Changez votre mot de passe. Vous pouvez consulter la page « Trouver de l'aide »."
     assert "interface_inventee" in reasons
+
+
+def test_remerciement_recoit_une_reponse_chaleureuse(client):
+    r = client.post("/api/chat", json={"message": "Très bien, merci beaucoup"}).json()
+    assert "ravie d'avoir pu vous aider" in r["answer"]
+    assert "comprend" not in r["answer"] and not r["show_emergency"]
+    r = client.post("/api/chat", json={"message": "Bonjour"}).json()
+    assert r["answer"].startswith("Bonjour")
+
+
+def test_remerciement_avec_une_vraie_demande_suit_le_parcours_normal(client):
+    r = client.post("/api/chat", json={"message": "Merci, mais il menace de me tuer ce soir"}).json()
+    assert "ravie" not in r["answer"] and r["show_emergency"]

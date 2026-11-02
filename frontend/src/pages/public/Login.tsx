@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
 import type { User } from "@/lib/types";
 import { ErrorNote } from "@/components/ui";
+import { usePrefs } from "@/lib/prefs";
 
 export default function Login() {
   const { login, verifyMfa } = useAuth();
+  const { tx } = usePrefs();
   const nav = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,11 +49,11 @@ export default function Login() {
     return (
       <Shell>
         <form onSubmit={submitCode} className="space-y-5">
-          <div className="pb-2 text-center"><h1 className="text-3xl">Double authentification</h1><p className="mt-2 text-sm muted">Saisissez le code à 6 chiffres de votre application d'authentification.</p></div>
-          <input className="input text-center text-2xl tracking-[0.5em]" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} autoFocus aria-label="Code" />
+          <div className="pb-2 text-center"><h1 className="text-3xl">{tx("Double authentification", "Two-factor authentication")}</h1><p className="mt-2 text-sm muted">{tx("Saisissez le code à 6 chiffres de votre application d'authentification.", "Enter the 6-digit code from your authenticator app.")}</p></div>
+          <input className="input text-center text-2xl tracking-[0.5em]" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} autoFocus aria-label={tx("Code", "Code")} />
           <ErrorNote error={error} />
-          <button className="btn-primary w-full" disabled={busy || code.length !== 6}>Valider</button>
-          <button type="button" className="btn-ghost w-full" onClick={() => { setMfaToken(null); setCode(""); }}>Retour</button>
+          <button className="btn-primary w-full" disabled={busy || code.length !== 6}>{tx("Valider", "Confirm")}</button>
+          <button type="button" className="btn-ghost w-full" onClick={() => { setMfaToken(null); setCode(""); }}>{tx("Retour", "Back")}</button>
         </form>
       </Shell>
     );
@@ -59,17 +61,17 @@ export default function Login() {
   return (
     <Shell>
       <form onSubmit={submit} className="space-y-5">
-        <div className="pb-2 text-center"><h1 className="text-4xl">Connexion</h1><p className="mt-2 text-sm muted">Connectez-vous à votre espace.</p></div>
+        <div className="pb-2 text-center"><h1 className="text-4xl">{tx("Connexion", "Sign in")}</h1><p className="mt-2 text-sm muted">{tx("Connectez-vous à votre espace.", "Sign in to your area.")}</p></div>
         <div>
-          <label className="label" htmlFor="email">Adresse e-mail</label>
+          <label className="label" htmlFor="email">{tx("Adresse e-mail", "Email address")}</label>
           <input id="email" className="input" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
         <div>
-          <label className="label" htmlFor="pwd">Mot de passe</label>
+          <label className="label" htmlFor="pwd">{tx("Mot de passe", "Password")}</label>
           <input id="pwd" className="input" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         <ErrorNote error={error} />
-        <button className="btn-primary w-full" disabled={busy}>{busy ? "Connexion…" : "Se connecter"}</button>
+        <button className="btn-primary w-full" disabled={busy}>{busy ? tx("Connexion…", "Signing in…") : tx("Se connecter", "Sign in")}</button>
       </form>
     </Shell>
   );

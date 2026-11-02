@@ -6,7 +6,7 @@ import { usePrefs } from "@/lib/prefs";
 type Contact = { label: string; number: string };
 
 export default function EmergencyPanel({ note }: { note?: string }) {
-  const { t } = usePrefs();
+  const { t, tx } = usePrefs();
   const [contacts, setContacts] = useState<Contact[]>([]);
   useEffect(() => {
     api<Contact[]>("/emergency-contacts").then(setContacts).catch(() => setContacts([]));
@@ -21,7 +21,7 @@ export default function EmergencyPanel({ note }: { note?: string }) {
           </span>
           <div>
             <h2 className="text-3xl text-alert sm:text-4xl">{t("emergencyTitle")}</h2>
-            <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">{note ?? "Appelez maintenant."} Touchez un numéro pour appeler.</p>
+            <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-300">{note ?? tx("Appelez maintenant.", "Call now.")} {tx("Touchez un numéro pour appeler.", "Tap a number to call.")}</p>
           </div>
         </div>
         <ul className="grid gap-px bg-sand-200 sm:grid-cols-2 dark:bg-white/[0.06]">

@@ -17,8 +17,9 @@ Règles impératives :
 - Vouvoie toujours, sans terme affectueux. Mots simples, phrases courtes. 100 à 180 mots.
 - N'utilise pas de point médian (« seul·e ») : écris au féminin, la plupart des personnes sont des femmes.
 - Ne recopie pas les titres des passages. Ne te contredis pas : relis l'ordre des démarches.
-- Si le contexte ne contient pas la réponse, dis-le honnêtement et propose l'annuaire des structures d'aide.
-- L'annuaire se consulte (« consultez l'annuaire »), on ne le contacte pas.
+- Si le contexte ne contient pas la réponse, dis-le honnêtement et propose la page « Trouver de l'aide ».
+- Les structures d'aide se trouvent sur la page « Trouver de l'aide » du site : nomme-la ainsi.
+  Ne décris jamais l'écran (boutons, menus, position à gauche ou à droite) : tu ne le vois pas.
 - Langue de réponse : {language}.
 """
 

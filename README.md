@@ -174,7 +174,7 @@ as "CDC §9.2" in the source code point to the matching chapter).
 | **Answers only from validated documents** | Prevents invented information on sensitive subjects such as law, health and violence. |
 | **Local, open-source AI** (Ollama, Whisper) | No paid service, no message sent to a foreign provider, and full control over the data. |
 | **Extractive fallback** | The assistant keeps working even if the language model stops. |
-| **Quick exit and discreet mode** | Someone may be watched. One tap hides everything; the mobile app turns into a working calculator. |
+| **Quick exit and discreet mode** | Someone may be watched. One tap erases the conversation and closes the app or the tab. |
 | **Consent before referral, encrypted contact details** | The person stays in control of what is shared, with whom, and for how long. |
 | **Publication threshold N ≥ 5** | Prevents anyone from being identified through statistics in a small region. |
 | **Server-side permissions** | Security cannot depend on what the interface shows. |
@@ -223,7 +223,7 @@ The full charter is in [`docs/user-guides/charte-ui.md`](docs/user-guides/charte
 | Component | What it offers |
 |---|---|
 | **Public website** | Conversational assistant (French / Wolof), directory of organizations, consent-based referral, request tracking by code, privacy page, Quick exit button, installable on a phone (PWA) |
-| **Mobile app "Sunu"** | Android and iOS app with voice input, answers, resources, request tracking and a discreet mode disguised as a calculator |
+| **Mobile app "Sunu"** | Android and iOS app with voice input, answers, resources, request tracking and a one-tap quick exit |
 | **Sunu Impact** | Anonymous indicators, trends, needs, languages, regional map, PDF and Excel reports |
 | **Sunu Orientation** | Organization profiles, availability, incoming referral requests, response times, team management |
 | **Sunu Ressources** | Document import, expert validation workflow, publication, assistant testing, evaluation |
@@ -354,7 +354,7 @@ the browser history.
 | **Sunu Ressources** | Search the directory by region, department or need; call an organization; the directory also works offline. |
 | **Referral** | Choose what to share, give consent, receive a tracking code. |
 | **Sunu Session** | Follow your requests, and use **"Effacer toute trace"** (Erase all traces) to clear everything stored on the phone. |
-| **Sunu Discret** | The **"Sortir"** (Exit) button turns the app into a working calculator. To come back, type your code followed by **"="** (default code `1234`). |
+| **Quick exit** | The **"Sortir"** (Exit) button erases the conversation and closes the app. On iPhone, where an app cannot close itself, the screen turns plain black; a tap returns to the home screen. |
 
 ### For professionals
 
@@ -672,7 +672,7 @@ make eval    # search quality evaluation
 | Privacy | Messages never stored, anonymity threshold, consent required, partner isolation |
 | Access | Permissions per dashboard, public sign-up without privileges, logout, two-factor authentication, lockout and rate limiting |
 | Operations | Reports, data purge, accounts |
-| Mobile | Mobile channel, voice API limits, calculator, local retention |
+| Mobile | Mobile channel, voice API limits, quick exit, local retention |
 
 Search quality on the reference set (14 questions): **recall@4 = 93 %**, **MRR = 0.82**.
 

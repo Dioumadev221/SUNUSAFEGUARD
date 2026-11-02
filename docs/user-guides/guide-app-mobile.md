@@ -21,9 +21,9 @@ L'app vous montre ce qui sera transmis. Vous choisissez de donner, ou non, un mo
 Vous recevez un **code de suivi** (SSG-…). L'état de la demande s'affiche dans **Mes demandes**.
 
 ## Sortir rapidement
-Touchez **Sortir** (en rouge, en haut) : la conversation s'efface et une calculatrice s'affiche.
-Pour revenir : tapez votre code puis **=** (1234 au départ, modifiable dans *Mes demandes*).
-Ce mode cache l'écran, mais l'app reste visible dans la liste des applications du téléphone.
+Touchez **Sortir** (en rouge, en haut) : la conversation s'efface et l'application se ferme aussitôt.
+Sur iPhone, le système ne permet pas à une application de se fermer seule : l'écran devient noir et vide. Touchez-le pour revenir à l'accueil.
+Aucune autre application ne s'ouvre. L'app reste visible dans la liste des applications du téléphone.
 
 ## Effacer toute trace
 Dans **Mes demandes** → **Effacer toute trace** : conversation, codes, réglages et annuaire enregistré sont supprimés du téléphone.

@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { usePrefs } from "@/lib/prefs";
 
-const NEUTRAL_URL = "https://www.google.com/";
-
-/** Efface toute trace de session puis remplace la page (le bouton « retour » ne ramène pas ici). */
+/**
+ * Efface toute trace de session puis quitte le site : l'onglet se ferme quand le navigateur le permet,
+ * sinon la page est remplacée par une page vide (le bouton « retour » ne ramène pas ici).
+ * Aucun autre site ni aucune autre application ne s'ouvre.
+ */
 export function quickExit() {
   try {
     sessionStorage.clear();
@@ -11,8 +13,9 @@ export function quickExit() {
     /* ignore */
   }
   document.body.innerHTML = "";
-  document.title = "Google";
-  window.location.replace(NEUTRAL_URL);
+  document.title = "";
+  window.close();
+  window.location.replace("about:blank");
 }
 
 export default function QuickExit() {

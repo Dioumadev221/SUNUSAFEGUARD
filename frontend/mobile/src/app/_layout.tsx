@@ -11,8 +11,8 @@ import {
   PlusJakartaSans_600SemiBold,
   PlusJakartaSans_700Bold,
 } from "@expo-google-fonts/plus-jakarta-sans";
-import StealthInterface from "@/components/security/StealthInterface";
-import { queryClient, restoreStealth } from "@/services/session.service";
+import ExitScreen from "@/components/security/ExitScreen";
+import { clearLegacyStealth, queryClient } from "@/services/session.service";
 import { restoreAccount } from "@/services/auth.service";
 import { getItem, KEYS } from "@/services/secure";
 import { stopRecording, stopSpeaking } from "@/services/voice.service";
@@ -33,9 +33,8 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    // Si la sortie rapide était active à la fermeture, l'app rouvre sur la calculatrice.
     void Promise.all([
-      restoreStealth(),
+      clearLegacyStealth(),
       restoreAccount(),
       getItem(KEYS.autoRead).then((v) => useSession.getState().setAutoRead(v === "1")),
       getItem(KEYS.theme).then((v) => useSession.getState().setThemeMode(v === "light" ? "light" : "dark")),
@@ -70,7 +69,7 @@ export default function RootLayout() {
 
   if (!ready || !fontsLoaded) return <View style={{ flex: 1, backgroundColor: stealth ? "#000000" : c.bg }} />;
 
-  if (stealth) return <StealthInterface />;
+  if (stealth) return <ExitScreen />;
 
   return (
     <QueryClientProvider client={queryClient}>

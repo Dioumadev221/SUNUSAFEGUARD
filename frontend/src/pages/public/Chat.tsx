@@ -10,6 +10,7 @@ import { LogoMark } from "@/components/Logo";
 type Msg = { role: "user" | "assistant"; text: string; meta?: ChatResponse };
 const KEY = "ssg_chat"; // Historique local à l'onglet uniquement (sessionStorage), jamais sur le serveur.
 
+// Exemples envoyés à l'assistant : toujours en français, la langue du chat (avec le wolof).
 const SUGGESTIONS = [
   "Mon mari me frappe, est-ce que je peux porter plainte ?",
   "Quelqu'un menace de publier mes photos",
@@ -26,7 +27,7 @@ function loadHistory(): Msg[] {
 }
 
 export default function Chat() {
-  const { t } = usePrefs();
+  const { t, tx, lang } = usePrefs();
   const [params, setParams] = useSearchParams();
   const [messages, setMessages] = useState<Msg[]>(loadHistory);
   // Un sujet choisi sur l'accueil pré-remplit la question, sans l'envoyer : la personne garde la main.
@@ -59,7 +60,8 @@ export default function Chat() {
       const res = await api<ChatResponse>("/chat", { method: "POST", json: { message, channel: "web" } });
       setMessages((m) => [...m, { role: "assistant", text: res.answer, meta: res }]);
     } catch {
-      setError("Le service ne répond pas pour le moment. Si vous êtes en danger, appelez les numéros d'urgence.");
+      setError(tx("Le service ne répond pas pour le moment. Si vous êtes en danger, appelez les numéros d'urgence.",
+        "The service is not responding right now. If you are in danger, call the emergency numbers."));
     } finally {
       setBusy(false);
     }
@@ -86,13 +88,16 @@ export default function Chat() {
         </div>
       )}
 
-      {showEmergency && <div className="mb-6"><EmergencyPanel note="Si vous ou un proche êtes en danger, appelez maintenant." /></div>}
+      {showEmergency && <div className="mb-6"><EmergencyPanel note={tx("Si vous ou un proche êtes en danger, appelez maintenant.", "If you or someone close to you is in danger, call now.")} /></div>}
 
       <div className="flex-1 space-y-7" aria-live="polite">
         {empty && (
           <div className="flex flex-col items-center pt-16 text-center sm:pt-24">
-            <h1 className="text-4xl sm:text-5xl">Bonjour, <em className="font-medium text-teal dark:text-teal-light">je vous écoute.</em></h1>
-            <p className="mt-12 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">Pour commencer</p>
+            <h1 className="text-4xl sm:text-5xl">{tx("Bonjour,", "Hello,")} <em className="font-medium text-teal dark:text-teal-light">{tx("je vous écoute.", "I'm listening.")}</em></h1>
+            {lang === "en" && (
+              <p className="mt-4 max-w-md text-sm muted">The assistant answers in French or Wolof. You can write to it in either language.</p>
+            )}
+            <p className="mt-12 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{tx("Pour commencer", "To get started")}</p>
             <div className="mt-3 grid w-full gap-2.5 sm:grid-cols-2">
               {SUGGESTIONS.map((s) => (
                 <button key={s} onClick={() => send(s)} className="group flex items-center justify-between gap-3 rounded-2xl border border-sand-200 bg-white/80 px-4 py-3.5 text-left text-sm font-medium transition hover:-translate-y-0.5 hover:border-teal hover:bg-white hover:shadow-soft dark:border-white/[0.08] dark:bg-night-850 dark:hover:border-teal-light">
@@ -113,7 +118,7 @@ export default function Chat() {
         {busy && (
           <div className="flex items-center gap-3">
             <LogoMark size={32} />
-            <span className="flex gap-1.5 rounded-full bg-white px-4 py-3 shadow-soft dark:bg-night-850 dark:shadow-none" aria-label="L'assistant prépare une réponse">
+            <span className="flex gap-1.5 rounded-full bg-white px-4 py-3 shadow-soft dark:bg-night-850 dark:shadow-none" aria-label={tx("L'assistant prépare une réponse", "The assistant is preparing an answer")}>
               {[0, 150, 300].map((d) => <span key={d} className="h-2 w-2 animate-bounce rounded-full bg-ochre" style={{ animationDelay: `${d}ms` }} />)}
             </span>
           </div>
@@ -124,7 +129,7 @@ export default function Chat() {
 
       <form onSubmit={onSubmit} className="sticky bottom-0 mt-8 bg-gradient-to-t from-sand via-sand to-transparent pb-4 pt-6 dark:from-night-950 dark:via-night-950">
         <div className="flex items-end gap-2 rounded-[1.75rem] border border-sand-300/80 bg-white p-2 pl-5 shadow-lift transition focus-within:border-teal dark:border-white/10 dark:bg-night-850 dark:shadow-none dark:focus-within:border-teal-light">
-          <label htmlFor="msg" className="sr-only">Votre message</label>
+          <label htmlFor="msg" className="sr-only">{tx("Votre message", "Your message")}</label>
           <textarea
             id="msg"
             ref={inputRef}
@@ -141,14 +146,14 @@ export default function Chat() {
             <ArrowUp size={19} strokeWidth={2.5} />
           </button>
         </div>
-        <p className="mt-2.5 text-center text-[11px] muted">Assistant d'information : il ne remplace pas un·e professionnel·le.</p>
+        <p className="mt-2.5 text-center text-[11px] muted">{tx("Assistant d'information : il ne remplace pas un·e professionnel·le.", "Information assistant: it does not replace a professional.")}</p>
       </form>
     </div>
   );
 }
 
 function AssistantMessage({ msg }: { msg: Msg }) {
-  const { t } = usePrefs();
+  const { t, tx } = usePrefs();
   const [open, setOpen] = useState(false);
   const sources = msg.meta?.sources ?? [];
   return (
@@ -160,13 +165,13 @@ function AssistantMessage({ msg }: { msg: Msg }) {
           <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-sand-200 pt-3 dark:border-white/[0.06]">
             {sources.length > 0 && (
               <button onClick={() => setOpen((o) => !o)} className="inline-flex items-center gap-1.5 rounded-full bg-teal-soft px-3 py-1.5 text-xs font-bold text-teal-dark transition hover:bg-teal-soft/70 dark:bg-teal/15 dark:text-teal-light" aria-expanded={open}>
-                <BookOpen size={13} /> {sources.length} {sources.length > 1 ? "sources vérifiées" : "source vérifiée"}
+                <BookOpen size={13} /> {sources.length} {sources.length > 1 ? tx("sources vérifiées", "verified sources") : tx("source vérifiée", "verified source")}
                 <ChevronDown size={13} className={`transition ${open ? "rotate-180" : ""}`} />
               </button>
             )}
             {msg.meta?.suggest_directory && (
               <Link to="/aide" className="inline-flex items-center gap-1.5 rounded-full bg-ochre-soft px-3 py-1.5 text-xs font-bold text-ochre-dark transition hover:bg-ochre-light dark:bg-ochre/15 dark:text-ochre-light">
-                <HeartHandshake size={13} /> Trouver une structure d'aide
+                <HeartHandshake size={13} /> {tx("Trouver une structure d'aide", "Find a support organization")}
               </Link>
             )}
           </div>

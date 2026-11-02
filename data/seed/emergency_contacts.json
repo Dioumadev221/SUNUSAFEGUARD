@@ -1,9 +1,30 @@
 {
-  "_note": "Numéros d'urgence à VÉRIFIER et faire valider avant ouverture publique (CDC §6.3).",
+  "_note": "Numéros vérifiés le 02/11/2026 sur des sources publiques (voir _sources). À revérifier tous les 6 mois.",
   "contacts": [
-    {"label": "Police secours", "number": "17"},
-    {"label": "Sapeurs-pompiers", "number": "18"},
-    {"label": "SAMU national", "number": "1515"},
-    {"label": "Protection de l'enfance (ligne verte)", "number": "116"}
+    {
+      "label": "Police secours",
+      "number": "17"
+    },
+    {
+      "label": "Sapeurs-pompiers",
+      "number": "18"
+    },
+    {
+      "label": "SAMU national",
+      "number": "1515"
+    },
+    {
+      "label": "Allô 116 — écoute et protection de l'enfance (Centre Ginddi)",
+      "number": "116"
+    },
+    {
+      "label": "AJS — assistance juridique gratuite (numéro vert)",
+      "number": "800 805 805"
+    }
+  ],
+  "_sources": [
+    "https://senego.com/services/numeros-urgence",
+    "https://childhelplineinternational.org/senegal-centre-ginddi-allo-116/",
+    "https://femmesjuristes.org/?page_id=4330"
   ]
 }

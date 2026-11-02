@@ -1,8 +1,8 @@
 ---
 id: kb-003
 title: "Soutenir un proche en détresse"
-type: demo
-source: "Contenu de démonstration adapté de guides d'écoute de premier recours"
+type: fiche
+source: "GREEN T — fiche d'information adaptée de guides d'écoute de premier recours"
 verified: false
 last_reviewed: "2026-10-27"
 ---

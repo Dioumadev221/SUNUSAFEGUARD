@@ -1,6 +1,6 @@
 ---
 title: Prendre soin de son bien-être psychologique
-source: GREEN T — fiche de démonstration
+source: GREEN T — fiche d'information
 category: ecoute_psychosociale
 language: fr
 status: publie

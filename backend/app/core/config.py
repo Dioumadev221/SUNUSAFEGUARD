@@ -62,10 +62,30 @@ class Settings(BaseSettings):
     data_dir: str = str(ROOT_DIR / "data")
 
     @property
+    def is_production(self) -> bool:
+        return self.environment.lower() in {"production", "prod"}
+
+    def production_problems(self) -> list[str]:
+        """Réglages incompatibles avec une mise en service : l'API refuse de démarrer tant qu'il en reste."""
+        problems = []
+        if len(self.jwt_secret) < 32 or "change-me" in self.jwt_secret or "remplacer" in self.jwt_secret:
+            problems.append("JWT_SECRET : générer une valeur aléatoire d'au moins 32 caractères")
+        if not self.data_encryption_key:
+            problems.append("DATA_ENCRYPTION_KEY : générer une clé Fernet")
+        if self.database_url.startswith("sqlite"):
+            problems.append("DATABASE_URL : utiliser PostgreSQL, pas SQLite")
+        if any(o.startswith("http://") and "localhost" not in o for o in self.cors_list) or not self.cors_list:
+            problems.append("CORS_ORIGINS : indiquer les adresses https:// du site")
+        return problems
+
+    @property
     def cors_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    settings = Settings()
+    if settings.is_production and (problems := settings.production_problems()):
+        raise RuntimeError("Configuration de production incomplète :\n- " + "\n- ".join(problems))
+    return settings

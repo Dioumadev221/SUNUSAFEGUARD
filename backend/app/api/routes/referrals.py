@@ -14,6 +14,7 @@ from app.db.session import get_db
 from app.models import Organization, ReferralEvent, ReferralRequest, User
 from app.schemas import ReferralCreated, ReferralIn, ReferralStatusIn
 from app.services.audit import audit
+from app.services.partners import org_receives
 
 router = APIRouter(prefix="/referrals", tags=["Referral API"])
 
@@ -36,8 +37,8 @@ def create_referral(data: ReferralIn, db: Session = Depends(get_db), owner: User
     org = db.get(Organization, data.organization_id)
     if not org or not org.validated:
         raise HTTPException(404, "Structure introuvable")
-    # Sans compte actif, personne à la structure ne verrait la demande : on ne prétend pas la transmettre.
-    if db.scalar(select(User.id).where(User.organization_id == org.id, User.is_active.is_(True)).limit(1)) is None:
+    # Sans compte activé par la structure, personne ne verrait la demande : on ne prétend pas la transmettre.
+    if not org_receives(db, org.id):
         raise HTTPException(409, "Cette structure ne reçoit pas encore de demandes en ligne. Appelez-la directement.")
     code = "SSG-" + secrets.token_hex(4).upper()
     ref = ReferralRequest(public_code=code, organization_id=org.id, category=data.category, region=data.region,

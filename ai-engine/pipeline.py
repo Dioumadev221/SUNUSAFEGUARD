@@ -16,14 +16,17 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from embeddings import Embedder, HashingEmbedder
-from llm import SYSTEM_PROMPT, LLMUnavailable, OllamaClient, build_user_prompt, extractive_answer, template_message
+from llm import (SYSTEM_PROMPT, LLMUnavailable, OllamaClient, build_user_prompt, extractive_answer, opening_message,
+                 template_message)
 from multilingual import detect_language, expand_query
 from rag import Chunk, build_context, search
 from safety import check_input, check_output, classify_need
 
 # Les petits modèles open source ne maîtrisent pas le wolof : on répond en français simple,
 # précédé d'une phrase wolof validable (voir llm/fallback.py), plutôt que d'inventer du wolof.
-LANG_NAMES = {"fr": "français", "wo": "français simple (la personne a écrit en wolof : phrases très courtes, vocabulaire courant)"}
+LANG_NAMES = {"fr": "français",
+              "wo": "français uniquement, n'écris jamais en wolof (la personne a écrit en wolof : phrases très "
+                    "courtes, vocabulaire courant)"}
 
 
 @dataclass
@@ -115,6 +118,11 @@ class AssistantPipeline:
         urgent_floor = self.min_score + 0.08 if self.mode == "hybride" else self.min_score * 2
         floor = max(urgent_floor if decision.action == "urgent" else self.min_score, top_score * 0.6)
         relevant = [r for r in results if r.score >= floor]
+        # Priorité aux fiches du même besoin : une personne angoissée ne doit pas recevoir un extrait
+        # sur les violences économiques simplement parce qu'un mot est commun.
+        same_need = [r for r in relevant if r.chunk.metadata.get("category") == category]
+        if same_need:
+            relevant = same_need
         context, refs = build_context(relevant)
         ref_of = {cid: r["ref"] for r in refs for cid in r["chunk_ids"]}
         relevant = [r for r in relevant if r.chunk.id in ref_of]  # extraits réellement transmis
@@ -124,12 +132,20 @@ class AssistantPipeline:
             prefix = template_message("urgent_third_party" if decision.third_party else "urgent", lang)
         elif decision.action == "redirect_professional":
             prefix = template_message("redirect_professional", lang)
+        elif relevant:
+            prefix = opening_message(category, lang)
 
         used_llm = False
+        # Question en wolof : si des textes wolof validés répondent, on les restitue tels quels
+        # (pas de génération libre en wolof par le modèle, dont la qualité n'est pas garantie).
+        wolof = [r for r in relevant if r.chunk.metadata.get("language") == "wo"] if lang == "wo" else []
         if not relevant and decision.action == "urgent":
             body = ""
         elif not relevant:
             body = template_message("no_source", lang)
+        elif wolof:
+            body = extractive_answer(wolof, lang, ref_of=ref_of)
+            refs = [r for r in refs if any(cid in {w.chunk.id for w in wolof} for cid in r["chunk_ids"])]
         else:
             g0 = time.perf_counter()
             body = None
@@ -140,6 +156,9 @@ class AssistantPipeline:
                         build_user_prompt(message, context),
                     )
                     used_llm = True
+                    # Une réponse ne commence pas par une référence (« [1] … ») : lecture plus naturelle.
+                    body = re.sub(r"^\s*(\[\d+\]\s*)+", "", body).strip() or None
+                    used_llm = body is not None
                 except LLMUnavailable:
                     body = None
             if body is None:

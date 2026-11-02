@@ -10,7 +10,8 @@ const OFFLINE_CONTACTS: EmergencyContact[] = [
   { label: "Police secours", number: "17" },
   { label: "Sapeurs-pompiers", number: "18" },
   { label: "SAMU national", number: "1515" },
-  { label: "Protection de l'enfance (ligne verte)", number: "116" },
+  { label: "Allô 116 — écoute et protection de l'enfance (Centre Ginddi)", number: "116" },
+  { label: "AJS — assistance juridique gratuite (numéro vert)", number: "800 805 805" },
 ];
 
 /**

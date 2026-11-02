@@ -1,12 +1,14 @@
 """Commandes d'administration : python -m app.cli <commande>
 
-  seed [--no-synthetic]   charge les données de démonstration de data/
+  seed [--no-synthetic]   charge les données (en production : structures réelles, sans démonstration)
   evaluate                lance l'évaluation RAG et affiche le rapport
   reindex                 réindexe tous les documents (après changement d'embedder)
   ai-status               détecte Ollama, télécharge les modèles manquants et affiche l'état IA
   purge                   applique la politique de conservation (aussi lancée toutes les 24 h)
   create-admin EMAIL      crée un super administrateur (mot de passe demandé)
   import-orgs FICHIER [--hide-demo]   ajoute/met à jour des structures réelles (ex. data/seed/organizations_reelles.json)
+  invite-structures [FICHIER.csv]     crée un compte par structure réelle (mot de passe provisoire)
+  remove-demo             désactive les comptes de démonstration et masque les structures fictives
 """
 import getpass
 import json
@@ -79,22 +81,37 @@ def main(argv: list[str]) -> int:
             from pathlib import Path
 
             from app.models import Organization
+            from app.services.seed import import_organizations
 
-            items = json.loads(Path(args[0]).read_text(encoding="utf-8"))
-            for item in items:
-                item = {k: v for k, v in item.items() if not k.startswith("_")}
-                org = db.scalar(select(Organization).where(Organization.name == item["name"]))
-                if org is None:
-                    db.add(Organization(**item))
-                    print("ajoutée :", item["name"])
-                else:
-                    for key, value in item.items():
-                        setattr(org, key, value)
-                    print("mise à jour :", item["name"])
+            for change, name in import_organizations(db, Path(args[0])):
+                print(f"{change} : {name}")
             if "--hide-demo" in args:
                 for org in db.scalars(select(Organization).where(Organization.name.contains("DÉMO"))):
                     org.validated = False
                     print("masquée :", org.name)
+            db.commit()
+        elif cmd == "invite-structures":
+            # Un compte par structure validée qui n'en a pas ; identifiants écrits dans un CSV hors dépôt.
+            from pathlib import Path
+
+            from app.services.partners import invite_structures
+
+            output = Path(args[0]) if args else Path.home() / "identifiants-structures.csv"
+            created = invite_structures(db, output)
+            for row in created:
+                print(f"compte créé : {row['structure']} -> {row['identifiant']}")
+            print(f"{len(created)} compte(s) créé(s)" + (f", identifiants dans {output}" if created else ""))
+            print("Chaque structure reçoit les demandes après sa première connexion (mot de passe à remplacer).")
+        elif cmd == "remove-demo":
+            # Supprime les comptes de démonstration et masque les structures fictives (production).
+            from app.models import Organization, User
+
+            for user in db.scalars(select(User).where(User.email.like("%@sunusafeguard.local"))):
+                user.is_active = False
+                print("compte désactivé :", user.email)
+            for org in db.scalars(select(Organization).where(Organization.name.contains("DÉMO"))):
+                org.validated = False
+                print("masquée :", org.name)
             db.commit()
         elif cmd == "create-admin":
             from app.core.security import hash_password

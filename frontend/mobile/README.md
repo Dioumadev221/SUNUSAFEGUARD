@@ -23,8 +23,8 @@ Spécification : cahier des charges mobile v1.0. Guide utilisatrice : `docs/user
 | Sunu Écoute + Réponse | `src/app/response.tsx` | Micro (« Je parle » Français / Wolof), puis chat : `POST /api/chat` (canal `mobile`), alerte de crise, Être orientée / Réécouter / Autre question |
 | Sunu Ressources | `src/app/resources/` | Annuaire `GET /api/directory`, recherche, région, département, besoin, fiche, Appeler, copie hors connexion |
 | Mise en relation | `src/app/referral/[id].tsx` | Données transmises, niveau d'information choisi, consentement, `POST /api/referrals`, code de suivi |
-| Sunu Session | `src/app/session.tsx` | Statut réel (`GET /api/referrals/status/{code}`), code de retour, « Effacer toute trace » |
-| Sunu Discret | `src/components/security/StealthInterface.tsx`, `src/app/stealth.tsx` | « Sortir » → vraie calculatrice ; retour : code + « = » (1234 par défaut) |
+| Sunu Session | `src/app/session.tsx` | Statut réel (`GET /api/referrals/status/{code}`), « Effacer toute trace » |
+| Sortie rapide | `src/components/security/QuickExit.tsx`, `src/components/security/ExitScreen.tsx` | « Sortir » efface la conversation et ferme l'app (Android) ; écran noir vide sur iPhone |
 
 ## Voix (gratuite, locale)
 
@@ -36,7 +36,7 @@ Spécification : cahier des charges mobile v1.0. Guide utilisatrice : `docs/user
 ## Confidentialité, côté téléphone
 
 - Conversation en mémoire seulement (effacée à la fermeture, à « Sortir », à l'effacement).
-- Codes de suivi, code de retour, réglages : stockage chiffré du système (`expo-secure-store`). Demande close effacée 30 jours après, toute demande après 180 jours.
+- Codes de suivi, réglages : stockage chiffré du système (`expo-secure-store`). Demande close effacée 30 jours après, toute demande après 180 jours.
 - Annuaire public copié localement pour le hors connexion (aucune donnée personnelle), effacé par « Effacer toute trace ».
 - Android : écran masqué dans les apps récentes et captures bloquées. iOS : flou dans le sélecteur d'apps.
 - Micro et lecture coupés en arrière-plan et à « Sortir ». Aucune notification. Permissions : micro uniquement.
@@ -53,7 +53,7 @@ iOS : nécessite un compte Apple Developer (payant).
 
 ```powershell
 npx tsc --noEmit     # typage
-npx jest             # 11 tests (calculatrice, disponibilité, conservation locale, lecture vocale)
+npx jest             # 8 tests (disponibilité, conservation locale, lecture vocale)
 npx expo-doctor      # configuration Expo (20/20)
 ```
 Côté serveur : `backend/tests/test_mobile.py` (canal mobile, limites de l'API vocale).

@@ -33,6 +33,6 @@ Graphiques : sarcelle, ocre, encre, sauge, terre, prune (`src/lib/chart.ts`) —
 
 Mode discret (sombre) accessible en un clic dans l'en-tête et appliqué automatiquement si le téléphone
 est en mode sombre ; photos atténuées dans ce mode. Bouton « Sortir » (sans icône) toujours visible, y compris sur
-mobile (Échap ×2) : il efface la session et remplace la page par google.com. Titre d'onglet neutre (« Sunu — Infos et orientation »). Cibles tactiles ≥ 44 px.
+mobile (Échap ×2) : il efface la session et ferme l'onglet, ou le remplace par une page vide. Titre d'onglet neutre (« Sunu — Infos et orientation »). Cibles tactiles ≥ 44 px.
 Animations désactivées si l'appareil demande moins d'animations. Graphiques chargés uniquement dans les
 espaces professionnels.

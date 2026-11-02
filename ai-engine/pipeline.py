@@ -143,7 +143,8 @@ class AssistantPipeline:
             prefix = template_message("urgent_third_party" if decision.third_party else "urgent", lang)
         elif decision.action == "redirect_professional":
             prefix = template_message("redirect_professional", lang)
-        elif relevant:
+        else:
+            # Même sans fiche trouvée, la personne est d'abord accueillie selon son besoin.
             prefix = opening_message(category, lang)
 
         used_llm = False

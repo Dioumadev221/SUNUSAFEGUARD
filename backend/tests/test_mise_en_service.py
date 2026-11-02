@@ -90,3 +90,90 @@ def test_accueil_chaleureux_selon_le_besoin():
     assert "pas votre faute" in opening_message("violences_physiques_verbales", "fr")
     assert opening_message("autre", "fr") == ""
     assert "reformuler" in template_message("no_source", "fr")
+
+
+def test_consigne_selon_le_besoin_et_sans_renvois():
+    from llm.prompts import SYSTEM_PROMPT, build_user_prompt
+
+    prompt = build_user_prompt("Mon ex publie mes photos", "[1] extrait", "cyberharcelement")
+    assert "ne pas répondre à l'auteur" in prompt
+    assert "confronter l'auteur" in SYSTEM_PROMPT
+
+
+@pytest.mark.parametrize("text,reason", [
+    ("Prenez des captures d'écran. Ensuite, envoyez un message clair à votre ex pour qu'il retire les photos. "
+     "Signalez le contenu à WhatsApp.", "confrontation"),
+    ("Prenez des captures d'écran. Des associations peuvent vous aider, comme l'ACRO ou l'AFED. "
+     "Signalez le contenu à WhatsApp.", "organisation_inconnue"),
+])
+def test_nettoyage_des_reponses(text, reason):
+    from llm.postprocess import clean_answer
+
+    cleaned, reasons = clean_answer(text, "Signaler le contenu à WhatsApp.")
+    assert reason in reasons
+    assert "ex pour" not in cleaned and "ACRO" not in cleaned
+    assert "captures" in cleaned
+
+
+def test_tutoiement_converti_en_vouvoiement():
+    from llm.postprocess import clean_answer
+
+    cleaned, _ = clean_answer("Je comprends que tu te sens triste. Tu peux parler à une personne de confiance.", "")
+    assert cleaned == "Je comprends que vous vous sentez triste. Vous pouvez parler à une personne de confiance."
+
+
+def test_ne_pas_contacter_l_auteur_reste_autorise():
+    from llm.postprocess import clean_answer
+
+    text = "Ne répondez pas à votre ex et ne lui écrivez pas. Gardez des preuves de chaque message reçu."
+    cleaned, reasons = clean_answer(text, "")
+    assert cleaned == text and not reasons
+
+
+def test_suite_orpheline_et_imperatifs():
+    from llm.postprocess import clean_answer
+
+    cleaned, reasons = clean_answer("Ne répondez pas. Envoyez un message à votre ex. Si cela ne fonctionne pas, "
+                                    "insistez. Changez vos mots de passe.", "")
+    assert cleaned == "Ne répondez pas. Changez vos mots de passe." and "suite_orpheline" in reasons
+    cleaned, _ = clean_answer("Planifie tes révisions, et prends soin de toi. Vous pouvez voir un·e psychologue ou·e.", "")
+    assert cleaned == "Planifiez vos révisions, et prenez soin de vous. Vous pouvez voir un·e psychologue."
+
+
+def test_repli_sans_renvois():
+    from llm import extractive_answer
+    from rag.retriever import Chunk, ScoredChunk
+
+    chunk = Chunk(id=1, document_id=1, text="Il est utile de parler à une personne de confiance quand le stress monte.",
+                  embedding=None)
+    assert "[1]" not in extractive_answer([ScoredChunk(chunk, 0.5)], "fr")
+
+
+def test_negation_ailleurs_ne_masque_pas_la_confrontation():
+    from llm.postprocess import clean_answer
+
+    text = ("Gardez des preuves. Envoyez un message clair à votre ex pour lui dire que vous ne souhaitez plus "
+            "avoir de contact avec lui. Ne répondez pas aux messages insultants.")
+    cleaned, reasons = clean_answer(text, "")
+    assert "confrontation" in reasons
+    assert cleaned == "Gardez des preuves. Ne répondez pas aux messages insultants."
+    text = "N'envoyez pas de message à votre ex. Évitez de parler avec votre ex."
+    assert clean_answer(text, "")[0] == text
+
+
+def test_imperatifs_en_debut_de_phrase():
+    from llm.postprocess import clean_answer
+
+    cleaned, _ = clean_answer("1. Essaye de dormir à heure fixe. 2. Pratique une activité calme. "
+                              "Encourage-vous à parler à un proche.", "")
+    assert "Essayez de dormir" in cleaned and "Pratiquez une activité" in cleaned
+    assert "Je vous encourage à parler" in cleaned
+
+
+def test_petites_tournures_corrigees():
+    from llm.postprocess import clean_answer
+
+    cleaned, _ = clean_answer("Il existe des recours décrits dans le contexte pour vous aider. Parlez à quelqu'un "
+                              "que vous pouvez confier vos sentiments. Vous n'êtes pas seule·e.", "")
+    assert cleaned == ("Il existe des recours pour vous aider. Parlez à quelqu'un à qui vous pouvez confier "
+                       "vos sentiments. Vous n'êtes pas seule.")

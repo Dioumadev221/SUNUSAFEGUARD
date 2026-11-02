@@ -18,6 +18,7 @@ from typing import Callable
 from embeddings import Embedder, HashingEmbedder
 from llm import (SYSTEM_PROMPT, LLMUnavailable, OllamaClient, build_user_prompt, extractive_answer, opening_message,
                  template_message)
+from llm.postprocess import clean_answer
 from multilingual import detect_language, expand_query
 from rag import Chunk, build_context, search
 from safety import check_input, check_output, classify_need
@@ -82,7 +83,14 @@ class AssistantPipeline:
                 self.mode = "hybride"
             except Exception:  # noqa: BLE001 — modèle indisponible : repli lexical
                 self.mode = "lexical"
+        self._last_vectors = (qvec, qlex)
         return query, search(qvec, self.chunk_loader(), top_k or self.top_k, min_score, query_lex=qlex)
+
+    def retrieve_in_category(self, category: str, top_k: int = 2) -> list:
+        """Meilleurs passages des fiches du besoin détecté (repli quand la recherche générale ne les classe pas)."""
+        qvec, qlex = getattr(self, "_last_vectors", (None, None))
+        chunks = [c for c in self.chunk_loader() if c.metadata.get("category") == category]
+        return [r for r in search(qvec, chunks, top_k, 0.0, query_lex=qlex) if r.score > 0.03]
 
     def run(self, message: str, debug: bool = False) -> PipelineResult:
         t: dict[str, float] = {}
@@ -123,6 +131,10 @@ class AssistantPipeline:
         same_need = [r for r in relevant if r.chunk.metadata.get("category") == category]
         if same_need:
             relevant = same_need
+        elif category != "autre" and decision.action != "urgent":
+            # Besoin clairement identifié (ex. « il garde tout mon salaire ») mais formulé avec d'autres mots
+            # que la fiche : on s'appuie sur la fiche de ce besoin plutôt que de ne rien répondre.
+            relevant = self.retrieve_in_category(category) or relevant
         context, refs = build_context(relevant)
         ref_of = {cid: r["ref"] for r in refs for cid in r["chunk_ids"]}
         relevant = [r for r in relevant if r.chunk.id in ref_of]  # extraits réellement transmis
@@ -132,7 +144,8 @@ class AssistantPipeline:
             prefix = template_message("urgent_third_party" if decision.third_party else "urgent", lang)
         elif decision.action == "redirect_professional":
             prefix = template_message("redirect_professional", lang)
-        elif relevant:
+        else:
+            # Même sans fiche trouvée, la personne est d'abord accueillie selon son besoin.
             prefix = opening_message(category, lang)
 
         used_llm = False
@@ -153,11 +166,17 @@ class AssistantPipeline:
                 try:
                     body = self.llm.chat(
                         SYSTEM_PROMPT.format(language=LANG_NAMES.get(lang, "français")),
-                        build_user_prompt(message, context),
+                        build_user_prompt(message, context, category),
                     )
                     used_llm = True
-                    # Une réponse ne commence pas par une référence (« [1] … ») : lecture plus naturelle.
-                    body = re.sub(r"^\s*(\[\d+\]\s*)+", "", body).strip() or None
+                    # Les sources sont affichées à part : on retire les renvois « [1] » du texte.
+                    body = re.sub(r"[ \t]*\[\d+(?:,\s*\d+)*\]", "", body)
+                    body = re.sub(r"(?m)^\s*[-•]\s*", "- ", body).strip()
+                    # Garde-fous déterministes : confrontation avec l'auteur, organisation inventée, tutoiement.
+                    body, cleaning = clean_answer(body, context)
+                    if cleaning:
+                        base["safety_reasons"] = list(base.get("safety_reasons") or decision.reasons) + [
+                            f"output:{r}" for r in cleaning]
                     used_llm = body is not None
                 except LLMUnavailable:
                     body = None

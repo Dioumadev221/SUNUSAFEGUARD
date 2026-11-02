@@ -1,28 +1,32 @@
 ---
 id: kb-006
-title: "Confidentialité et limites du prototype"
+title: "Confidentialité de vos échanges"
 type: fiche
 source: "SunuSafeguard AI — notice de confidentialité"
 verified: false
-last_reviewed: "2026-10-27"
+last_reviewed: "2026-11-02"
 ---
 
-# Confidentialité et limites du prototype
+# Confidentialité de vos échanges
 
-SunuSafeguard AI a été conçu selon les principes de confidentialité par conception. Cette fiche explique comment les données sont traitées dans le prototype actuel.
+SunuSafeguard AI a été conçu pour protéger la confidentialité des personnes qui l'utilisent. Cette fiche explique ce qui est fait de ce que vous écrivez.
 
-## Données conservées
+## Vos messages ne sont pas conservés
 
-Le prototype ne conserve pas les messages de conversation. Lorsqu'une requête est envoyée au modèle d'IA, le texte est traité temporairement en mémoire et n'est pas écrit sur disque. Aucun identifiant personnel n'est demandé ni associé à l'usage.
+Les messages échangés avec l'assistant ne sont pas enregistrés sur nos serveurs. Ils sont traités le temps de préparer la réponse, puis oubliés. L'historique reste dans votre onglet ou dans l'application, et disparaît quand vous le fermez, l'effacez ou utilisez le bouton « Sortir ». Aucun nom ni compte n'est demandé pour parler à l'assistant.
 
-## Mesures agrégées
+## Des statistiques anonymes
 
-Le prototype conserve uniquement des compteurs agrégés : nombre total de requêtes, distribution des sujets abordés, et nombre de réponses produites par le modèle. Ces compteurs ne permettent pas de relier une requête à une personne.
+Seules des informations générales sont comptées, comme la langue utilisée ou le type de besoin. Elles ne contiennent aucun texte et aucun identifiant, et ne permettent pas de relier une question à une personne. Les petits chiffres ne sont jamais publiés.
 
-## Limites du prototype
+## Une structure ne vous contacte qu'avec votre accord
 
-Le prototype ne dispose pas encore d'authentification, ne met pas en œuvre de chiffrement de bout en bout au-delà du HTTPS du déploiement, et n'a pas fait l'objet d'une évaluation clinique. Il ne doit pas être utilisé comme seul moyen de soutien en situation de détresse grave.
+Si vous demandez à être rappelée par une structure d'aide, vos coordonnées ne lui sont transmises que si vous cochez la case de consentement. Elles sont chiffrées, puis effacées après le traitement de la demande.
 
-## Signalement d'un problème
+## Aucun signalement automatique
 
-Les utilisateurs qui remarqueraient un comportement anormal ou une erreur peuvent interrompre l'utilisation et, s'ils le souhaitent, faire part de l'observation à l'équipe projet. Aucune donnée nominative n'est collectée à cette fin.
+L'assistant ne prévient jamais la police, votre famille ou une autre personne à votre place.
+
+## Ce que l'assistant ne remplace pas
+
+L'assistant donne des informations et oriente vers des personnes qui peuvent aider. Il ne remplace pas un médecin, un psychologue ou un juriste. En cas de danger immédiat, appelez les numéros d'urgence affichés dans l'application.

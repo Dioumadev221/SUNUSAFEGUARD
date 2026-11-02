@@ -1,15 +1,17 @@
 import { NavLink, Navigate, Outlet, useLocation } from "react-router-dom";
 import { BarChart3, BookOpen, Cpu, LogOut, Network, ShieldAlert, UserCog } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { clean, ROLE_LABELS } from "@/lib/labels";
+import { clean, role } from "@/lib/labels";
+import { usePrefs } from "@/lib/prefs";
+import LanguageSwitch from "./LanguageSwitch";
 import Logo from "./Logo";
 import { Loading } from "./ui";
 
 export const DASHBOARDS = {
-  impact: { label: "Impact", sub: "Pilotage institutionnel", icon: BarChart3 },
-  orientation: { label: "Orientation", sub: "Réseau humain", icon: Network },
-  ressources: { label: "Ressources", sub: "Connaissances & RAG", icon: BookOpen },
-  tech: { label: "Tech", sub: "Supervision technique", icon: Cpu },
+  impact: { label: "Impact", en: "Impact", sub: "Pilotage institutionnel", subEn: "Institutional steering", icon: BarChart3 },
+  orientation: { label: "Orientation", en: "Support network", sub: "Réseau humain", subEn: "Human network", icon: Network },
+  ressources: { label: "Ressources", en: "Resources", sub: "Connaissances & RAG", subEn: "Knowledge & RAG", icon: BookOpen },
+  tech: { label: "Tech", en: "Tech", sub: "Supervision technique", subEn: "Technical monitoring", icon: Cpu },
 } as const;
 
 const item = ({ isActive }: { isActive: boolean }) =>
@@ -19,6 +21,7 @@ const item = ({ isActive }: { isActive: boolean }) =>
 
 export default function DashboardLayout() {
   const { user, loading, logout } = useAuth();
+  const { tx, lang } = usePrefs();
   const loc = useLocation();
   if (loading) return <div className="p-8"><Loading /></div>;
   if (!user) return <Navigate to="/pro" replace />;
@@ -33,31 +36,35 @@ export default function DashboardLayout() {
     <div className="flex min-h-screen flex-col md:flex-row">
       <aside className="weave-texture relative flex flex-col gap-4 bg-night px-4 py-4 text-sand-100 md:sticky md:top-0 md:h-screen md:w-64 md:py-7 dark:bg-night-900">
         <div className="flex items-center justify-between px-2 md:mb-6">
-          <Logo size={32} sub="Espace pro" inverted />
-          <button onClick={logout} className="btn h-9 min-h-0 px-3 text-sand-100/70 hover:bg-white/10 md:hidden" aria-label="Se déconnecter"><LogOut size={16} /></button>
+          <Logo size={32} sub={tx("Espace pro", "Pro area")} inverted />
+          <span className="flex items-center gap-1">
+            <LanguageSwitch className="h-9 border-white/15 text-sand-100/80 hover:border-white/40 md:hidden" />
+            <button onClick={logout} className="btn h-9 min-h-0 px-3 text-sand-100/70 hover:bg-white/10 md:hidden" aria-label={tx("Se déconnecter", "Sign out")}><LogOut size={16} /></button>
+          </span>
         </div>
-        <nav className="flex gap-1 overflow-x-auto md:flex-col" aria-label="Tableaux de bord">
+        <nav className="flex gap-1 overflow-x-auto md:flex-col" aria-label={tx("Tableaux de bord", "Dashboards")}>
           {user.dashboards.map((d) => {
             const meta = DASHBOARDS[d as keyof typeof DASHBOARDS];
             const Icon = meta.icon;
-            return <NavLink key={d} to={`/espace/${d}`} className={item} title={meta.sub}><Icon size={18} strokeWidth={1.8} /> {meta.label}</NavLink>;
+            return <NavLink key={d} to={`/espace/${d}`} className={item} title={lang === "en" ? meta.subEn : meta.sub}><Icon size={18} strokeWidth={1.8} /> {lang === "en" ? meta.en : meta.label}</NavLink>;
           })}
-          <NavLink to="/espace/compte" className={item}><UserCog size={18} strokeWidth={1.8} /> Mon compte</NavLink>
+          <NavLink to="/espace/compte" className={item}><UserCog size={18} strokeWidth={1.8} /> {tx("Mon compte", "My account")}</NavLink>
         </nav>
-        <div className="mt-auto hidden items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:flex">
+        <LanguageSwitch className="mt-auto hidden self-start border-white/15 text-sand-100/80 hover:border-white/40 md:inline-flex" />
+        <div className="hidden items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:flex">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ochre-light font-display text-sm font-semibold text-night">{initials}</span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-semibold">{clean(user.full_name)}</span>
-            <span className="block truncate text-xs text-sand-100/50">{ROLE_LABELS[user.role]}</span>
+            <span className="block truncate text-xs text-sand-100/50">{role(user.role, lang)}</span>
           </span>
-          <button onClick={logout} className="rounded-lg p-1.5 text-sand-100/50 hover:bg-white/10 hover:text-white" aria-label="Se déconnecter" title="Se déconnecter"><LogOut size={16} /></button>
+          <button onClick={logout} className="rounded-lg p-1.5 text-sand-100/50 hover:bg-white/10 hover:text-white" aria-label={tx("Se déconnecter", "Sign out")} title={tx("Se déconnecter", "Sign out")}><LogOut size={16} /></button>
         </div>
       </aside>
       <main className="min-w-0 flex-1 px-4 py-6 md:px-10 md:py-10">
         <div className="mx-auto max-w-6xl">
           {user.mfa_setup_required && current !== "compte" && (
             <NavLink to="/espace/compte" className="mb-6 flex items-center gap-2 rounded-2xl bg-warn/10 px-4 py-2.5 text-sm text-warn">
-              <ShieldAlert size={16} /> Activez la double authentification pour sécuriser votre compte <span className="ml-auto font-semibold">Activer →</span>
+              <ShieldAlert size={16} /> {tx("Activez la double authentification pour sécuriser votre compte", "Turn on two-factor authentication to secure your account")} <span className="ml-auto font-semibold">{tx("Activer →", "Turn on →")}</span>
             </NavLink>
           )}
           <Outlet />
@@ -68,15 +75,16 @@ export default function DashboardLayout() {
 }
 
 function AccessDenied({ onLogout }: { onLogout: () => void }) {
+  const { tx } = usePrefs();
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="card max-w-md space-y-4 p-8 text-center" role="alert">
         <ShieldAlert className="mx-auto text-warn" size={36} />
-        <h1 className="text-3xl">Accès refusé</h1>
-        <p className="muted">Ce compte n'a pas accès à l'espace professionnel. L'administration est réservée aux comptes habilités.</p>
+        <h1 className="text-3xl">{tx("Accès refusé", "Access denied")}</h1>
+        <p className="muted">{tx("Ce compte n'a pas accès à l'espace professionnel. L'administration est réservée aux comptes habilités.", "This account cannot access the professional area. Administration is limited to authorized accounts.")}</p>
         <div className="flex flex-col gap-2">
-          <NavLink to="/" className="btn-primary">Retour à l'accueil</NavLink>
-          <button onClick={onLogout} className="btn-ghost">Se déconnecter</button>
+          <NavLink to="/" className="btn-primary">{tx("Retour à l'accueil", "Back to home")}</NavLink>
+          <button onClick={onLogout} className="btn-ghost">{tx("Se déconnecter", "Sign out")}</button>
         </div>
       </div>
     </div>

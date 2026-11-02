@@ -1,4 +1,5 @@
 import { Count } from "./ui";
+import { usePrefs } from "@/lib/prefs";
 
 /** Carte schématique des 14 régions (tuiles positionnées approximativement, pas à l'échelle).
  *  Évite de charger un fond cartographique externe ; une carte PostGIS fine pourra la remplacer. */
@@ -11,6 +12,7 @@ const TILES: Record<string, [number, number]> = {
 type Region = { region: string; count: number | null; wolof_share: number | null };
 
 export default function RegionMap({ data, metric }: { data: Region[]; metric: "count" | "wolof" }) {
+  const { tx } = usePrefs();
   const byName = Object.fromEntries(data.map((r) => [r.region, r]));
   const max = Math.max(1, ...data.map((r) => r.count ?? 0));
   const value = (r?: Region) => (metric === "count" ? (r?.count ?? null) !== null ? (r!.count as number) / max : null : r?.wolof_share ?? null);
@@ -33,9 +35,11 @@ export default function RegionMap({ data, metric }: { data: Region[]; metric: "c
             </div>
           );
         })}
-        <div style={{ gridColumn: "1 / 6", gridRow: 5 }} className="flex items-center justify-center text-[10px] muted">— Gambie —</div>
+        <div style={{ gridColumn: "1 / 6", gridRow: 5 }} className="flex items-center justify-center text-[10px] muted">— {tx("Gambie", "Gambia")} —</div>
       </div>
-      <p className="mt-2 text-xs muted">Schéma de position des régions, non à l'échelle. Teinte proportionnelle {metric === "count" ? "au volume" : "à la part du wolof"} ; gris = masqué (&lt; 5) ou sans donnée.</p>
+      <p className="mt-2 text-xs muted">{metric === "count"
+        ? tx("Schéma de position des régions, non à l'échelle. Teinte proportionnelle au volume ; gris = masqué (< 5) ou sans donnée.", "Schematic layout of regions, not to scale. Shade proportional to volume; grey = hidden (< 5) or no data.")
+        : tx("Schéma de position des régions, non à l'échelle. Teinte proportionnelle à la part du wolof ; gris = masqué (< 5) ou sans donnée.", "Schematic layout of regions, not to scale. Shade proportional to the Wolof share; grey = hidden (< 5) or no data.")}</p>
     </div>
   );
 }

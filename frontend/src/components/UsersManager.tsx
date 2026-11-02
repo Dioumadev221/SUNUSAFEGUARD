@@ -2,7 +2,8 @@ import { useState, type FormEvent } from "react";
 import { UserPlus } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { clean, fmtDate, ROLE_LABELS } from "@/lib/labels";
+import { clean, fmtDate, role } from "@/lib/labels";
+import { usePrefs } from "@/lib/prefs";
 import type { Organization, User } from "@/lib/types";
 import { useFetch } from "@/lib/useFetch";
 import { Badge, ErrorNote, Loading } from "./ui";
@@ -10,6 +11,7 @@ import { Badge, ErrorNote, Loading } from "./ui";
 /** Gestion des comptes (super admin : tous ; responsable partenaire : sa structure). */
 export default function UsersManager() {
   const { user: me } = useAuth();
+  const { tx, lang } = usePrefs();
   const users = useFetch<User[]>("/users");
   const roles = useFetch<{ id: string; label: string }[]>("/users/roles");
   const orgs = useFetch<Organization[]>(me?.role === "super_admin" ? "/directory/manage" : null);
@@ -54,36 +56,36 @@ export default function UsersManager() {
   return (
     <div className="space-y-4">
       <form onSubmit={create} className="card grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <div className="lg:col-span-2"><label className="label">E-mail professionnel</label><input className="input" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-        <div><label className="label">Nom complet</label><input className="input" required minLength={2} value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
-        <div><label className="label">Rôle</label>
+        <div className="lg:col-span-2"><label className="label">{tx("E-mail professionnel", "Work email")}</label><input className="input" type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
+        <div><label className="label">{tx("Nom complet", "Full name")}</label><input className="input" required minLength={2} value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} /></div>
+        <div><label className="label">{tx("Rôle", "Role")}</label>
           <select className="input" required value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-            <option value="" disabled>Choisir un rôle…</option>
-            {roles.data?.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+            <option value="" disabled>{tx("Choisir un rôle…", "Choose a role…")}</option>
+            {roles.data?.map((r) => <option key={r.id} value={r.id}>{role(r.id, lang)}</option>)}
           </select>
         </div>
         {me?.role === "super_admin" && (
-          <div><label className="label">Structure</label>
+          <div><label className="label">{tx("Structure", "Organization")}</label>
             <select className="input" value={form.organization_id} onChange={(e) => setForm({ ...form, organization_id: e.target.value })}>
-              <option value="">Aucune</option>
+              <option value="">{tx("Aucune", "None")}</option>
               {orgs.data?.map((o) => <option key={o.id} value={o.id}>{clean(o.name)}</option>)}
             </select>
           </div>
         )}
-        <div className="flex items-end lg:col-span-5"><button className="btn-primary"><UserPlus size={16} /> Créer le compte</button></div>
+        <div className="flex items-end lg:col-span-5"><button className="btn-primary"><UserPlus size={16} /> {tx("Créer le compte", "Create account")}</button></div>
       </form>
       {secret && (
         <div role="status" className="rounded-xl border border-warn/40 bg-warn/10 p-3 text-sm">
-          Mot de passe provisoire pour <strong>{secret.email}</strong> : <code className="font-mono text-base">{secret.password}</code>
-          <p className="mt-1 text-xs muted">Transmettez-le par un canal sûr. Il ne sera plus affiché ; la personne devra le changer à sa première connexion.</p>
-          <button className="mt-2 text-xs underline" onClick={() => setSecret(null)}>Masquer</button>
+          {tx("Mot de passe provisoire pour", "Temporary password for")} <strong>{secret.email}</strong> : <code className="font-mono text-base">{secret.password}</code>
+          <p className="mt-1 text-xs muted">{tx("Transmettez-le par un canal sûr. Il ne sera plus affiché ; la personne devra le changer à sa première connexion.", "Share it through a safe channel. It will not be shown again; the person must change it at first sign-in.")}</p>
+          <button className="mt-2 text-xs underline" onClick={() => setSecret(null)}>{tx("Masquer", "Hide")}</button>
         </div>
       )}
       <ErrorNote error={error ?? users.error} />
       {!users.data ? <Loading /> : (
         <div className="card overflow-x-auto">
           <table className="table">
-            <thead><tr><th>Compte</th><th>Rôle</th><th>Structure</th><th>Sécurité</th><th>Dernière connexion</th><th>Actions</th></tr></thead>
+            <thead><tr><th>{tx("Compte", "Account")}</th><th>{tx("Rôle", "Role")}</th><th>{tx("Structure", "Organization")}</th><th>{tx("Sécurité", "Security")}</th><th>{tx("Dernière connexion", "Last sign-in")}</th><th>{tx("Actions", "Actions")}</th></tr></thead>
             <tbody>
               {users.data.map((u) => (
                 <tr key={u.id} className={u.is_active ? "" : "opacity-50"}>
@@ -91,21 +93,21 @@ export default function UsersManager() {
                   <td>
                     <select className="rounded-lg border border-sand-200 bg-transparent px-2 py-1 text-xs dark:border-night-700" value={u.role} disabled={u.id === me?.id}
                       onChange={(e) => patch(u, { role: e.target.value })}>
-                      {(roles.data ?? []).concat(roles.data?.some((r) => r.id === u.role) ? [] : [{ id: u.role, label: ROLE_LABELS[u.role] }]).map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
+                      {(roles.data ?? []).concat(roles.data?.some((r) => r.id === u.role) ? [] : [{ id: u.role, label: u.role }]).map((r) => <option key={r.id} value={r.id}>{role(r.id, lang)}</option>)}
                     </select>
                   </td>
                   <td className="text-xs">{orgName(u.organization_id)}</td>
                   <td className="space-x-1">
-                    {u.mfa_active ? <Badge tone="bg-success/15 text-success">2FA</Badge> : u.mfa_setup_required ? <Badge tone="bg-warn/15 text-warn">2FA à activer</Badge> : null}
-                    {u.must_change_password && <Badge tone="bg-warn/15 text-warn">mdp provisoire</Badge>}
-                    {!u.is_active && <Badge tone="bg-slate-500/15 text-slate-400">désactivé</Badge>}
+                    {u.mfa_active ? <Badge tone="bg-success/15 text-success">2FA</Badge> : u.mfa_setup_required ? <Badge tone="bg-warn/15 text-warn">{tx("2FA à activer", "2FA to set up")}</Badge> : null}
+                    {u.must_change_password && <Badge tone="bg-warn/15 text-warn">{tx("mdp provisoire", "temporary password")}</Badge>}
+                    {!u.is_active && <Badge tone="bg-slate-500/15 text-slate-400">{tx("désactivé", "disabled")}</Badge>}
                   </td>
-                  <td className="text-xs">{fmtDate(u.last_login_at)}</td>
+                  <td className="text-xs">{fmtDate(u.last_login_at, lang)}</td>
                   <td className="space-x-1 whitespace-nowrap">
                     {u.id !== me?.id && (
                       <>
-                        <button className="rounded-lg border border-sand-200 px-2 py-1 text-xs dark:border-night-700" onClick={() => patch(u, { is_active: !u.is_active })}>{u.is_active ? "Désactiver" : "Réactiver"}</button>
-                        <button className="rounded-lg border border-sand-200 px-2 py-1 text-xs dark:border-night-700" onClick={() => reset(u)}>Réinitialiser</button>
+                        <button className="rounded-lg border border-sand-200 px-2 py-1 text-xs dark:border-night-700" onClick={() => patch(u, { is_active: !u.is_active })}>{u.is_active ? tx("Désactiver", "Disable") : tx("Réactiver", "Re-enable")}</button>
+                        <button className="rounded-lg border border-sand-200 px-2 py-1 text-xs dark:border-night-700" onClick={() => reset(u)}>{tx("Réinitialiser", "Reset")}</button>
                       </>
                     )}
                   </td>

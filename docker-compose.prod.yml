@@ -1,0 +1,46 @@
+# Mise en service sur un serveur :
+#   cp .env.production.example .env   puis remplir chaque valeur
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# Seuls les ports 80 et 443 sont ouverts ; l'API et la base ne sont pas exposées.
+services:
+  postgres:
+    restart: unless-stopped
+  redis:
+    restart: unless-stopped
+  ollama:
+    restart: unless-stopped
+  backend:
+    restart: unless-stopped
+    environment:
+      ENVIRONMENT: production
+    ports: !reset []
+  frontend:
+    restart: unless-stopped
+    ports: !reset []
+  caddy:
+    image: caddy:2.8.4-alpine
+    restart: unless-stopped
+    depends_on: [frontend]
+    environment:
+      DOMAIN: ${DOMAIN:?Renseigner DOMAIN dans .env}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./infrastructure/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+  backup:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    depends_on: [postgres]
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-sunu}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB:-sunusafeguard}
+    volumes: ["./backups:/backups"]
+    # Sauvegarde quotidienne, conservation 14 jours.
+    entrypoint: ["sh", "-c", "while true; do pg_dump -Fc > /backups/sunusafeguard-$$(date +%F).dump && find /backups -name '*.dump' -mtime +14 -delete; sleep 86400; done"]
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AVAILABILITY } from "@/lib/labels";
+import { usePrefs } from "@/lib/prefs";
 
 export function Badge({ children, tone = "bg-teal-soft text-teal-dark dark:bg-teal/15 dark:text-teal-light" }: { children: ReactNode; tone?: string }) {
   return <span className={`inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${tone}`}>{children}</span>;
@@ -45,7 +46,8 @@ export function ErrorNote({ error }: { error: string | null }) {
 }
 
 export function Loading() {
-  return <p className="muted animate-pulse">Chargement…</p>;
+  const { tx } = usePrefs();
+  return <p className="muted animate-pulse">{tx("Chargement…", "Loading…")}</p>;
 }
 
 /** Affiche un effectif agrégé ; null = masqué par le seuil de confidentialité. */

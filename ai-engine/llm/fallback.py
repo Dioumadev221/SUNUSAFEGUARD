@@ -62,12 +62,12 @@ MESSAGES = {
     "site_directory": {
         "fr": "Pour voir les structures d'aide, ouvrez la page « Trouver de l'aide » (« Find help » si le site est "
               "affiché en anglais). Elle se trouve dans le menu en haut de l'écran, et vous pouvez aussi toucher "
-              "le lien « Trouver une structure d'aide » juste sous ce message.\n\n"
+              "le lien juste sous ce message.\n\n"
               "Sur cette page, choisissez votre besoin (écoute, violences, droits et justice, santé, hébergement, "
               "harcèlement en ligne) et votre région. Pour chaque structure, vous pouvez l'appeler directement, "
               "ou demander à être rappelée quand c'est proposé. C'est vous qui décidez.",
         "wo": "Ngir gis bérab yi di dimbali, ubbil xët wi « Trouver de l'aide » ci kaw, walla bësal "
-              "« Trouver une structure d'aide » ci suufu bataaxal bii. Tànnal li nga soxla ak sa diwaan, "
+              "lien bi ci suufu bataaxal bii. Tànnal li nga soxla ak sa diwaan, "
               "te mën ngaa woo bérab bi ci saa si.",
     },
     "fallback_intro": {

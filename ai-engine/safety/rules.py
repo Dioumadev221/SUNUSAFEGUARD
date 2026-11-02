@@ -10,7 +10,7 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
-RULES_VERSION = "2026.10-phase2"
+RULES_VERSION = "2026.11-mise-en-service"
 
 
 def _norm(text: str) -> str:
@@ -48,6 +48,17 @@ INJECTION_PATTERNS = [
     r"tu es maintenant", r"you are now", r"agis comme si tu n'avais (pas|aucune) regle",
     r"revele (ton|tes|le) (prompt|instructions|configuration)",
     r"<\s*/?\s*(system|assistant)\s*>", r"\bdeveloper mode\b",
+    # Formes plus libres : « ignore tes instructions », « oublie tout ce qu'on t'a dit », « disregard … »
+    # (?<!ai ) : « j'ai oublié les consignes du médecin » n'est pas une tentative de détournement.
+    r"(?<!ai )(?<!as )\b(ignore[rz]?|oublie[rz]?|neglige[rz]?|contourne[rz]?|desactive[rz]?)\b (\w+ ){0,3}(tes|vos|ton|votre|toutes? tes|toutes? vos)\b.{0,15}\b(instructions?|regles?|consignes?|directives?|restrictions?|garde-fous?|filtres?)\b",
+    r"(?<!ai )(?<!as )\b(ignore[rz]?|oublie[rz]?|neglige[rz]?|contourne[rz]?|desactive[rz]?)\b (\w+ ){0,3}(les|ces|toutes? les)\b.{0,15}\b(instructions?|consignes? (precedentes?|du systeme)|directives?|garde-fous?|filtres?)\b",
+    r"(?<!ai )\boublie[rz]? (tout|ce qu'on t'a dit)\b",
+    r"\b(ignore|disregard|forget|bypass|override)\b.{0,30}\b(instructions?|rules?|guidelines?|prompt|restrictions?)\b",
+    r"\b(fais comme si|imagine que|fais semblant) (tu )?(n'avais|n'as|etais) (pas|aucune?|plus)\b.{0,20}\b(regle|limite|filtre)",
+    r"\b(act as|pretend (to be|you are))\b",
+    # Tentatives d'extraction de données d'autres personnes
+    r"\b(donne|liste|montre|affiche|envoie|revele|communique|transmets?)[a-z-]*\b.{0,40}\b(numeros?|telephones?|adresses?|e-?mails?|donnees|conversations?|messages?|mots? de passe|identifiants?|contacts?)\b.{0,30}\b(utilisat\w*|usagere?s?|femmes|victimes|personnes|autres|clientes?|membres|comptes?)\b",
+    r"\b(base de donnees|database|dump|sql)\b.{0,30}\b(utilisat\w*|users?|comptes?|contenu|tables?)\b",
 ]
 
 # --- Demandes clairement hors périmètre -------------------------------------------

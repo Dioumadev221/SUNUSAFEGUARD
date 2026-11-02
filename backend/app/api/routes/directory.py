@@ -10,6 +10,7 @@ from app.db.session import get_db
 from app.models import Organization, ServiceAvailability, User
 from app.schemas import AvailabilityIn, OrganizationIn, OrganizationOut
 from app.services.audit import audit
+from app.services.partners import receiving_org_ids
 
 router = APIRouter(prefix="/directory", tags=["Service Directory API"])
 
@@ -31,7 +32,7 @@ def _get(db: Session, org_id: int) -> Organization:
 def public_directory(region: str | None = None, domain: str | None = None, db: Session = Depends(get_db)):
     """Annuaire public : uniquement les structures validées."""
     orgs = db.scalars(select(Organization).where(Organization.validated.is_(True)).order_by(Organization.region))
-    receiving = set(db.scalars(select(User.organization_id).where(User.is_active.is_(True), User.organization_id.is_not(None))))
+    receiving = receiving_org_ids(db)
     return [
         OrganizationOut.model_validate(o).model_copy(update={"accepts_referrals": o.id in receiving})
         for o in orgs

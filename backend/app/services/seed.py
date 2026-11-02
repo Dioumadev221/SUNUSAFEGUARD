@@ -10,7 +10,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
@@ -46,6 +46,23 @@ def seed_organizations(db: Session, data_dir: Path) -> dict[str, Organization]:
         orgs[item["name"]] = org
     db.flush()
     return orgs
+
+
+def import_organizations(db: Session, path: Path) -> list[tuple[str, str]]:
+    """Ajoute ou met à jour (par nom) des structures depuis un fichier JSON. Les clés « _… » sont ignorées."""
+    changes = []
+    for item in json.loads(path.read_text(encoding="utf-8")):
+        item = {k: v for k, v in item.items() if not k.startswith("_")}
+        org = db.scalar(select(Organization).where(Organization.name == item["name"]))
+        if org is None:
+            db.add(Organization(**item, last_verified_at=datetime.now(timezone.utc)))
+            changes.append(("ajoutée", item["name"]))
+        else:
+            for key, value in item.items():
+                setattr(org, key, value)
+            changes.append(("mise à jour", item["name"]))
+    db.flush()
+    return changes
 
 
 def seed_users(db: Session, data_dir: Path, orgs: dict[str, Organization]) -> None:
@@ -146,9 +163,17 @@ def seed_referrals(db: Session, orgs: dict[str, Organization]) -> None:
 
 
 def seed_all(db: Session, synthetic: bool = True) -> dict:
-    data_dir = Path(get_settings().data_dir)
-    orgs = seed_organizations(db, data_dir)
-    seed_users(db, data_dir, orgs)
+    """Développement : structures, comptes et activité de démonstration.
+    Production : structures réelles uniquement, aucun compte ni activité de démonstration."""
+    settings = get_settings()
+    data_dir = Path(settings.data_dir)
+    if settings.is_production:
+        import_organizations(db, data_dir / "seed" / "organizations_reelles.json")
+        orgs = {}
+        synthetic = False
+    else:
+        orgs = seed_organizations(db, data_dir)
+        seed_users(db, data_dir, orgs)
     docs = seed_knowledge(db, data_dir)
     if not db.scalar(select(SafetyRule).limit(1)):
         db.add(SafetyRule(version=RULES_VERSION, description="Règles déterministes initiales (Phase 1)"))
@@ -161,4 +186,4 @@ def seed_all(db: Session, synthetic: bool = True) -> dict:
         seed_synthetic_activity(db)
         seed_referrals(db, orgs)
     db.commit()
-    return {"organizations": len(orgs), "documents_indexed": docs}
+    return {"organizations": db.scalar(select(func.count(Organization.id))), "documents_indexed": docs}

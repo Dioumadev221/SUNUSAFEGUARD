@@ -126,10 +126,16 @@ class AssistantPipeline:
             prefix = template_message("redirect_professional", lang)
 
         used_llm = False
+        # Question en wolof : si des textes wolof validés répondent, on les restitue tels quels
+        # (pas de génération libre en wolof par le modèle, dont la qualité n'est pas garantie).
+        wolof = [r for r in relevant if r.chunk.metadata.get("language") == "wo"] if lang == "wo" else []
         if not relevant and decision.action == "urgent":
             body = ""
         elif not relevant:
             body = template_message("no_source", lang)
+        elif wolof:
+            body = extractive_answer(wolof, lang, ref_of=ref_of)
+            refs = [r for r in refs if any(cid in {w.chunk.id for w in wolof} for cid in r["chunk_ids"])]
         else:
             g0 = time.perf_counter()
             body = None

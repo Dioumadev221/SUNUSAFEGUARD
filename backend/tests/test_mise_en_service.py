@@ -168,3 +168,12 @@ def test_imperatifs_en_debut_de_phrase():
                               "Encourage-vous à parler à un proche.", "")
     assert "Essayez de dormir" in cleaned and "Pratiquez une activité" in cleaned
     assert "Je vous encourage à parler" in cleaned
+
+
+def test_petites_tournures_corrigees():
+    from llm.postprocess import clean_answer
+
+    cleaned, _ = clean_answer("Il existe des recours décrits dans le contexte pour vous aider. Parlez à quelqu'un "
+                              "que vous pouvez confier vos sentiments. Vous n'êtes pas seule·e.", "")
+    assert cleaned == ("Il existe des recours pour vous aider. Parlez à quelqu'un à qui vous pouvez confier "
+                       "vos sentiments. Vous n'êtes pas seule.")

@@ -33,6 +33,13 @@ TU_REPLACEMENTS = [
 ]
 # « ou·e », « et·e » : point médian accroché à un mot qui ne s'accorde pas.
 BROKEN_INCLUSIVE = re.compile(r"\b(ou|et|de|des|les|le|la|à|au|aux|en|pour|avec)·e\b")
+# Doublement du féminin (« seule·e ») et petites tournures fautives fréquentes du modèle.
+DOUBLED_FEMININE = re.compile(r"\b(\w+e)·e\b")
+FIXES = [
+    (re.compile(r"\bque vous pouvez confier\b"), "à qui vous pouvez confier"),
+    (re.compile(r"\s*(décrits?|décrites?|mentionnée?s?|présentée?s?)? ?dans le contexte\b"), ""),
+    (re.compile(r"\bdérangeé\b"), "dérangée"),
+]
 # Phrase qui ne se comprend qu'avec la précédente (« Si cela ne fonctionne pas… »).
 DEPENDENT_START = re.compile(r"^(si (cela|ca|ce n'est|elle|il)|sinon|ensuite|dans ce cas|puis|apres cela)\b")
 IMPERATIVES = {"prends": "prenez", "fais": "faites", "essaie": "essayez", "parle": "parlez", "respire": "respirez",
@@ -105,6 +112,9 @@ def clean_answer(text: str, context: str) -> tuple[str | None, list[str]]:
     """Retourne (texte nettoyé ou None, raisons)."""
     reasons, kept = [], []
     text = BROKEN_INCLUSIVE.sub(r"\1", text)
+    text = DOUBLED_FEMININE.sub(r"\1", text)
+    for pattern, repl in FIXES:
+        text = pattern.sub(repl, text)
     previous_removed = False
     for line in text.split("\n"):
         parts = []

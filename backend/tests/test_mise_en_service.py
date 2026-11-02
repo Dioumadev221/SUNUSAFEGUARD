@@ -147,3 +147,24 @@ def test_repli_sans_renvois():
     chunk = Chunk(id=1, document_id=1, text="Il est utile de parler à une personne de confiance quand le stress monte.",
                   embedding=None)
     assert "[1]" not in extractive_answer([ScoredChunk(chunk, 0.5)], "fr")
+
+
+def test_negation_ailleurs_ne_masque_pas_la_confrontation():
+    from llm.postprocess import clean_answer
+
+    text = ("Gardez des preuves. Envoyez un message clair à votre ex pour lui dire que vous ne souhaitez plus "
+            "avoir de contact avec lui. Ne répondez pas aux messages insultants.")
+    cleaned, reasons = clean_answer(text, "")
+    assert "confrontation" in reasons
+    assert cleaned == "Gardez des preuves. Ne répondez pas aux messages insultants."
+    text = "N'envoyez pas de message à votre ex. Évitez de parler avec votre ex."
+    assert clean_answer(text, "")[0] == text
+
+
+def test_imperatifs_en_debut_de_phrase():
+    from llm.postprocess import clean_answer
+
+    cleaned, _ = clean_answer("1. Essaye de dormir à heure fixe. 2. Pratique une activité calme. "
+                              "Encourage-vous à parler à un proche.", "")
+    assert "Essayez de dormir" in cleaned and "Pratiquez une activité" in cleaned
+    assert "Je vous encourage à parler" in cleaned

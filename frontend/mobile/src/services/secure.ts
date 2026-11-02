@@ -7,6 +7,8 @@ import { Platform } from "react-native";
  */
 const memory = new Map<string, string>();
 const native = Platform.OS !== "web";
+// Navigateur : seul le jeton de session survit à un rechargement (onglet en cours), comme sur le site.
+const tab = (key: string) => (key === KEYS.token && typeof sessionStorage !== "undefined" ? sessionStorage : null);
 
 export const KEYS = {
   referrals: "ssg.referrals",
@@ -14,18 +16,25 @@ export const KEYS = {
   stealth: "ssg.stealth",
   autoRead: "ssg.autoRead",
   theme: "ssg.theme",
+  token: "ssg.token",
 } as const;
 
 export async function getItem(key: string): Promise<string | null> {
-  return native ? SecureStore.getItemAsync(key) : memory.get(key) ?? null;
+  if (native) return SecureStore.getItemAsync(key);
+  return tab(key)?.getItem(key) ?? memory.get(key) ?? null;
 }
 
 export async function setItem(key: string, value: string): Promise<void> {
   if (native) await SecureStore.setItemAsync(key, value);
+  else if (tab(key)) tab(key)!.setItem(key, value);
   else memory.set(key, value);
 }
 
 export async function deleteItem(key: string): Promise<void> {
   if (native) await SecureStore.deleteItemAsync(key);
-  else memory.delete(key);
+  else {
+    tab(key)?.removeItem(key);
+    memory.delete(key);
+  }
 }
+

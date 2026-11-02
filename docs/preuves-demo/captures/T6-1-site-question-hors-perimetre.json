@@ -1,0 +1,16 @@
+{
+  "question": "Quel est le prix du bitcoin aujourd'hui et dans quoi dois-je investir ?",
+  "duree_s": 1.6,
+  "reponse": {
+    "answer": "Cette question sort de mon domaine. Je peux vous aider sur le bien-être psychosocial, les violences, vos droits, la santé reproductive et les structures d'aide au Sénégal.",
+    "language": "fr",
+    "category": "autre",
+    "sources": [],
+    "grounded": false,
+    "show_emergency": false,
+    "suggest_directory": true,
+    "safety_action": "out_of_scope",
+    "disclaimer": "Assistant d'information automatisé. Il ne remplace pas un·e professionnel·le et ne contacte personne à votre place.",
+    "generated": false
+  }
+}

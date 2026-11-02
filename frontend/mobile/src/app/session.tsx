@@ -3,8 +3,10 @@ import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
 import { router } from "expo-router";
 import Screen from "@/components/common/Screen";
 import { Button, Card, Em, Eyebrow, Notice, T } from "@/components/common/ui";
-import { RefreshCw, ShieldCheck, Trash2 } from "lucide-react-native";
-import { loadReferrals, refreshReferral, removeReferral } from "@/services/referrals.service";
+import { RefreshCw, ShieldCheck, Trash2, UserRound } from "lucide-react-native";
+import { loadReferrals, mergeServerReferrals, refreshReferral, removeReferral } from "@/services/referrals.service";
+import { myReferrals } from "@/services/auth.service";
+import { useSession } from "@/store/session";
 import { DEFAULT_EXIT_CODE, getExitCode, panicWipe, setExitCode } from "@/services/session.service";
 import { fmtDate, fmtDateTime } from "@/constants/labels";
 import type { StoredReferral } from "@/types";
@@ -23,6 +25,7 @@ const STATUS_TONE: Record<string, "ok" | "wait" | "end"> = {
 /** Écran 4 — Sunu Session : carnet des demandes, code de retour, effacement des traces. */
 export default function Session() {
   const c = useColors();
+  const account = useSession((s) => s.account);
   const [items, setItems] = useState<StoredReferral[] | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [offline, setOffline] = useState(false);
@@ -37,6 +40,14 @@ export default function Session() {
     let list = await loadReferrals();
     setItems(list);
     let failed = false;
+    if (useSession.getState().account) {
+      // Avec un compte : les demandes du compte (et seulement les siennes) sont aussi lues sur le serveur.
+      try {
+        list = await mergeServerReferrals(await myReferrals());
+      } catch {
+        failed = true;
+      }
+    }
     for (const r of list) {
       try {
         list = await refreshReferral(r.code);
@@ -52,7 +63,7 @@ export default function Session() {
   useEffect(() => {
     void refreshAll();
     void getExitCode().then(setCode);
-  }, [refreshAll]);
+  }, [refreshAll, account]);
 
   const saveCode = async () => {
     if (!/^\d{3,8}$/.test(draftCode)) return;
@@ -83,6 +94,15 @@ export default function Session() {
           L'échange avec l'assistant reste sur ce téléphone le temps de la session. Le serveur ne garde que des chiffres anonymes (langue, thème), jamais vos messages.
         </T>
       </Notice>
+
+      <Pressable accessibilityRole="link" onPress={() => router.push("/account")}>
+        <Card flat style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <UserRound color={c.accent} size={20} />
+          <T variant="small" style={{ flex: 1 }}>
+            {account ? `Connectée : ${account.name}` : "Sans compte : vos demandes restent seulement sur ce téléphone. Se connecter ou créer un compte"}
+          </T>
+        </Card>
+      </Pressable>
 
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <T variant="heading">Demandes en cours</T>

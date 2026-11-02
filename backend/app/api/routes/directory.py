@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import require
+from app.core.permissions import is_global
 from app.db.session import get_db
 from app.models import Organization, ServiceAvailability, User
 from app.schemas import AvailabilityIn, OrganizationIn, OrganizationOut
@@ -15,7 +16,7 @@ router = APIRouter(prefix="/directory", tags=["Service Directory API"])
 
 def _scope_check(user: User, org: Organization) -> None:
     """Un partenaire n'agit que sur sa propre structure (CDC §4.4)."""
-    if user.role != "super_admin" and user.organization_id != org.id:
+    if not is_global(user.role) and user.organization_id != org.id:
         raise HTTPException(403, "Cette structure ne relève pas de votre périmètre")
 
 
@@ -41,7 +42,7 @@ def public_directory(region: str | None = None, domain: str | None = None, db: S
 @router.get("/manage", response_model=list[OrganizationOut])
 def manage_list(user: User = Depends(require("directory:availability")), db: Session = Depends(get_db)):
     q = select(Organization).order_by(Organization.name)
-    if user.role != "super_admin":
+    if not is_global(user.role):
         q = q.where(Organization.id == user.organization_id)
     return list(db.scalars(q))
 
@@ -63,7 +64,7 @@ def update(org_id: int, data: OrganizationIn, user: User = Depends(require("dire
     _scope_check(user, org)
     for key, value in data.model_dump().items():
         setattr(org, key, value)
-    if user.role != "super_admin":
+    if not is_global(user.role):
         org.validated = False  # Toute modification partenaire repasse en validation.
     audit(db, user, "organization_update", f"organization:{org.id}")
     db.commit()

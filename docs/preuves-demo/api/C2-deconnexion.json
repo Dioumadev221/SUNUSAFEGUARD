@@ -1,0 +1,7 @@
+{
+ "me_avant": 200,
+ "jeton_altere": 401,
+ "logout": 204,
+ "me_apres_logout": 401,
+ "page_protegee_apres_logout": 401
+}

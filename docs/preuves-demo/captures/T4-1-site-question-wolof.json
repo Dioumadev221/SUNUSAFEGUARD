@@ -1,0 +1,25 @@
+{
+  "question": "Sama jëkkër dafay dóor, lan laa war def ?",
+  "duree_s": 26.9,
+  "reponse": {
+    "answer": "Maa ngi lay tontu ci français ngir xibaar bi wóor. Su la soxla, laajal ndimbal ci kenn ku xam wolof.\n\n[1] Si vous subissez des violences physiques ou verbales, il est important de savoir que vous avez des droits. Consultez un juriste pour obtenir des informations précises pour votre situation.",
+    "language": "wo",
+    "category": "violences_physiques_verbales",
+    "sources": [
+      {
+        "ref": 1,
+        "document_id": 2,
+        "title": "Violences physiques et verbales — vos droits au Sénégal",
+        "source": "GREEN T — synthèse de démonstration (Code pénal, loi n° 99-05)",
+        "section": "Ce que dit la loi · La violence n'est jamais normale",
+        "score": 0.4283
+      }
+    ],
+    "grounded": true,
+    "show_emergency": false,
+    "suggest_directory": true,
+    "safety_action": "allow",
+    "disclaimer": "Assistant d'information automatisé. Il ne remplace pas un·e professionnel·le et ne contacte personne à votre place.",
+    "generated": true
+  }
+}

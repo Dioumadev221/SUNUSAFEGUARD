@@ -47,19 +47,27 @@ export type Transcription = { text: string; language: "fr" | "wo"; duration: num
 
 /** Envoie le message vocal au serveur (Whisper local) et renvoie le texte reconnu. */
 export async function transcribe(uri: string, language: "fr" | "wo"): Promise<Transcription> {
-  const form = new FormData();
-  form.append("language", language);
-  if (Platform.OS === "web") {
-    const blob = await (await fetch(uri)).blob();
-    form.append("audio", blob, "voix.webm");
-  } else {
-    form.append("audio", { uri, name: "voix.m4a", type: "audio/m4a" } as unknown as Blob);
-  }
   let res: Response;
   try {
-    res = await fetch(`${API_BASE}/voice/transcribe`, { method: "POST", body: form });
-  } catch {
-    throw new ApiError(0, "Connexion impossible. Vérifiez votre réseau puis réessayez.");
+    if (Platform.OS === "web") {
+      const form = new FormData();
+      form.append("language", language);
+      form.append("audio", await (await fetch(uri)).blob(), "voix.webm");
+      res = await fetch(`${API_BASE}/voice/transcribe`, { method: "POST", body: form });
+    } else {
+      // Sur téléphone, l'envoi de fichier en multipart échoue sur iOS : on lit le fichier et on l'envoie en base64.
+      const { File } = await import("expo-file-system");
+      const audio = await new File(uri).base64();
+      res = await fetch(`${API_BASE}/voice/transcribe-base64`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ audio, language }),
+      });
+    }
+  } catch (e) {
+    // En développement, on affiche la cause exacte pour pouvoir diagnostiquer depuis le téléphone.
+    const why = __DEV__ && e instanceof Error ? ` (${e.message})` : "";
+    throw new ApiError(0, `Connexion impossible. Vérifiez votre réseau puis réessayez.${why}`);
   }
   if (!res.ok) {
     let detail = "La reconnaissance vocale n'a pas fonctionné. Réessayez ou écrivez votre question.";

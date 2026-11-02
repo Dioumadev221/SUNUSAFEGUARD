@@ -23,6 +23,7 @@ def _parse(rule: str) -> tuple[int, int]:
 def _rules() -> dict[str, tuple[int, int]]:
     s = get_settings()
     return {"/api/chat": _parse(s.rate_limit_chat), "/api/auth/login": _parse(s.rate_limit_login),
+            "/api/auth/register": _parse(s.rate_limit_login),
             "/api/auth/mfa/verify": _parse(s.rate_limit_login), "/api/referrals": _parse(s.rate_limit_login)}
 
 

@@ -43,6 +43,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     accept(await api<TokenResponse>("/auth/mfa/verify", { method: "POST", json: { mfa_token: mfaToken, code } }));
 
   const logout = () => {
+    // Fermeture côté serveur : le jeton est révoqué et ne rouvre plus les pages protégées.
+    if (tokenStore.get()) api("/auth/logout", { method: "POST" }).catch(() => undefined);
     tokenStore.clear();
     setUser(null);
   };

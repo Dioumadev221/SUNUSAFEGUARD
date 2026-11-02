@@ -2,7 +2,7 @@ import { Image, Pressable, StyleSheet, Text, View, type ImageSourcePropType } fr
 import { router } from "expo-router";
 import {
   ArrowRight, ArrowUpRight, HeartHandshake, House, Scale, ShieldAlert,
-  ShieldCheck, Smartphone, Stethoscope, type LucideIcon,
+  ShieldCheck, Smartphone, Stethoscope, UserRound, type LucideIcon,
 } from "lucide-react-native";
 import Screen from "@/components/common/Screen";
 import { Button, Em, Eyebrow, T } from "@/components/common/ui";
@@ -25,6 +25,7 @@ const TOPICS: { icon: LucideIcon; title: string; ask: string; img: ImageSourcePr
 export default function Home() {
   const c = useColors();
   const setDraft = useSession((s) => s.setDraft);
+  const account = useSession((s) => s.account);
   // Comme sur le site : un sujet pré-remplit la question sans l'envoyer, la personne garde la main.
   const openTopic = (ask: string) => {
     setDraft(ask);
@@ -92,6 +93,11 @@ export default function Home() {
           </T>
         </View>
         <ArrowRight size={18} color={c.accent} />
+      </Pressable>
+
+      <Pressable accessibilityRole="link" onPress={() => router.push("/account")} style={{ flexDirection: "row", alignItems: "center", gap: 8, alignSelf: "center", padding: 8 }}>
+        <UserRound size={16} color={c.accent} />
+        <T variant="small" style={{ color: c.accent, fontFamily: fonts.semibold }}>{account ? `Mon compte · ${account.name}` : "Mon compte (facultatif)"}</T>
       </Pressable>
 
       <SafetyAlert note="Appel gratuit, 24 h/24." />

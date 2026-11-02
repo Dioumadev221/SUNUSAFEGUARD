@@ -84,9 +84,18 @@ class ReferralRequest(TimestampMixin, Base):
     status: Mapped[str] = mapped_column(String(40), default="en_attente_consentement")
     consent_given: Mapped[bool] = mapped_column(Boolean, default=False)
     contact_encrypted: Mapped[str] = mapped_column(Text, default="")
+    # Compte utilisateur à l'origine de la demande (facultatif : l'usage anonyme reste possible).
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
     organization: Mapped[Organization] = relationship()
     events: Mapped[list["ReferralEvent"]] = relationship(back_populates="referral", order_by="ReferralEvent.id")
+
+
+class RevokedToken(Base):
+    """Jetons invalidés à la déconnexion, conservés jusqu'à leur expiration naturelle."""
+    __tablename__ = "revoked_tokens"
+    jti: Mapped[str] = mapped_column(String(64), primary_key=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
 
 
 class ReferralEvent(TimestampMixin, Base):

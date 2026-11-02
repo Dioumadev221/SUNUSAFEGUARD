@@ -22,6 +22,8 @@ export default function DashboardLayout() {
   const loc = useLocation();
   if (loading) return <div className="p-8"><Loading /></div>;
   if (!user) return <Navigate to="/pro" replace />;
+  // Compte utilisateur (application) : aucun tableau de bord, l'espace professionnel est refusé.
+  if (user.dashboards.length === 0) return <AccessDenied onLogout={logout} />;
   const current = loc.pathname.split("/")[2];
   if (user.must_change_password && current !== "compte") return <Navigate to="/espace/compte" replace />;
   if (current && current !== "compte" && !user.dashboards.includes(current)) return <Navigate to={`/espace/${user.dashboards[0]}`} replace />;
@@ -61,6 +63,22 @@ export default function DashboardLayout() {
           <Outlet />
         </div>
       </main>
+    </div>
+  );
+}
+
+function AccessDenied({ onLogout }: { onLogout: () => void }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="card max-w-md space-y-4 p-8 text-center" role="alert">
+        <ShieldAlert className="mx-auto text-warn" size={36} />
+        <h1 className="text-3xl">Accès refusé</h1>
+        <p className="muted">Ce compte n'a pas accès à l'espace professionnel. L'administration est réservée aux comptes habilités.</p>
+        <div className="flex flex-col gap-2">
+          <NavLink to="/" className="btn-primary">Retour à l'accueil</NavLink>
+          <button onClick={onLogout} className="btn-ghost">Se déconnecter</button>
+        </div>
+      </div>
     </div>
   );
 }

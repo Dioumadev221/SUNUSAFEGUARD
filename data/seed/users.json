@@ -1,5 +1,8 @@
 [
-  {"email": "superadmin@sunusafeguard.local", "full_name": "Super Admin (démo)", "role": "super_admin"},
+  {"email": "superadmin@sunusafeguard.local", "full_name": "Super Admin GREEN T (démo)", "role": "super_admin"},
+  {"email": "operationnel@sunusafeguard.local", "full_name": "Admin opérationnel (démo)", "role": "admin_operationnel"},
+  {"email": "utilisateur@sunusafeguard.local", "full_name": "Awa (utilisatrice de test)", "role": "utilisateur"},
+  {"email": "utilisateur2@sunusafeguard.local", "full_name": "Fatou (utilisatrice de test 2)", "role": "utilisateur"},
   {"email": "tech@sunusafeguard.local", "full_name": "Admin technique (démo)", "role": "admin_technique"},
   {"email": "impact@sunusafeguard.local", "full_name": "Responsable institutionnel (démo)", "role": "responsable_institutionnel"},
   {"email": "analyste@sunusafeguard.local", "full_name": "Analyste (démo)", "role": "analyste"},

@@ -32,6 +32,16 @@ TU_REPLACEMENTS = [
     (r"\bn'hésite pas\b", "n'hésitez pas"), (r"\bte stressent\b", "vous stressent"), (r"\bte\b", "vous"),
     (r"\bt'", "vous "), (r"\btoi\b", "vous"), (r"\bton\b", "votre"), (r"\bta\b", "votre"), (r"\btes\b", "vos"),
 ]
+# « ou·e », « et·e » : point médian accroché à un mot qui ne s'accorde pas.
+BROKEN_INCLUSIVE = re.compile(r"\b(ou|et|de|des|les|le|la|à|au|aux|en|pour|avec)·e\b")
+# Phrase qui ne se comprend qu'avec la précédente (« Si cela ne fonctionne pas… »).
+DEPENDENT_START = re.compile(r"^(si (cela|ca|ce n'est|elle|il)|sinon|ensuite|dans ce cas|puis|apres cela)\b")
+IMPERATIVES = {"prends": "prenez", "fais": "faites", "essaie": "essayez", "parle": "parlez", "respire": "respirez",
+               "écris": "écrivez", "garde": "gardez", "sois": "soyez", "demande": "demandez", "contacte": "contactez",
+               "appelle": "appelez", "consulte": "consultez", "accorde": "accordez", "prévois": "prévoyez",
+               "planifie": "planifiez", "va": "allez", "rapproche-toi": "rapprochez-vous", "oublie": "oubliez"}
+IMPERATIVE_RE = re.compile(r"(^|[.!?]\s+|,\s*(?:et\s+)?|\bet\s+|\bn')(" + "|".join(map(re.escape, IMPERATIVES)) + r")\b",
+                           re.I)
 TU_LEFT = re.compile(r"\b(tu|te|toi|ton|ta|tes)\b", re.I)
 
 
@@ -55,35 +65,43 @@ def _unknown_acronyms(sentence: str, context: str) -> list[str]:
     return [a for a in found if a not in KNOWN_ACRONYMS and a not in context]
 
 
-def to_vous(text: str) -> str | None:
-    """Convertit les formes de tutoiement courantes ; None s'il en reste (réponse à rejeter)."""
-    def keep_case(repl):
-        return lambda m: repl[:1].upper() + repl[1:] if m.group(0)[:1].isupper() else repl
+def _same_case(source: str, repl: str) -> str:
+    return repl[:1].upper() + repl[1:] if source[:1].isupper() else repl
 
+
+def to_vous(text: str) -> str | None:
+    """Convertit les formes de tutoiement courantes ; None s'il en reste (phrase à retirer)."""
+    if TU_LEFT.search(text) or re.search(r"\b(n'hésite|prends soin)\b", text, re.I):
+        text = IMPERATIVE_RE.sub(
+            lambda m: m.group(1) + _same_case(m.group(2), IMPERATIVES[m.group(2).lower()]), text)
     for pattern, repl in TU_REPLACEMENTS:
-        text = re.sub(pattern, keep_case(repl), text, flags=re.I)
+        text = re.sub(pattern, lambda m, r=repl: _same_case(m.group(0), r), text, flags=re.I)
     return None if TU_LEFT.search(text) else text
 
 
 def clean_answer(text: str, context: str) -> tuple[str | None, list[str]]:
     """Retourne (texte nettoyé ou None, raisons)."""
     reasons, kept = [], []
+    text = BROKEN_INCLUSIVE.sub(r"\1", text)
+    previous_removed = False
     for line in text.split("\n"):
         parts = []
         for s in _sentences(line):
-            if _is_confrontation(s):
-                reasons.append("confrontation")
-                continue
-            if _unknown_acronyms(s, context):
-                reasons.append("organisation_inconnue")
+            reason = ("confrontation" if _is_confrontation(s) else
+                      "organisation_inconnue" if _unknown_acronyms(s, context) else
+                      "suite_orpheline" if previous_removed and DEPENDENT_START.match(_norm(s.strip())) else None)
+            if reason is None:
+                vous = to_vous(s)
+                reason = "tutoiement" if vous is None else None
+                s = vous or s
+            previous_removed = reason is not None
+            if reason:
+                reasons.append(reason)
                 continue
             parts.append(s.strip())
         if parts or not line.strip():
             kept.append(" ".join(parts))
     cleaned = re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip()
+    cleaned = re.sub(r"\s+(ou|et)\s*([.!?])", r"\2", cleaned)  # « … un psychologue ou. »
     cleaned = re.sub(r"(?m)^-\s*$\n?", "", cleaned)
-    vous = to_vous(cleaned)
-    if vous is None:
-        reasons.append("tutoiement")
-        return None, reasons
-    return (vous if len(vous) > 40 else None), reasons
+    return (cleaned if len(cleaned) > 40 else None), reasons

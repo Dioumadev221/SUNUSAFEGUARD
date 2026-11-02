@@ -128,3 +128,22 @@ def test_ne_pas_contacter_l_auteur_reste_autorise():
     text = "Ne répondez pas à votre ex et ne lui écrivez pas. Gardez des preuves de chaque message reçu."
     cleaned, reasons = clean_answer(text, "")
     assert cleaned == text and not reasons
+
+
+def test_suite_orpheline_et_imperatifs():
+    from llm.postprocess import clean_answer
+
+    cleaned, reasons = clean_answer("Ne répondez pas. Envoyez un message à votre ex. Si cela ne fonctionne pas, "
+                                    "insistez. Changez vos mots de passe.", "")
+    assert cleaned == "Ne répondez pas. Changez vos mots de passe." and "suite_orpheline" in reasons
+    cleaned, _ = clean_answer("Planifie tes révisions, et prends soin de toi. Vous pouvez voir un·e psychologue ou·e.", "")
+    assert cleaned == "Planifiez vos révisions, et prenez soin de vous. Vous pouvez voir un·e psychologue."
+
+
+def test_repli_sans_renvois():
+    from llm import extractive_answer
+    from rag.retriever import Chunk, ScoredChunk
+
+    chunk = Chunk(id=1, document_id=1, text="Il est utile de parler à une personne de confiance quand le stress monte.",
+                  embedding=None)
+    assert "[1]" not in extractive_answer([ScoredChunk(chunk, 0.5)], "fr")

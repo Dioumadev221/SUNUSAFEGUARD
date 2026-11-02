@@ -115,6 +115,6 @@ def extractive_answer(results: list[ScoredChunk], lang: str, max_sentences: int 
         ranked = sorted(sentences, key=lambda s: -sum(w in s.lower() for w in ACTION_WORDS))
         keep = set(ranked[: max(1, max_sentences // 2)])
         excerpt = ". ".join(s for s in sentences if s in keep).rstrip(".") + "."
-        lines.append(f"• {excerpt} [{i}]")
+        lines.append(f"• {excerpt}")  # les sources sont listées sous la réponse
     lines.append(template_message("fallback_outro", lang))
     return "\n\n".join(lines)

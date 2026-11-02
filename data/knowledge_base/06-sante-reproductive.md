@@ -1,6 +1,6 @@
 ---
 title: Santé reproductive et bien-être
-source: GREEN T — fiche de démonstration
+source: GREEN T — fiche d'information
 category: sante_reproductive
 language: fr
 status: publie

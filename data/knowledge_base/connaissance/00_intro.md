@@ -1,19 +1,19 @@
 ---
 id: kb-000
-title: "A propos de SunuSafeguard AI (prototype)"
-type: demo
-source: "SunuSafeguard AI — contenu de démonstration"
+title: "À propos de SunuSafeguard AI"
+type: fiche
+source: "SunuSafeguard AI"
 verified: false
 last_reviewed: "2026-10-27"
 ---
 
-# À propos de SunuSafeguard AI (prototype)
+# À propos de SunuSafeguard AI
 
-SunuSafeguard AI est un prototype expérimental d'information psychosociale conçu pour le contexte sénégalais. Il fournit des informations générales sur le bien-être psychosocial et oriente les utilisateurs vers des ressources d'aide, lorsqu'elles ont été vérifiées.
+SunuSafeguard AI est un service d'écoute et d'information psychosociale conçu pour le Sénégal. Il vous accueille sans jugement, vous informe sur le bien-être, les violences, vos droits et la santé, et vous oriente vers des structures d'aide dont les coordonnées ont été vérifiées.
 
-## Limites importantes
+## Ce que l'assistant fait, et ne fait pas
 
-SunuSafeguard AI n'est pas un dispositif médical, n'est pas cliniquement validé et ne remplace pas une consultation auprès d'un professionnel de santé qualifié. Le prototype ne pose pas de diagnostic, ne prescrit pas de traitement et ne constitue pas une relation thérapeutique.
+SunuSafeguard AI n'est pas un dispositif médical et ne remplace pas une consultation auprès d'un ou d'une professionnelle. Il ne pose pas de diagnostic et ne prescrit pas de traitement. Son rôle est de vous écouter, de vous informer et de vous aider à trouver la bonne personne.
 
 ## Confidentialité par conception
 
@@ -21,4 +21,4 @@ Les messages de conversation ne sont pas conservés par défaut. Les données tr
 
 ## Avertissement
 
-Si vous êtes en danger immédiat, rapprochez-vous d'un service d'urgence vérifié localement ou d'une personne de confiance. SunuSafeguard AI ne contacte pas automatiquement les autorités, les proches ou les services sociaux en votre nom.
+Si vous êtes en danger immédiat, appelez la police (17), les sapeurs-pompiers (18) ou le SAMU (1515), ou rapprochez-vous d'une personne de confiance. SunuSafeguard AI ne contacte pas automatiquement les autorités, les proches ou les services sociaux en votre nom.

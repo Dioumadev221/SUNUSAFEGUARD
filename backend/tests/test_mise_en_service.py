@@ -98,3 +98,33 @@ def test_consigne_selon_le_besoin_et_sans_renvois():
     prompt = build_user_prompt("Mon ex publie mes photos", "[1] extrait", "cyberharcelement")
     assert "ne pas répondre à l'auteur" in prompt
     assert "confronter l'auteur" in SYSTEM_PROMPT
+
+
+@pytest.mark.parametrize("text,reason", [
+    ("Prenez des captures d'écran. Ensuite, envoyez un message clair à votre ex pour qu'il retire les photos. "
+     "Signalez le contenu à WhatsApp.", "confrontation"),
+    ("Prenez des captures d'écran. Des associations peuvent vous aider, comme l'ACRO ou l'AFED. "
+     "Signalez le contenu à WhatsApp.", "organisation_inconnue"),
+])
+def test_nettoyage_des_reponses(text, reason):
+    from llm.postprocess import clean_answer
+
+    cleaned, reasons = clean_answer(text, "Signaler le contenu à WhatsApp.")
+    assert reason in reasons
+    assert "ex pour" not in cleaned and "ACRO" not in cleaned
+    assert "captures" in cleaned
+
+
+def test_tutoiement_converti_en_vouvoiement():
+    from llm.postprocess import clean_answer
+
+    cleaned, _ = clean_answer("Je comprends que tu te sens triste. Tu peux parler à une personne de confiance.", "")
+    assert cleaned == "Je comprends que vous vous sentez triste. Vous pouvez parler à une personne de confiance."
+
+
+def test_ne_pas_contacter_l_auteur_reste_autorise():
+    from llm.postprocess import clean_answer
+
+    text = "Ne répondez pas à votre ex et ne lui écrivez pas. Gardez des preuves de chaque message reçu."
+    cleaned, reasons = clean_answer(text, "")
+    assert cleaned == text and not reasons

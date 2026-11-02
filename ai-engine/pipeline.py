@@ -18,6 +18,7 @@ from typing import Callable
 from embeddings import Embedder, HashingEmbedder
 from llm import (SYSTEM_PROMPT, LLMUnavailable, OllamaClient, build_user_prompt, extractive_answer, opening_message,
                  template_message)
+from llm.postprocess import clean_answer
 from multilingual import detect_language, expand_query
 from rag import Chunk, build_context, search
 from safety import check_input, check_output, classify_need
@@ -170,7 +171,12 @@ class AssistantPipeline:
                     used_llm = True
                     # Les sources sont affichées à part : on retire les renvois « [1] » du texte.
                     body = re.sub(r"[ \t]*\[\d+(?:,\s*\d+)*\]", "", body)
-                    body = re.sub(r"(?m)^\s*[-•]\s*", "- ", body).strip() or None
+                    body = re.sub(r"(?m)^\s*[-•]\s*", "- ", body).strip()
+                    # Garde-fous déterministes : confrontation avec l'auteur, organisation inventée, tutoiement.
+                    body, cleaning = clean_answer(body, context)
+                    if cleaning:
+                        base["safety_reasons"] = list(base.get("safety_reasons") or decision.reasons) + [
+                            f"output:{r}" for r in cleaning]
                     used_llm = body is not None
                 except LLMUnavailable:
                     body = None

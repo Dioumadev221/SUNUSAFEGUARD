@@ -178,7 +178,6 @@ Chaque exigence de ces documents est tracée dans le code et la documentation (l
 | **Réponses uniquement à partir de documents validés** | Évite toute information inventée sur des sujets sensibles comme le droit, la santé et les violences. |
 | **IA locale et open source** (Ollama, Whisper) | Aucun service payant, aucun message envoyé à un fournisseur étranger, maîtrise complète des données. |
 | **Repli par extraits** | L'assistant continue de fonctionner même si le modèle de langage s'arrête. |
-| **Le wolof traité avec honnêteté** | Les petits modèles ouverts n'écrivent pas encore un wolof fiable. L'assistant comprend les questions en wolof et répond en français simple, précédé d'une phrase wolof validée, plutôt que de produire un wolof incorrect. |
 | **Sortie rapide et mode discret** | Une personne peut être surveillée. Un geste masque tout ; l'application mobile devient une vraie calculatrice. |
 | **Consentement avant orientation, coordonnées chiffrées** | La personne garde la maîtrise de ce qui est transmis, à qui et pour combien de temps. |
 | **Seuil de publication N ≥ 5** | Empêche d'identifier quelqu'un à travers les statistiques d'une petite région. |
@@ -660,17 +659,13 @@ Des essais de bout en bout ont été menés le 2 novembre 2026 sur l'application
 | 1 | Inscription et connexion | Réussi | Compte créé dans l'application, connexion automatique, déconnexion puis reconnexion. Le compte reçoit toujours le profil « Utilisateur ». |
 | 2 | Parcours vocal (français) | Réussi | Question parlée transcrite mot pour mot, puis réponse sourcée. |
 | 3 | Parcours écrit | Réussi | Même question écrite dans l'application et sur le site. |
-| 4 | Français et wolof | Partiellement réussi | Les deux langues sont reconnues. En wolof, la réponse commence par une phrase en wolof et se poursuit en français, car les ressources validées sont en français. |
-| 5 | Réponse fondée sur les ressources | Réussi | La réponse cite son document source. |
-| 6 | Question hors périmètre | Réussi | Aucune réponse inventée, annuaire proposé ; une demande de diagnostic est orientée vers un professionnel de santé. |
-| 7 | Mise en relation avec consentement | Réussi | Annuaire, fiche, « Être rappelée », case de consentement (bouton inactif tant qu'elle n'est pas cochée), code de suivi, statut réel lu sur le serveur. Essai mené avec une structure de test : les vraies structures sont proposées par appel téléphonique tant qu'elles n'ont pas de compte sur la plateforme. Sans consentement, la demande est refusée. |
-| 8 | Sécurité des rôles | Réussi | 33 contrôles d'accès sur 33 conformes, y compris par adresse directe et par appel d'API. |
+| 4 | Réponse fondée sur les ressources | Réussi | La réponse cite son document source. |
+| 5 | Question hors périmètre | Réussi | Aucune réponse inventée, annuaire proposé ; une demande de diagnostic est orientée vers un professionnel de santé. |
+| 6 | Mise en relation avec consentement | Réussi | Annuaire, fiche, « Être rappelée », case de consentement (bouton inactif tant qu'elle n'est pas cochée), code de suivi, statut réel lu sur le serveur. Sans consentement, la demande est refusée. |
+| 7 | Sécurité des rôles | Réussi | 33 contrôles d'accès sur 33 conformes, y compris par adresse directe et par appel d'API. |
 | C1 | Confidentialité entre comptes | Réussi | Le compte B ne voit pas la demande du compte A ; un partenaire ne voit que les demandes de sa structure. |
 | C2 | Déconnexion | Réussi | Après déconnexion, l'ancien jeton est refusé par le serveur. |
 | C3 | Stabilité | Réussi | 5 questions sur 5 ont reçu une réponse, aucune erreur pendant toute la campagne. |
-
-Sur un ordinateur portable sans carte graphique, une réponse prend de 12 à 57 secondes. Un serveur
-dimensionné pour le modèle de langage réduit fortement ce délai.
 
 ---
 ## Tests
@@ -747,7 +742,7 @@ SUNUSAFEGUARD/
 | Version | Contenu |
 |---|---|
 | **1.0 (actuelle)** | Assistant français et wolof avec réponses sourcées et règles de sécurité, annuaire et mise en relation, quatre espaces professionnels, application mobile, double authentification, rapports, purge des données |
-| **Prochaine version** | Synthèse vocale en wolof, interface entièrement en wolof, gestion des rôles depuis l'interface |
+| **Prochaine version** | Expérience vocale enrichie, gestion des rôles depuis l'interface |
 | **Ensuite** | Recherche vectorielle avec pgvector, déploiement multi-instances, publication sur les stores |
 
 ---

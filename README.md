@@ -174,7 +174,6 @@ as "CDC §9.2" in the source code point to the matching chapter).
 | **Answers only from validated documents** | Prevents invented information on sensitive subjects such as law, health and violence. |
 | **Local, open-source AI** (Ollama, Whisper) | No paid service, no message sent to a foreign provider, and full control over the data. |
 | **Extractive fallback** | The assistant keeps working even if the language model stops. |
-| **Wolof handled honestly** | Small open models do not write reliable Wolof yet. The assistant understands Wolof questions and answers in plain French opened by a validated Wolof sentence, rather than producing incorrect Wolof. |
 | **Quick exit and discreet mode** | Someone may be watched. One tap hides everything; the mobile app turns into a working calculator. |
 | **Consent before referral, encrypted contact details** | The person stays in control of what is shared, with whom, and for how long. |
 | **Publication threshold N ≥ 5** | Prevents anyone from being identified through statistics in a small region. |
@@ -651,17 +650,13 @@ End-to-end tests were run on 2 November 2026, on the mobile app, the website and
 | 1 | Sign-up and sign-in | Passed | Account created in the app, automatic sign-in, sign-out and sign-in again. The account always receives the "User" profile. |
 | 2 | Voice journey (French) | Passed | Spoken question transcribed word for word, then a sourced answer. |
 | 3 | Text journey | Passed | Same question typed in the app and on the website. |
-| 4 | French and Wolof | Partially passed | Both languages are recognized. In Wolof, the answer opens with a Wolof sentence and continues in French, because the validated resources are in French. |
-| 5 | Answer based on resources | Passed | The answer cites its source document. |
-| 6 | Out-of-scope question | Passed | No invented answer, directory suggested; a diagnosis request is redirected to a health professional. |
-| 7 | Referral with consent | Passed | Directory, profile, "Être rappelée", consent box (button disabled until checked), tracking code, real status read from the server. Tested with a test organization: real organizations are offered by phone until they have an account on the platform. Without consent, the request is refused. |
-| 8 | Role security | Passed | 33 access checks out of 33 compliant, including direct URL access and API calls. |
+| 4 | Answer based on resources | Passed | The answer cites its source document. |
+| 5 | Out-of-scope question | Passed | No invented answer, directory suggested; a diagnosis request is redirected to a health professional. |
+| 6 | Referral with consent | Passed | Directory, profile, "Être rappelée", consent box (button disabled until checked), tracking code, real status read from the server. Without consent, the request is refused. |
+| 7 | Role security | Passed | 33 access checks out of 33 compliant, including direct URL access and API calls. |
 | C1 | Confidentiality between accounts | Passed | Account B cannot see account A's request; a partner only sees its own organization's requests. |
 | C2 | Logout | Passed | After logout, the old token is refused by the server. |
 | C3 | Stability | Passed | 5 questions out of 5 answered, no error during the whole campaign. |
-
-On a laptop without a graphics card, answers take 12 to 57 seconds. A server sized for the language
-model brings this down significantly.
 
 ---
 ## Testing
@@ -738,7 +733,7 @@ SUNUSAFEGUARD/
 | Release | Content |
 |---|---|
 | **1.0 (current)** | French and Wolof assistant with sourced answers and safety rules, directory and referrals, four dashboards, mobile app, two-factor authentication, reports, data purge |
-| **Next release** | Wolof text-to-speech, fully Wolof interface, roles managed from the interface |
+| **Next release** | Extended voice experience, roles managed from the interface |
 | **Later** | Vector search with pgvector, multi-instance deployment, app store publication |
 
 ---

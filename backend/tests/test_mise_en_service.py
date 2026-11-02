@@ -82,3 +82,11 @@ def test_compte_structure_active_seulement_apres_premiere_connexion(tmp_path):
         user.must_change_password = False  # première connexion : mot de passe remplacé
         db.commit()
         assert org_receives(db, org.id)
+
+
+def test_accueil_chaleureux_selon_le_besoin():
+    from llm import opening_message, template_message
+
+    assert "pas votre faute" in opening_message("violences_physiques_verbales", "fr")
+    assert opening_message("autre", "fr") == ""
+    assert "reformuler" in template_message("no_source", "fr")

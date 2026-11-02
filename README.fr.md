@@ -24,32 +24,32 @@ Conçue par **GREEN T SARL** — Sénégal
 
 ## Sommaire
 
-1. [Le projet en bref](#-le-projet-en-bref)
-2. [Fonctionnalités](#-fonctionnalités)
-3. [Architecture générale](#-architecture-générale)
-4. [Le moteur d'intelligence artificielle](#-le-moteur-dintelligence-artificielle)
-5. [Parcours d'une conversation](#-parcours-dune-conversation)
-6. [Mise en relation avec une structure](#-mise-en-relation-avec-une-structure)
-7. [Base de connaissances et validation des documents](#-base-de-connaissances-et-validation-des-documents)
-8. [Rôles, accès et authentification](#-rôles-accès-et-authentification)
-9. [Modèle de données](#-modèle-de-données)
-10. [Sécurité et confidentialité](#-sécurité-et-confidentialité)
-11. [Application mobile « Sunu »](#-application-mobile--sunu-)
-12. [Stack technique](#-stack-technique)
-13. [Arborescence du dépôt](#-arborescence-du-dépôt)
-14. [Installation et démarrage](#-installation-et-démarrage)
-15. [Configuration](#-configuration)
-16. [Comptes de test](#-comptes-de-test)
-17. [API](#-api)
-18. [Tests et qualité](#-tests-et-qualité)
-19. [Déploiement](#-déploiement)
-20. [Feuille de route](#-feuille-de-route)
-21. [Bonnes pratiques d'exploitation](#-bonnes-pratiques-dexploitation)
-22. [Documentation complémentaire](#-documentation-complémentaire)
+1. [Le projet en bref](#le-projet-en-bref)
+2. [Fonctionnalités](#fonctionnalités)
+3. [Architecture générale](#architecture-générale)
+4. [Le moteur d'intelligence artificielle](#le-moteur-dintelligence-artificielle)
+5. [Parcours d'une conversation](#parcours-dune-conversation)
+6. [Mise en relation avec une structure](#mise-en-relation-avec-une-structure)
+7. [Base de connaissances et validation des documents](#base-de-connaissances-et-validation-des-documents)
+8. [Rôles, accès et authentification](#rôles-accès-et-authentification)
+9. [Modèle de données](#modèle-de-données)
+10. [Sécurité et confidentialité](#sécurité-et-confidentialité)
+11. [Application mobile « Sunu »](#application-mobile--sunu-)
+12. [Stack technique](#stack-technique)
+13. [Arborescence du dépôt](#arborescence-du-dépôt)
+14. [Installation et démarrage](#installation-et-démarrage)
+15. [Configuration](#configuration)
+16. [Comptes de test](#comptes-de-test)
+17. [API](#api)
+18. [Tests et qualité](#tests-et-qualité)
+19. [Déploiement](#déploiement)
+20. [Feuille de route](#feuille-de-route)
+21. [Bonnes pratiques d'exploitation](#bonnes-pratiques-dexploitation)
+22. [Documentation complémentaire](#documentation-complémentaire)
 
 ---
 
-## 🌍 Le projet en bref
+## Le projet en bref
 
 Beaucoup de femmes et de jeunes filles au Sénégal font face à des violences, à de la détresse
 psychologique ou à des situations d'urgence sans savoir **à qui parler** ni **vers qui se tourner**.
@@ -74,27 +74,27 @@ SunuSafeguard AI leur offre :
 
 ---
 
-## ✨ Fonctionnalités
+## Fonctionnalités
 
 | Espace | Contenu | État |
 |---|---|---|
-| **Interface publique (site web, PWA)** | Accueil, assistant conversationnel FR / WO, annuaire des structures, mise en relation avec consentement, suivi par code, page confidentialité, **bouton Sortie rapide** (et touche Échap × 2), mode sombre par défaut, conçue d'abord pour le téléphone | ✅ |
-| **Application mobile « Sunu »** | Android / iOS (Expo) : écoute vocale, réponse, ressources, session, **mode discret** déguisé en calculatrice | ✅ |
-| **Backend FastAPI** | Authentification JWT, contrôle d'accès par rôle côté serveur, verrouillage après échecs, inscription publique, déconnexion avec révocation du jeton, documentation OpenAPI sur `/api/docs` | ✅ |
-| **Moteur IA** (`ai-engine/`) | Détection de langue, classification des besoins, garde-fous déterministes (urgence, injection de prompt, hors périmètre, demande de diagnostic), recherche hybride (RAG) avec sources citées, LLM local via Ollama et **repli extractif**, contrôle de sortie | ✅ |
-| **Sunu Impact** | Indicateurs clés, évolution, besoins, langues, canaux, carte des régions, rapports PDF / Excel, seuil N ≥ 5 | ✅ |
-| **Sunu Orientation** | Fiches des structures, disponibilités et historique, validation, demandes de mise en relation, délais, alertes de non-réception, gestion d'équipe | ✅ |
-| **Sunu Ressources** | Import PDF / DOCX / TXT, découpage, indexation, circuit de validation, banc d'essai RAG, lacunes, évaluation | ✅ |
-| **Sunu Tech** | Qualité de l'IA, latences, garde-fous, état des services, CPU / RAM, journal d'audit, purge, métriques Prometheus `/metrics` | ✅ |
-| **Comptes et accès** | Comptes créés avec mot de passe provisoire, rôles, désactivation, réinitialisation ; un responsable partenaire gère l'équipe de sa structure | ✅ |
-| **Sécurité des accès** | Double authentification TOTP (QR code) obligatoire pour les comptes privilégiés, changement de mot de passe, limitation de débit sur la connexion et le chat | ✅ |
-| **Conservation des données** | Purge automatique toutes les 24 h selon la politique configurée, purge manuelle depuis Sunu Tech | ✅ |
-| **Reconnaissance vocale** | Whisper-small local (français et wolof), sur processeur, audio jamais écrit sur disque | ✅ |
-| **Synthèse vocale wolof** | Aucune solution gratuite et fiable identifiée à ce jour | 🔜 Prochaine version |
+| **Interface publique (site web, PWA)** | Accueil, assistant conversationnel FR / WO, annuaire des structures, mise en relation avec consentement, suivi par code, page confidentialité, **bouton Sortie rapide** (et touche Échap × 2), mode sombre par défaut, conçue d'abord pour le téléphone | Oui |
+| **Application mobile « Sunu »** | Android / iOS (Expo) : écoute vocale, réponse, ressources, session, **mode discret** déguisé en calculatrice | Oui |
+| **Backend FastAPI** | Authentification JWT, contrôle d'accès par rôle côté serveur, verrouillage après échecs, inscription publique, déconnexion avec révocation du jeton, documentation OpenAPI sur `/api/docs` | Oui |
+| **Moteur IA** (`ai-engine/`) | Détection de langue, classification des besoins, garde-fous déterministes (urgence, injection de prompt, hors périmètre, demande de diagnostic), recherche hybride (RAG) avec sources citées, LLM local via Ollama et **repli extractif**, contrôle de sortie | Oui |
+| **Sunu Impact** | Indicateurs clés, évolution, besoins, langues, canaux, carte des régions, rapports PDF / Excel, seuil N ≥ 5 | Oui |
+| **Sunu Orientation** | Fiches des structures, disponibilités et historique, validation, demandes de mise en relation, délais, alertes de non-réception, gestion d'équipe | Oui |
+| **Sunu Ressources** | Import PDF / DOCX / TXT, découpage, indexation, circuit de validation, banc d'essai RAG, lacunes, évaluation | Oui |
+| **Sunu Tech** | Qualité de l'IA, latences, garde-fous, état des services, CPU / RAM, journal d'audit, purge, métriques Prometheus `/metrics` | Oui |
+| **Comptes et accès** | Comptes créés avec mot de passe provisoire, rôles, désactivation, réinitialisation ; un responsable partenaire gère l'équipe de sa structure | Oui |
+| **Sécurité des accès** | Double authentification TOTP (QR code) obligatoire pour les comptes privilégiés, changement de mot de passe, limitation de débit sur la connexion et le chat | Oui |
+| **Conservation des données** | Purge automatique toutes les 24 h selon la politique configurée, purge manuelle depuis Sunu Tech | Oui |
+| **Reconnaissance vocale** | Whisper-small local (français et wolof), sur processeur, audio jamais écrit sur disque | Oui |
+| **Synthèse vocale wolof** | Aucune solution gratuite et fiable identifiée à ce jour | Prochaine version |
 
 ---
 
-## 🏗 Architecture générale
+## Architecture générale
 
 ### Vue d'ensemble
 
@@ -102,9 +102,9 @@ SunuSafeguard AI leur offre :
 flowchart TB
     subgraph CLIENTS["Clients"]
         direction LR
-        WEB["🌐 Site web / PWA<br/>React + Vite + Tailwind"]
-        MOB["📱 Application mobile Sunu<br/>Expo / React Native"]
-        PRO["🧑‍💼 Espaces professionnels<br/>Impact · Orientation · Ressources · Tech"]
+        WEB["Site web / PWA<br/>React + Vite + Tailwind"]
+        MOB["Application mobile Sunu<br/>Expo / React Native"]
+        PRO["Espaces professionnels<br/>Impact · Orientation · Ressources · Tech"]
     end
 
     NGINX["Nginx<br/>fichiers statiques + proxy /api"]
@@ -188,7 +188,7 @@ flowchart TD
 
 ---
 
-## 🧠 Le moteur d'intelligence artificielle
+## Le moteur d'intelligence artificielle
 
 Le moteur IA (`ai-engine/`) est un module Python indépendant, appelé par le backend. Il
 n'enregistre **aucune donnée de conversation**.
@@ -273,7 +273,7 @@ sur 57 h de wolof (`M9and2M/whisper-small-wolof`, licence MIT).
 
 ---
 
-## 💬 Parcours d'une conversation
+## Parcours d'une conversation
 
 ```mermaid
 sequenceDiagram
@@ -310,7 +310,7 @@ sequenceDiagram
 
 ---
 
-## 🤝 Mise en relation avec une structure
+## Mise en relation avec une structure
 
 Une mise en relation n'est créée **qu'avec le consentement explicite** de la personne. Ses
 coordonnées sont **chiffrées** (Fernet) et **effacées** dès la clôture de la demande.
@@ -366,7 +366,7 @@ stateDiagram-v2
 
 ---
 
-## 📚 Base de connaissances et validation des documents
+## Base de connaissances et validation des documents
 
 Seuls les documents au statut **publié** alimentent l'assistant. Chaque document passe par un
 circuit de validation tracé (versions, relectures, audit).
@@ -411,7 +411,7 @@ stress, soutien d'un proche, idées suicidaires, ressources au Sénégal, confid
 
 ---
 
-## 🔐 Rôles, accès et authentification
+## Rôles, accès et authentification
 
 ### Profils principaux
 
@@ -431,11 +431,11 @@ documentaire, expert linguistique.
 
 | Espace | super_admin | admin_operationnel | admin_technique | institutionnel / analyste | partenaire / travailleur social | experts | utilisateur |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Sunu Impact | ✅ | ✅ | | ✅ | | | |
-| Sunu Orientation | ✅ | ✅ | | | ✅ *(sa structure)* | | |
-| Sunu Ressources | ✅ | ✅ | | | | ✅ | |
-| Sunu Tech | ✅ | | ✅ | | | | |
-| Gestion des comptes | ✅ | | | | ✅ *(responsable, sa structure)* | | |
+| Sunu Impact | Oui | Oui | | Oui | | | |
+| Sunu Orientation | Oui | Oui | | | Oui *(sa structure)* | | |
+| Sunu Ressources | Oui | Oui | | | | Oui | |
+| Sunu Tech | Oui | | Oui | | | | |
+| Gestion des comptes | Oui | | | | Oui *(responsable, sa structure)* | | |
 
 La matrice complète des permissions est versionnée dans
 [`backend/app/core/permissions.py`](backend/app/core/permissions.py), ce qui la rend auditable.
@@ -470,7 +470,7 @@ sequenceDiagram
 
 ---
 
-## 🗄 Modèle de données
+## Modèle de données
 
 ```mermaid
 erDiagram
@@ -553,7 +553,7 @@ et les migrations Alembic dans [`backend/migrations/versions/`](backend/migratio
 
 ---
 
-## 🛡 Sécurité et confidentialité
+## Sécurité et confidentialité
 
 ### Ce que le code garantit aujourd'hui
 
@@ -592,18 +592,18 @@ et les migrations Alembic dans [`backend/migrations/versions/`](backend/migratio
 
 ```mermaid
 flowchart LR
-    subgraph JAMAIS["❌ Jamais enregistré"]
+    subgraph JAMAIS["Jamais enregistré"]
         J1["Texte des messages"]
         J2["Audio des messages vocaux"]
         J3["Identifiant de session de chat"]
         J4["Corps des requêtes dans les journaux"]
     end
-    subgraph ANONYME["📊 Anonyme et agrégé"]
+    subgraph ANONYME["Anonyme et agrégé"]
         A1["Langue · catégorie · région déclarée"]
         A2["Heure arrondie · canal"]
         A3["Publié seulement si N ≥ 5"]
     end
-    subgraph PROTEGE["🔒 Chiffré, avec consentement"]
+    subgraph PROTEGE["Chiffré, avec consentement"]
         P1["Coordonnées d'une demande<br/>de mise en relation"]
         P2["Effacées à la clôture"]
     end
@@ -611,21 +611,21 @@ flowchart LR
 
 ---
 
-## 📱 Application mobile « Sunu »
+## Application mobile « Sunu »
 
 Application Android / iOS dans [`frontend/mobile/`](frontend/mobile/), branchée sur la même API,
 avec le même design que le site (palette Teranga, thème sombre par défaut).
 
 ```mermaid
 flowchart TB
-    HOME["🏠 Accueil<br/>index.tsx"] --> ECOUTE["🎙 Sunu Écoute + Réponse<br/>response.tsx<br/>micro FR / WO puis chat"]
-    HOME --> RES["📍 Sunu Ressources<br/>resources/<br/>annuaire, filtres, fiche, appel"]
-    HOME --> SES["🗂 Sunu Session<br/>session.tsx<br/>suivi, « Effacer toute trace »"]
-    HOME --> ACC["👤 Mon compte (optionnel)<br/>account.tsx"]
-    ECOUTE --> REF["🤝 Mise en relation<br/>referral/[id].tsx<br/>consentement, code de suivi"]
+    HOME["Accueil<br/>index.tsx"] --> ECOUTE["Sunu Écoute + Réponse<br/>response.tsx<br/>micro FR / WO puis chat"]
+    HOME --> RES["Sunu Ressources<br/>resources/<br/>annuaire, filtres, fiche, appel"]
+    HOME --> SES["Sunu Session<br/>session.tsx<br/>suivi, « Effacer toute trace »"]
+    HOME --> ACC["Mon compte (optionnel)<br/>account.tsx"]
+    ECOUTE --> REF["Mise en relation<br/>referral/[id].tsx<br/>consentement, code de suivi"]
     RES --> REF
     REF --> SES
-    HOME & ECOUTE & RES & SES -->|"bouton « Sortir »"| DISC["🧮 Sunu Discret<br/>vraie calculatrice<br/>retour : code + « = »"]
+    HOME & ECOUTE & RES & SES -->|"bouton « Sortir »"| DISC["Sunu Discret<br/>vraie calculatrice<br/>retour : code + « = »"]
 ```
 
 | Protection côté téléphone | Détail |
@@ -642,7 +642,7 @@ et le [guide utilisatrice](docs/user-guides/guide-app-mobile.md).
 
 ---
 
-## 🧰 Stack technique
+## Stack technique
 
 | Couche | Technologies |
 |---|---|
@@ -658,7 +658,7 @@ et le [guide utilisatrice](docs/user-guides/guide-app-mobile.md).
 
 ---
 
-## 📂 Arborescence du dépôt
+## Arborescence du dépôt
 
 ```text
 SUNUSAFEGUARD/
@@ -702,7 +702,7 @@ SUNUSAFEGUARD/
 
 ---
 
-## 🚀 Installation et démarrage
+## Installation et démarrage
 
 ### Prérequis
 
@@ -801,7 +801,7 @@ Puis ouvrir Expo Go sur un téléphone connecté au même Wi-Fi. Détails dans
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Toute la configuration passe par des variables d'environnement (fichier `.env`, modèle dans
 [`.env.example`](.env.example)). **Ne jamais committer `.env`.**
@@ -837,7 +837,7 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 ---
 
-## 👥 Comptes de test
+## Comptes de test
 
 Mot de passe commun : `SunuDemo2026!` (variable `DEMO_PASSWORD`). Ces comptes servent aux environnements de développement et de test.
 
@@ -857,7 +857,7 @@ Les comptes `super_admin` et `admin_technique` sont invités à activer la doubl
 
 ---
 
-## 🔌 API
+## API
 
 Documentation interactive OpenAPI : **http://localhost:8000/api/docs**
 
@@ -884,7 +884,7 @@ curl -X POST http://localhost:8000/api/chat \
 
 ---
 
-## ✅ Tests et qualité
+## Tests et qualité
 
 ```bash
 make test   # pytest (backend + moteur IA) puis vérification TypeScript
@@ -907,7 +907,7 @@ Un test de fumée de bout en bout est disponible dans `scripts/smoke_test.py`.
 
 ---
 
-## ☁️ Déploiement
+## Déploiement
 
 ```mermaid
 flowchart TB
@@ -921,14 +921,14 @@ flowchart TB
         MON["Prometheus + Grafana"] -.-> BE
     end
     PG -->|backup-postgres.sh| BK[("Sauvegardes chiffrées<br/>hors site")]
-    APP["📱 Application mobile<br/>build EAS (APK)"] -->|HTTPS| LB
+    APP["Application mobile<br/>build EAS (APK)"] -->|HTTPS| LB
 ```
 
 Étapes et bonnes pratiques détaillées : [docs/deployment/README.md](docs/deployment/README.md).
 
 ---
 
-## 🗺 Feuille de route
+## Feuille de route
 
 ```mermaid
 timeline
@@ -940,7 +940,7 @@ timeline
 
 ---
 
-## 🧭 Bonnes pratiques d'exploitation
+## Bonnes pratiques d'exploitation
 
 | Domaine | Recommandation |
 |---|---|
@@ -956,7 +956,7 @@ timeline
 
 ---
 
-## 📖 Documentation complémentaire
+## Documentation complémentaire
 
 | Document | Contenu |
 |---|---|

@@ -24,32 +24,32 @@ Built by **GREEN T SARL** — Senegal
 
 ## Table of contents
 
-1. [Project overview](#-project-overview)
-2. [Features](#-features)
-3. [System architecture](#-system-architecture)
-4. [The AI engine](#-the-ai-engine)
-5. [Journey of a conversation](#-journey-of-a-conversation)
-6. [Referral to a support organization](#-referral-to-a-support-organization)
-7. [Knowledge base and document validation](#-knowledge-base-and-document-validation)
-8. [Roles, access and authentication](#-roles-access-and-authentication)
-9. [Data model](#-data-model)
-10. [Security and privacy](#-security-and-privacy)
-11. [Mobile app "Sunu"](#-mobile-app-sunu)
-12. [Tech stack](#-tech-stack)
-13. [Repository structure](#-repository-structure)
-14. [Installation and startup](#-installation-and-startup)
-15. [Configuration](#%EF%B8%8F-configuration)
-16. [Test accounts](#-test-accounts)
-17. [API](#-api)
-18. [Testing and quality](#-testing-and-quality)
-19. [Deployment](#%EF%B8%8F-deployment)
-20. [Roadmap](#-roadmap)
-21. [Operational best practices](#-operational-best-practices)
-22. [Further documentation](#-further-documentation)
+1. [Project overview](#project-overview)
+2. [Features](#features)
+3. [System architecture](#system-architecture)
+4. [The AI engine](#the-ai-engine)
+5. [Journey of a conversation](#journey-of-a-conversation)
+6. [Referral to a support organization](#referral-to-a-support-organization)
+7. [Knowledge base and document validation](#knowledge-base-and-document-validation)
+8. [Roles, access and authentication](#roles-access-and-authentication)
+9. [Data model](#data-model)
+10. [Security and privacy](#security-and-privacy)
+11. [Mobile app "Sunu"](#mobile-app-sunu)
+12. [Tech stack](#tech-stack)
+13. [Repository structure](#repository-structure)
+14. [Installation and startup](#installation-and-startup)
+15. [Configuration](#configuration)
+16. [Test accounts](#test-accounts)
+17. [API](#api)
+18. [Testing and quality](#testing-and-quality)
+19. [Deployment](#deployment)
+20. [Roadmap](#roadmap)
+21. [Operational best practices](#operational-best-practices)
+22. [Further documentation](#further-documentation)
 
 ---
 
-## 🌍 Project overview
+## Project overview
 
 Many women and girls in Senegal face violence, psychological distress or emergencies without knowing
 **who to talk to** or **where to turn**. SunuSafeguard AI gives them:
@@ -73,27 +73,27 @@ Many women and girls in Senegal face violence, psychological distress or emergen
 
 ---
 
-## ✨ Features
+## Features
 
 | Area | Content | Status |
 |---|---|---|
-| **Public interface (website, PWA)** | Home page, conversational assistant in FR / WO, directory of organizations, consented referral, tracking by code, privacy page, **Quick exit button** (and Esc × 2), dark mode by default, mobile-first design | ✅ |
-| **Mobile app "Sunu"** | Android / iOS (Expo): voice listening, answers, resources, session, **discreet mode** disguised as a calculator | ✅ |
-| **FastAPI backend** | JWT authentication, server-side role-based access control, lockout after failed attempts, public sign-up, logout with token revocation, OpenAPI docs at `/api/docs` | ✅ |
-| **AI engine** (`ai-engine/`) | Language detection, needs classification, deterministic guardrails (emergency, prompt injection, out of scope, diagnosis requests), hybrid retrieval (RAG) with cited sources, local LLM through Ollama with an **extractive fallback**, output check | ✅ |
-| **Sunu Impact** | Key indicators, trends, needs, languages, channels, regional map, PDF / Excel reports, N ≥ 5 threshold | ✅ |
-| **Sunu Orientation** | Organization profiles, availability and history, validation, referral requests, response times, non-receipt alerts, team management | ✅ |
-| **Sunu Ressources** | PDF / DOCX / TXT import, chunking, indexing, validation workflow, RAG playground, knowledge gaps, evaluation | ✅ |
-| **Sunu Tech** | AI quality, latency, guardrails, service health, CPU / RAM, audit log, data purge, Prometheus metrics at `/metrics` | ✅ |
-| **Accounts and access** | Accounts created with a temporary password, roles, deactivation, reset; a partner manager runs their own organization's team | ✅ |
-| **Access security** | TOTP two-factor authentication (QR code) required for privileged accounts, password change, rate limiting on login and chat | ✅ |
-| **Data retention** | Automatic purge every 24 h according to the configured policy, manual purge from Sunu Tech | ✅ |
-| **Speech recognition** | Local Whisper-small (French and Wolof), CPU only, audio never written to disk | ✅ |
-| **Wolof text-to-speech** | No free and reliable solution available yet | 🔜 Next release |
+| **Public interface (website, PWA)** | Home page, conversational assistant in FR / WO, directory of organizations, consented referral, tracking by code, privacy page, **Quick exit button** (and Esc × 2), dark mode by default, mobile-first design | Yes |
+| **Mobile app "Sunu"** | Android / iOS (Expo): voice listening, answers, resources, session, **discreet mode** disguised as a calculator | Yes |
+| **FastAPI backend** | JWT authentication, server-side role-based access control, lockout after failed attempts, public sign-up, logout with token revocation, OpenAPI docs at `/api/docs` | Yes |
+| **AI engine** (`ai-engine/`) | Language detection, needs classification, deterministic guardrails (emergency, prompt injection, out of scope, diagnosis requests), hybrid retrieval (RAG) with cited sources, local LLM through Ollama with an **extractive fallback**, output check | Yes |
+| **Sunu Impact** | Key indicators, trends, needs, languages, channels, regional map, PDF / Excel reports, N ≥ 5 threshold | Yes |
+| **Sunu Orientation** | Organization profiles, availability and history, validation, referral requests, response times, non-receipt alerts, team management | Yes |
+| **Sunu Ressources** | PDF / DOCX / TXT import, chunking, indexing, validation workflow, RAG playground, knowledge gaps, evaluation | Yes |
+| **Sunu Tech** | AI quality, latency, guardrails, service health, CPU / RAM, audit log, data purge, Prometheus metrics at `/metrics` | Yes |
+| **Accounts and access** | Accounts created with a temporary password, roles, deactivation, reset; a partner manager runs their own organization's team | Yes |
+| **Access security** | TOTP two-factor authentication (QR code) required for privileged accounts, password change, rate limiting on login and chat | Yes |
+| **Data retention** | Automatic purge every 24 h according to the configured policy, manual purge from Sunu Tech | Yes |
+| **Speech recognition** | Local Whisper-small (French and Wolof), CPU only, audio never written to disk | Yes |
+| **Wolof text-to-speech** | No free and reliable solution available yet | Next release |
 
 ---
 
-## 🏗 System architecture
+## System architecture
 
 ### Overview
 
@@ -101,9 +101,9 @@ Many women and girls in Senegal face violence, psychological distress or emergen
 flowchart TB
     subgraph CLIENTS["Clients"]
         direction LR
-        WEB["🌐 Website / PWA<br/>React + Vite + Tailwind"]
-        MOB["📱 Sunu mobile app<br/>Expo / React Native"]
-        PRO["🧑‍💼 Professional dashboards<br/>Impact · Orientation · Ressources · Tech"]
+        WEB["Website / PWA<br/>React + Vite + Tailwind"]
+        MOB["Sunu mobile app<br/>Expo / React Native"]
+        PRO["Professional dashboards<br/>Impact · Orientation · Ressources · Tech"]
     end
 
     NGINX["Nginx<br/>static files + /api proxy"]
@@ -187,7 +187,7 @@ flowchart TD
 
 ---
 
-## 🧠 The AI engine
+## The AI engine
 
 The AI engine (`ai-engine/`) is a standalone Python module called by the backend. It stores
 **no conversation data**.
@@ -272,7 +272,7 @@ Wolof (`M9and2M/whisper-small-wolof`, MIT license).
 
 ---
 
-## 💬 Journey of a conversation
+## Journey of a conversation
 
 ```mermaid
 sequenceDiagram
@@ -309,7 +309,7 @@ sequenceDiagram
 
 ---
 
-## 🤝 Referral to a support organization
+## Referral to a support organization
 
 A referral is only created **with the person's explicit consent**. Their contact details are
 **encrypted** (Fernet) and **erased** as soon as the request is closed.
@@ -375,7 +375,7 @@ stateDiagram-v2
 
 ---
 
-## 📚 Knowledge base and document validation
+## Knowledge base and document validation
 
 Only documents with the **published** status feed the assistant. Each document goes through a
 traceable validation workflow (versions, reviews, audit).
@@ -432,7 +432,7 @@ stress, supporting a loved one, suicidal thoughts, resources in Senegal, confide
 
 ---
 
-## 🔐 Roles, access and authentication
+## Roles, access and authentication
 
 ### Main profiles
 
@@ -451,11 +451,11 @@ partner manager, social worker, document expert, linguistic expert.
 
 | Dashboard | super_admin | admin_operationnel | admin_technique | institutional / analyst | partner / social worker | experts | utilisateur |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Sunu Impact | ✅ | ✅ | | ✅ | | | |
-| Sunu Orientation | ✅ | ✅ | | | ✅ *(own organization)* | | |
-| Sunu Ressources | ✅ | ✅ | | | | ✅ | |
-| Sunu Tech | ✅ | | ✅ | | | | |
-| Account management | ✅ | | | | ✅ *(manager, own organization)* | | |
+| Sunu Impact | Yes | Yes | | Yes | | | |
+| Sunu Orientation | Yes | Yes | | | Yes *(own organization)* | | |
+| Sunu Ressources | Yes | Yes | | | | Yes | |
+| Sunu Tech | Yes | | Yes | | | | |
+| Account management | Yes | | | | Yes *(manager, own organization)* | | |
 
 The full permission matrix is versioned in
 [`backend/app/core/permissions.py`](backend/app/core/permissions.py), which makes it auditable.
@@ -490,7 +490,7 @@ sequenceDiagram
 
 ---
 
-## 🗄 Data model
+## Data model
 
 ```mermaid
 erDiagram
@@ -573,7 +573,7 @@ and the Alembic migrations in [`backend/migrations/versions/`](backend/migration
 
 ---
 
-## 🛡 Security and privacy
+## Security and privacy
 
 ### What the code guarantees
 
@@ -612,18 +612,18 @@ and the Alembic migrations in [`backend/migrations/versions/`](backend/migration
 
 ```mermaid
 flowchart LR
-    subgraph NEVER["❌ Never stored"]
+    subgraph NEVER["Never stored"]
         J1["Message text"]
         J2["Voice message audio"]
         J3["Chat session identifier"]
         J4["Request bodies in logs"]
     end
-    subgraph ANON["📊 Anonymous and aggregated"]
+    subgraph ANON["Anonymous and aggregated"]
         A1["Language · category · self-reported region"]
         A2["Rounded hour · channel"]
         A3["Published only if N ≥ 5"]
     end
-    subgraph PROT["🔒 Encrypted, with consent"]
+    subgraph PROT["Encrypted, with consent"]
         P1["Contact details of a<br/>referral request"]
         P2["Erased on closure"]
     end
@@ -631,21 +631,21 @@ flowchart LR
 
 ---
 
-## 📱 Mobile app "Sunu"
+## Mobile app "Sunu"
 
 Android / iOS app in [`frontend/mobile/`](frontend/mobile/), connected to the same API, with the
 same design as the website (Teranga palette, dark theme by default).
 
 ```mermaid
 flowchart TB
-    HOME["🏠 Home<br/>index.tsx"] --> LISTEN["🎙 Sunu Écoute + Réponse<br/>response.tsx<br/>FR / WO microphone, then chat"]
-    HOME --> RES["📍 Sunu Ressources<br/>resources/<br/>directory, filters, profile, call"]
-    HOME --> SES["🗂 Sunu Session<br/>session.tsx<br/>tracking, “Erase all traces”"]
-    HOME --> ACC["👤 My account (optional)<br/>account.tsx"]
-    LISTEN --> REF["🤝 Referral<br/>referral/[id].tsx<br/>consent, tracking code"]
+    HOME["Home<br/>index.tsx"] --> LISTEN["Sunu Écoute + Réponse<br/>response.tsx<br/>FR / WO microphone, then chat"]
+    HOME --> RES["Sunu Ressources<br/>resources/<br/>directory, filters, profile, call"]
+    HOME --> SES["Sunu Session<br/>session.tsx<br/>tracking, “Erase all traces”"]
+    HOME --> ACC["My account (optional)<br/>account.tsx"]
+    LISTEN --> REF["Referral<br/>referral/[id].tsx<br/>consent, tracking code"]
     RES --> REF
     REF --> SES
-    HOME & LISTEN & RES & SES -->|"“Exit” button"| DISC["🧮 Sunu Discret<br/>working calculator<br/>return: code + “=”"]
+    HOME & LISTEN & RES & SES -->|"“Exit” button"| DISC["Sunu Discret<br/>working calculator<br/>return: code + “=”"]
 ```
 
 | On-device protection | Details |
@@ -662,7 +662,7 @@ and the [user guide](docs/user-guides/guide-app-mobile.md) (in French).
 
 ---
 
-## 🧰 Tech stack
+## Tech stack
 
 | Layer | Technologies |
 |---|---|
@@ -678,7 +678,7 @@ and the [user guide](docs/user-guides/guide-app-mobile.md) (in French).
 
 ---
 
-## 📂 Repository structure
+## Repository structure
 
 ```text
 SUNUSAFEGUARD/
@@ -722,7 +722,7 @@ SUNUSAFEGUARD/
 
 ---
 
-## 🚀 Installation and startup
+## Installation and startup
 
 ### Prerequisites
 
@@ -821,7 +821,7 @@ Then open Expo Go on a phone connected to the same Wi-Fi network. Details in
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 All configuration goes through environment variables (`.env` file, template in
 [`.env.example`](.env.example)). **Never commit `.env`.**
@@ -857,7 +857,7 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 ---
 
-## 👥 Test accounts
+## Test accounts
 
 Shared password: `SunuDemo2026!` (variable `DEMO_PASSWORD`). These accounts are meant for
 development and test environments.
@@ -878,7 +878,7 @@ development and test environments.
 
 ---
 
-## 🔌 API
+## API
 
 Interactive OpenAPI documentation: **http://localhost:8000/api/docs**
 
@@ -905,7 +905,7 @@ curl -X POST http://localhost:8000/api/chat \
 
 ---
 
-## ✅ Testing and quality
+## Testing and quality
 
 ```bash
 make test   # pytest (backend + AI engine) then TypeScript check
@@ -928,7 +928,7 @@ An end-to-end smoke test is available in `scripts/smoke_test.py`.
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
 ```mermaid
 flowchart TB
@@ -942,14 +942,14 @@ flowchart TB
         MON["Prometheus + Grafana"] -.-> BE
     end
     PG -->|backup-postgres.sh| BK[("Encrypted off-site<br/>backups")]
-    APP["📱 Mobile app<br/>EAS build (APK)"] -->|HTTPS| LB
+    APP["Mobile app<br/>EAS build (APK)"] -->|HTTPS| LB
 ```
 
 Detailed steps and best practices: [docs/deployment/README.md](docs/deployment/README.md) (in French).
 
 ---
 
-## 🗺 Roadmap
+## Roadmap
 
 ```mermaid
 timeline
@@ -961,7 +961,7 @@ timeline
 
 ---
 
-## 🧭 Operational best practices
+## Operational best practices
 
 | Area | Recommendation |
 |---|---|
@@ -977,7 +977,7 @@ timeline
 
 ---
 
-## 📖 Further documentation
+## Further documentation
 
 The detailed documents below are written in French.
 

@@ -7,8 +7,9 @@ export function Badge({ children, tone = "bg-teal-soft text-teal-dark dark:bg-te
 }
 
 export function AvailabilityBadge({ status }: { status: string }) {
+  const { lang } = usePrefs();
   const a = AVAILABILITY[status] ?? AVAILABILITY.non_communique;
-  return <Badge tone={a.tone}>{a.label}</Badge>;
+  return <Badge tone={a.tone}>{lang === "en" ? a.en : a.label}</Badge>;
 }
 
 export function Stat({ label, value, hint, delta }: { label: string; value: ReactNode; hint?: string; delta?: ReactNode }) {
@@ -52,5 +53,8 @@ export function Loading() {
 
 /** Affiche un effectif agrégé ; null = masqué par le seuil de confidentialité. */
 export function Count({ value, k = 5 }: { value: number | null | undefined; k?: number }) {
-  return value === null || value === undefined ? <span title="Effectif masqué (seuil de confidentialité)" className="muted">&lt; {k}</span> : <>{value.toLocaleString("fr-FR")}</>;
+  const { tx, lang } = usePrefs();
+  return value === null || value === undefined
+    ? <span title={tx("Effectif masqué (seuil de confidentialité)", "Count hidden (privacy threshold)")} className="muted">&lt; {k}</span>
+    : <>{value.toLocaleString(lang === "en" ? "en-GB" : "fr-FR")}</>;
 }

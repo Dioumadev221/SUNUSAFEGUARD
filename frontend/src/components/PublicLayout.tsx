@@ -1,12 +1,12 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { Languages, Lock, Moon, Sun } from "lucide-react";
+import { Lock, Moon, Sun } from "lucide-react";
 import QuickExit from "./QuickExit";
 import Logo from "./Logo";
 import { usePrefs } from "@/lib/prefs";
-import { LANGS } from "@/lib/i18n";
+import LanguageSwitch from "./LanguageSwitch";
 
 export default function PublicLayout() {
-  const { t, tx, lang, setLang, dark, toggleDark } = usePrefs();
+  const { t, tx, dark, toggleDark } = usePrefs();
   const { pathname } = useLocation();
   const link = ({ isActive }: { isActive: boolean }) =>
     `relative rounded-full px-4 py-2 text-sm font-semibold transition ${isActive ? "bg-night text-sand-100 dark:bg-sand-100 dark:text-night" : "text-slate-600 hover:bg-night/[0.05] hover:text-night dark:text-slate-300 dark:hover:bg-white/[0.06] dark:hover:text-white"}`;
@@ -25,14 +25,7 @@ export default function PublicLayout() {
             <NavLink to="/aide" className={link}>{t("navDirectory")}</NavLink>
           </nav>
           {/* Langue d'affichage du site ; le chat reste en français ou en wolof. */}
-          <label className="relative inline-flex h-10 shrink-0 items-center rounded-full border border-night/10 text-xs font-bold text-slate-600 transition hover:border-night/30 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/30">
-            <Languages size={15} className="pointer-events-none absolute left-2.5" aria-hidden />
-            <span className="sr-only">{t("language")}</span>
-            <select value={lang} onChange={(e) => setLang(e.target.value as typeof lang)} title={t("language")}
-              className="h-full cursor-pointer appearance-none rounded-full bg-transparent pl-8 pr-3 outline-none">
-              {LANGS.map((l) => <option key={l.id} value={l.id} className="text-night">{l.short}</option>)}
-            </select>
-          </label>
+          <LanguageSwitch className="border-night/10 text-slate-600 hover:border-night/30 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/30" />
           <button onClick={toggleDark} aria-pressed={dark} title={t("discreet")}
             className="inline-flex h-10 min-w-10 shrink-0 items-center justify-center gap-2 rounded-full border border-night/10 px-2.5 text-xs font-bold lg:px-3 text-slate-600 transition hover:border-night/30 hover:text-night dark:border-white/10 dark:text-slate-300 dark:hover:border-white/30 dark:hover:text-white">
             {dark ? <Sun size={16} aria-hidden /> : <Moon size={16} aria-hidden />}

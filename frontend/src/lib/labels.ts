@@ -66,6 +66,52 @@ export const ROLE_LABELS: Record<string, string> = {
   expert_linguistique: "Expert linguistique",
 };
 
+export const REFERRAL_STATUS_EN: Record<string, string> = {
+  brouillon: "Draft",
+  en_attente_consentement: "Awaiting consent",
+  transmise: "Sent",
+  recue: "Received",
+  en_cours: "In progress",
+  prise_en_charge_confirmee: "Care confirmed",
+  non_prise_en_charge: "Not taken on",
+  cloturee: "Closed",
+  annulee: "Cancelled",
+};
+
+export const DOC_STATUS_EN: Record<string, string> = {
+  importe: "Imported",
+  en_traitement: "Processing",
+  a_verifier: "To review",
+  en_validation: "Under validation",
+  valide: "Validated",
+  publie: "Published",
+  expire: "Expired",
+  archive: "Archived",
+  rejete: "Rejected",
+};
+
+export const ROLE_LABELS_EN: Record<string, string> = {
+  super_admin: "GREEN T super administrator",
+  admin_operationnel: "Operations administrator",
+  utilisateur: "User",
+  admin_technique: "Technical administrator",
+  responsable_institutionnel: "Institutional lead",
+  analyste: "Analyst",
+  responsable_partenaire: "Partner lead",
+  travailleur_social: "Social worker",
+  expert_documentaire: "Documentation expert",
+  expert_linguistique: "Language expert",
+};
+
+type L = "fr" | "en";
+export const role = (k: string, lang: L = "fr") => (lang === "en" ? ROLE_LABELS_EN[k] : ROLE_LABELS[k]) ?? k;
+export const refStatus = (k: string, lang: L = "fr") => (lang === "en" ? REFERRAL_STATUS_EN[k] : REFERRAL_STATUS[k]) ?? k;
+export const docStatus = (k: string, lang: L = "fr") => (lang === "en" ? DOC_STATUS_EN[k] : DOC_STATUS[k]) ?? k;
+export const availability = (k: string, lang: L = "fr") => {
+  const a = AVAILABILITY[k] ?? AVAILABILITY.non_communique;
+  return lang === "en" ? a.en : a.label;
+};
+
 export const REGIONS = [
   "Dakar", "Diourbel", "Fatick", "Kaffrine", "Kaolack", "Kédougou", "Kolda", "Louga",
   "Matam", "Saint-Louis", "Sédhiou", "Tambacounda", "Thiès", "Ziguinchor",
@@ -74,4 +120,5 @@ export const REGIONS = [
 export const cat = (k: string, lang: "fr" | "en" = "fr") => (lang === "en" ? CATEGORY_LABELS_EN[k] : CATEGORY_LABELS[k]) ?? k;
 // Retire à l'affichage les marqueurs « (DÉMO) » des données d'exemple, sans modifier la base.
 export const clean = (s?: string | null) => (s ?? "").replace(/\s*\(d[ée]mo\)\s*/gi, " ").trim();
-export const fmtDate = (d?: string | null) => (d ? new Date(d).toLocaleString("fr-SN", { dateStyle: "short", timeStyle: "short" }) : "—");
+export const fmtDate = (d?: string | null, lang: L = "fr") =>
+  (d ? new Date(d).toLocaleString(lang === "en" ? "en-GB" : "fr-SN", { dateStyle: "short", timeStyle: "short" }) : "—");

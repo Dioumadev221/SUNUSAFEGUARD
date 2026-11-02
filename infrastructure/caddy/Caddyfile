@@ -1,0 +1,13 @@
+# Point d'entrée public : certificat HTTPS automatique (Let's Encrypt) pour DOMAIN.
+# Le nom de domaine doit déjà pointer vers l'adresse IP du serveur (enregistrement DNS A).
+{$DOMAIN} {
+	encode gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		-Server
+	}
+	log {
+		output discard
+	}
+	reverse_proxy frontend:80
+}

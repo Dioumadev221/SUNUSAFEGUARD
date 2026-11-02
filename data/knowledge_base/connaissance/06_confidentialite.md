@@ -1,7 +1,7 @@
 ---
 id: kb-006
 title: "Confidentialité et limites du prototype"
-type: demo
+type: fiche
 source: "SunuSafeguard AI — notice de confidentialité"
 verified: false
 last_reviewed: "2026-10-27"

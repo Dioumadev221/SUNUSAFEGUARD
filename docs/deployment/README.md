@@ -1,5 +1,39 @@
 # Déploiement
 
+## Mise en service (production)
+
+Prérequis : un serveur Linux (4 vCPU / 8 Go minimum, 8 vCPU / 16 Go recommandés), Docker,
+un nom de domaine dont l'enregistrement DNS A pointe vers l'adresse IP du serveur.
+
+```bash
+git clone https://github.com/Dioumadev221/SUNUSAFEGUARD.git && cd SUNUSAFEGUARD
+cp .env.production.example .env        # remplir DOMAIN, CORS_ORIGINS, POSTGRES_PASSWORD, JWT_SECRET, DATA_ENCRYPTION_KEY
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+- HTTPS est obtenu automatiquement (Caddy, Let's Encrypt) ; seuls les ports 80 et 443 sont ouverts.
+- L'API refuse de démarrer si un secret est absent ou laissé à sa valeur par défaut, ou si la base est SQLite.
+- En production, le chargement initial ne crée que les structures réelles (`data/seed/organizations_reelles.json`) :
+  aucun compte, aucune structure ni activité de démonstration.
+- Une sauvegarde PostgreSQL est écrite chaque jour dans `backups/` (14 jours conservés).
+
+Ensuite, une seule fois :
+
+```bash
+docker compose exec backend python -m app.cli create-admin admin@votre-domaine.sn
+docker compose exec backend python -m app.cli invite-structures /app/identifiants-structures.csv
+docker compose cp backend:/app/identifiants-structures.csv .   # puis supprimer la copie du conteneur
+```
+
+`invite-structures` crée un compte « responsable partenaire » par structure validée. Le mot de passe
+est provisoire : une structure ne reçoit les demandes d'orientation en ligne qu'après sa première
+connexion, lorsqu'elle l'a remplacé. Tant que ce n'est pas fait, l'application invite à l'appeler
+directement. Remettre les identifiants à chaque référent·e par un canal sûr, puis détruire le fichier.
+
+Une base déjà en service (ancienne installation de démonstration) se nettoie avec
+`python -m app.cli remove-demo`.
+
+
 ## Docker Compose (serveur unique)
 
 ```bash

@@ -1,8 +1,8 @@
 ---
 id: kb-004
 title: "Reconnaître les idées suicidaires et réagir avec prudence"
-type: demo
-source: "Contenu de démonstration adapté de guides de prévention du suicide (premier secours psychologique)"
+type: fiche
+source: "GREEN T — fiche d'information adaptée de guides de prévention du suicide (premier secours psychologique)"
 verified: false
 last_reviewed: "2026-10-27"
 ---

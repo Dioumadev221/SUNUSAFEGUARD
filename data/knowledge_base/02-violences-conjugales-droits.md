@@ -1,6 +1,6 @@
 ---
 title: Violences physiques et verbales — vos droits au Sénégal
-source: GREEN T — synthèse de démonstration (Code pénal, loi n° 99-05)
+source: GREEN T — fiche d'information (Code pénal, loi n° 99-05)
 category: violences_physiques_verbales
 language: fr
 status: publie

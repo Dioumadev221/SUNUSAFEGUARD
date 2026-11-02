@@ -24,22 +24,27 @@ Built by **GREEN T SARL**, Senegal
 ## Table of contents
 
 1. [Overview](#overview)
-2. [Features](#features)
-3. [Architecture](#architecture)
-4. [How the assistant works](#how-the-assistant-works)
-5. [User guide](#user-guide)
-6. [Roles and access](#roles-and-access)
-7. [Security and privacy](#security-and-privacy)
-8. [Installation](#installation)
-9. [Configuration](#configuration)
-10. [Test accounts](#test-accounts)
-11. [API](#api)
-12. [Testing](#testing)
-13. [Deployment](#deployment)
-14. [Repository structure](#repository-structure)
-15. [Roadmap](#roadmap)
-16. [Operational best practices](#operational-best-practices)
-17. [Further documentation](#further-documentation)
+2. [Why SunuSafeguard](#why-sunusafeguard)
+3. [The concept](#the-concept)
+4. [Research and design](#research-and-design)
+5. [Features](#features)
+6. [Architecture](#architecture)
+7. [How the assistant works](#how-the-assistant-works)
+8. [User guide](#user-guide)
+9. [Roles and access](#roles-and-access)
+10. [Security and privacy](#security-and-privacy)
+11. [Installation](#installation)
+12. [Configuration](#configuration)
+13. [Test accounts](#test-accounts)
+14. [API](#api)
+15. [Development](#development)
+16. [Test results](#test-results)
+17. [Testing](#testing)
+18. [Deployment](#deployment)
+19. [Repository structure](#repository-structure)
+20. [Roadmap](#roadmap)
+21. [Operational best practices](#operational-best-practices)
+22. [Further documentation](#further-documentation)
 
 ---
 
@@ -65,6 +70,152 @@ The platform is built on six principles:
 | Always sourced | The assistant only answers from documents validated by experts, and cites them. |
 | Explicit consent | Nothing is sent to an organization without the person's clear agreement. |
 | Sovereign AI | The language model and speech recognition run locally, with no paid third-party service. |
+
+---
+
+## Why SunuSafeguard
+
+### The problem
+
+In Senegal, many women, adolescent girls and vulnerable people face domestic violence, economic
+violence, cyberbullying, psychological distress or situations of danger. Help exists (listening
+centers, legal aid offices, shelters, health and social services), but it is hard to reach:
+
+- people often **do not know which organization can help them**, where it is, or whether it is
+  available;
+- speaking about violence or distress is difficult, and **fear of being judged or exposed** stops
+  many people from asking;
+- reliable information on rights, protection and well-being is **scattered** and rarely available
+  in Wolof, the language most people speak every day;
+- organizations work in silos, and institutions **lack reliable figures** on needs, regions and
+  response times to guide their decisions.
+
+### The answer
+
+SunuSafeguard AI is a single entry point that anyone can open on a phone, at any hour, without giving
+their name. It listens, informs from validated sources, recognizes emergencies, and connects the
+person with a human organization when she wants it. Behind this entry point, it gives the network of
+professionals the tools to keep information reliable, coordinate referrals and measure impact
+without ever exposing the people they serve.
+
+### Who it is for
+
+| Audience | What they need | What SunuSafeguard gives them |
+|---|---|---|
+| Women, adolescent girls, vulnerable people | A safe, discreet place to talk and find help | Assistant in French and Wolof, directory, consent-based referral, quick exit, discreet mode |
+| Partner organizations | Requests they can act on, and an up-to-date profile | Sunu Orientation: profile, availability, incoming requests, team |
+| Lawyers, psychologists, linguists | Control over what the assistant says | Sunu Ressources: document validation, testing, gap analysis |
+| Institutions and funders | Reliable, anonymous figures | Sunu Impact: indicators, regional map, reports |
+| GREEN T technical team | A reliable and secure platform | Sunu Tech: AI quality, security, audit, accounts |
+
+### What SunuSafeguard is not
+
+SunuSafeguard does not replace doctors, psychologists, social workers or the authorities. It never
+makes a diagnosis, never prescribes, and never reports anyone on its own initiative. It is a
+complementary tool for information, first orientation and access to human services.
+
+---
+
+## The concept
+
+### The name
+
+*Sunu* means "our" in Wolof. *Safeguard* means protection. **SunuSafeguard** is "our protection": a
+tool built in Senegal, for people in Senegal, with the organizations that already protect them.
+
+### One platform, five spaces
+
+| Space | Purpose |
+|---|---|
+| **Public space** (website and mobile app) | Listen, inform, orient. Open to everyone, no account required. |
+| **Sunu Impact** | Understand needs and trends to support institutional decisions. |
+| **Sunu Orientation** | Coordinate referrals with the network of human organizations. |
+| **Sunu Ressources** | Keep control over the quality of the knowledge used by the AI. |
+| **Sunu Tech** | Guarantee the performance, security and reliability of the platform. |
+
+Each space has its own users, permissions and data. They share one technical foundation and one
+visual identity.
+
+### Design principles
+
+| Principle | Meaning in SunuSafeguard |
+|---|---|
+| Safety by design | Every user journey is designed around the person's safety: quick exit, discreet mode, emergency rules that always win. |
+| Privacy by design | Data minimization: no conversation stored, no account required, anonymous statistics only. |
+| Human-centered AI | The AI supports people and professionals without replacing their judgment. |
+| Human in the loop | Situations that require a person are routed to human organizations, with consent. |
+| Evidence-based knowledge | Answers rely on documents validated by experts, with their sources shown. |
+| Digital inclusion | Mobile-first, plain language, French and Wolof, voice input, works on slow connections. |
+| Accountability | Every administrative action is traced in an audit log. |
+
+---
+
+## Research and design
+
+### Reference documents
+
+The platform was designed from two specifications written for the project:
+
+| Document | Content |
+|---|---|
+| **Functional and technical specification** (19 chapters) | Context and vision, the four dashboards view by view, the public space, roles and permissions, AI and RAG architecture, multilingual architecture, data model, security and protection of people, non-functional requirements, API, acceptance criteria, governance |
+| **Mobile app specification** | The five mobile spaces (Listen, Answer, Resources, Session, Discreet), on-device privacy rules, voice, offline use |
+
+Every requirement of these specifications is traced in the code and documentation (references such
+as "CDC §9.2" in the source code point to the matching chapter).
+
+### Design choices and the reasons behind them
+
+| Choice | Reason |
+|---|---|
+| **No account needed** to use the assistant or the directory | A person in danger must be able to ask for help without leaving an identity. An account is optional, only to follow requests from several devices. |
+| **No conversation stored** | Protects people if a device or the server is ever compromised, and builds trust. |
+| **Deterministic emergency rules** before the AI | An emergency must never depend on the mood of a language model. Rules are predictable and testable. |
+| **Answers only from validated documents** | Prevents invented information on sensitive subjects such as law, health and violence. |
+| **Local, open-source AI** (Ollama, Whisper) | No paid service, no message sent to a foreign provider, and full control over the data. |
+| **Extractive fallback** | The assistant keeps working even if the language model stops. |
+| **Wolof handled honestly** | Small open models do not write reliable Wolof yet. The assistant understands Wolof questions and answers in plain French opened by a validated Wolof sentence, rather than producing incorrect Wolof. |
+| **Quick exit and discreet mode** | Someone may be watched. One tap hides everything; the mobile app turns into a working calculator. |
+| **Consent before referral, encrypted contact details** | The person stays in control of what is shared, with whom, and for how long. |
+| **Publication threshold N ≥ 5** | Prevents anyone from being identified through statistics in a small region. |
+| **Server-side permissions** | Security cannot depend on what the interface shows. |
+
+### Visual identity
+
+The "Teranga" design system (from the Senegalese value of hospitality) aims for a safe, welcoming and
+institutional place:
+
+- a night-blue, warm-sand and teal palette, with ochre for warmth and red reserved **only** for quick
+  exit and emergency numbers;
+- Fraunces for titles and Plus Jakarta Sans for text, embedded so that no third-party resource is
+  loaded;
+- a logo showing a heart where the sun rises over the sea, and arch shapes evoking the door of a home
+  (*kër*);
+- dark mode by default, which is more discreet on a phone.
+
+The full charter is in [`docs/user-guides/charte-ui.md`](docs/user-guides/charte-ui.md).
+
+### Content and directory
+
+- The knowledge base covers psychosocial support, domestic violence and rights, cyberbullying,
+  economic violence, shelter, reproductive health, stress, supporting a loved one, suicidal thoughts,
+  resources in Senegal and confidentiality.
+- The directory includes real Senegalese organizations, among them AJS Grand-Yoff, Maison Rose
+  (Guédiawaye), La Palabre (Thiès), CLVF (Kédougou) and CEGID. Their contact details are checked with
+  each organization before they are connected to the referral service.
+
+### Governance
+
+| Area | Responsibility |
+|---|---|
+| Architecture and development | GREEN T SARL |
+| Infrastructure and cybersecurity | GREEN T technical team |
+| Content governance | Authorized experts |
+| Psychosocial validation | Qualified professionals |
+| Legal validation | Legal experts |
+| Linguistic validation | French and Wolof specialists |
+| Organization profiles | Partner organizations |
+| Protection of people | Authorized managers and professionals |
 
 ---
 
@@ -464,6 +615,55 @@ curl -X POST http://localhost:8000/api/chat \
 
 ---
 
+## Development
+
+### How the platform was built
+
+| Stage | What was delivered |
+|---|---|
+| 1. Specification | Functional and technical specification, then the mobile specification |
+| 2. Foundation | FastAPI backend, data model and migrations, role-based access, public website, the four dashboards |
+| 3. AI engine | Language detection, safety rules, RAG with cited sources, local language model, final answer check, extractive fallback |
+| 4. Search quality | Hybrid semantic and keyword search, automatic threshold calibration on a reference question set, evaluation tools |
+| 5. Security and operations | Two-factor authentication, account management, rate limiting, encrypted referral data, PDF and Excel reports, automatic data purge, monitoring |
+| 6. Mobile app | Expo app for Android and iOS, same design as the website, discreet mode, offline directory, local voice recognition in French and Wolof |
+| 7. Access control and field tests | Three main profiles, public sign-up, server-side logout, end-to-end tests on the phone and the website |
+
+### Engineering practices
+
+- **Automated tests** for every security and privacy commitment (pytest for the backend and AI
+  engine, Jest for the mobile app, TypeScript checks for the website).
+- **Versioned database migrations** with Alembic.
+- **Permissions defined in code** in a single, auditable file.
+- **Configuration through environment variables**, with no secret in the repository.
+- **Reproducible environments**: local scripts for Windows and Unix, and Docker Compose for the full
+  stack.
+- **Observability**: Prometheus metrics, service health, AI engine state and an audit log.
+
+---
+
+## Test results
+
+End-to-end tests were run on 2 November 2026, on the mobile app, the website and the API.
+
+| # | Test | Result | Observations |
+|---|---|---|---|
+| 1 | Sign-up and sign-in | Passed | Account created in the app, automatic sign-in, sign-out and sign-in again. The account always receives the "User" profile. |
+| 2 | Voice journey (French) | Passed | Spoken question transcribed word for word, then a sourced answer. |
+| 3 | Text journey | Passed | Same question typed in the app and on the website. |
+| 4 | French and Wolof | Partially passed | Both languages are recognized. In Wolof, the answer opens with a Wolof sentence and continues in French, because the validated resources are in French. |
+| 5 | Answer based on resources | Passed | The answer cites its source document. |
+| 6 | Out-of-scope question | Passed | No invented answer, directory suggested; a diagnosis request is redirected to a health professional. |
+| 7 | Referral with consent | Passed | Directory, profile, "Être rappelée", consent box (button disabled until checked), tracking code, real status read from the server. Tested with a test organization: real organizations are offered by phone until they have an account on the platform. Without consent, the request is refused. |
+| 8 | Role security | Passed | 33 access checks out of 33 compliant, including direct URL access and API calls. |
+| C1 | Confidentiality between accounts | Passed | Account B cannot see account A's request; a partner only sees its own organization's requests. |
+| C2 | Logout | Passed | After logout, the old token is refused by the server. |
+| C3 | Stability | Passed | 5 questions out of 5 answered, no error during the whole campaign. |
+
+On a laptop without a graphics card, answers take 12 to 57 seconds. A server sized for the language
+model brings this down significantly.
+
+---
 ## Testing
 
 ```bash

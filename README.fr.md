@@ -24,22 +24,27 @@ Conçue par **GREEN T SARL**, Sénégal
 ## Sommaire
 
 1. [Présentation](#présentation)
-2. [Fonctionnalités](#fonctionnalités)
-3. [Architecture](#architecture)
-4. [Fonctionnement de l'assistant](#fonctionnement-de-lassistant)
-5. [Guide d'utilisation](#guide-dutilisation)
-6. [Rôles et accès](#rôles-et-accès)
-7. [Sécurité et confidentialité](#sécurité-et-confidentialité)
-8. [Installation](#installation)
-9. [Configuration](#configuration)
-10. [Comptes de test](#comptes-de-test)
-11. [API](#api)
-12. [Tests](#tests)
-13. [Déploiement](#déploiement)
-14. [Structure du dépôt](#structure-du-dépôt)
-15. [Feuille de route](#feuille-de-route)
-16. [Bonnes pratiques d'exploitation](#bonnes-pratiques-dexploitation)
-17. [Documentation complémentaire](#documentation-complémentaire)
+2. [Pourquoi SunuSafeguard](#pourquoi-sunusafeguard)
+3. [Le concept](#le-concept)
+4. [Études et conception](#études-et-conception)
+5. [Fonctionnalités](#fonctionnalités)
+6. [Architecture](#architecture)
+7. [Fonctionnement de l'assistant](#fonctionnement-de-lassistant)
+8. [Guide d'utilisation](#guide-dutilisation)
+9. [Rôles et accès](#rôles-et-accès)
+10. [Sécurité et confidentialité](#sécurité-et-confidentialité)
+11. [Installation](#installation)
+12. [Configuration](#configuration)
+13. [Comptes de test](#comptes-de-test)
+14. [API](#api)
+15. [Développement](#développement)
+16. [Résultats des essais](#résultats-des-essais)
+17. [Tests](#tests)
+18. [Déploiement](#déploiement)
+19. [Structure du dépôt](#structure-du-dépôt)
+20. [Feuille de route](#feuille-de-route)
+21. [Bonnes pratiques d'exploitation](#bonnes-pratiques-dexploitation)
+22. [Documentation complémentaire](#documentation-complémentaire)
 
 ---
 
@@ -66,6 +71,155 @@ La plateforme repose sur six principes :
 | Toujours sourcé | L'assistant ne répond qu'à partir de documents validés par des expert·es, et les cite. |
 | Consentement explicite | Rien n'est transmis à une structure sans l'accord clair de la personne. |
 | IA souveraine | Le modèle de langage et la reconnaissance vocale tournent en local, sans service payant. |
+
+---
+
+## Pourquoi SunuSafeguard
+
+### Le problème
+
+Au Sénégal, beaucoup de femmes, d'adolescentes et de personnes vulnérables font face à des violences
+conjugales, des violences économiques, du cyberharcèlement, de la détresse psychologique ou des
+situations de danger. L'aide existe (centres d'écoute, boutiques de droit, hébergement, services de
+santé et sociaux), mais elle reste difficile d'accès :
+
+- les personnes **ne savent souvent pas quelle structure peut les aider**, où elle se trouve, ni si
+  elle est disponible ;
+- parler de violence ou de détresse est difficile, et **la peur d'être jugée ou exposée** empêche
+  beaucoup de personnes de demander ;
+- l'information fiable sur les droits, la protection et le bien-être est **dispersée** et rarement
+  disponible en wolof, la langue parlée au quotidien par la majorité ;
+- les structures travaillent de façon cloisonnée, et les institutions **manquent de chiffres fiables**
+  sur les besoins, les régions et les délais de prise en charge pour orienter leurs décisions.
+
+### La réponse
+
+SunuSafeguard AI est une porte d'entrée unique, accessible depuis un téléphone, à toute heure, sans
+donner son nom. Elle écoute, informe à partir de sources validées, reconnaît les urgences et met la
+personne en relation avec une structure humaine quand elle le souhaite. Derrière cette porte
+d'entrée, elle donne au réseau de professionnel·les les outils pour garder une information fiable,
+coordonner les orientations et mesurer l'impact sans jamais exposer les personnes accompagnées.
+
+### Pour qui
+
+| Public | Ce dont il a besoin | Ce que SunuSafeguard lui apporte |
+|---|---|---|
+| Femmes, adolescentes, personnes vulnérables | Un lieu sûr et discret pour parler et trouver de l'aide | Assistant en français et en wolof, annuaire, mise en relation avec consentement, sortie rapide, mode discret |
+| Structures partenaires | Des demandes exploitables et une fiche à jour | Sunu Orientation : fiche, disponibilités, demandes reçues, équipe |
+| Juristes, psychologues, linguistes | La maîtrise de ce que dit l'assistant | Sunu Ressources : validation des documents, tests, analyse des lacunes |
+| Institutions et bailleurs | Des chiffres fiables et anonymes | Sunu Impact : indicateurs, carte des régions, rapports |
+| Équipe technique GREEN T | Une plateforme fiable et sécurisée | Sunu Tech : qualité de l'IA, sécurité, audit, comptes |
+
+### Ce que SunuSafeguard n'est pas
+
+SunuSafeguard ne remplace ni les médecins, ni les psychologues, ni les travailleurs sociaux, ni les
+autorités. La plateforme ne pose jamais de diagnostic, ne prescrit rien et ne signale jamais personne
+de sa propre initiative. C'est un outil complémentaire d'information, de première orientation et
+d'accès aux services humains.
+
+---
+
+## Le concept
+
+### Le nom
+
+*Sunu* signifie « notre » en wolof. *Safeguard* signifie protection. **SunuSafeguard**, c'est « notre
+protection » : un outil construit au Sénégal, pour les personnes au Sénégal, avec les structures qui
+les protègent déjà.
+
+### Une plateforme, cinq espaces
+
+| Espace | Finalité |
+|---|---|
+| **Espace public** (site et application mobile) | Écouter, informer, orienter. Ouvert à toutes et tous, sans compte. |
+| **Sunu Impact** | Comprendre les besoins et les tendances pour éclairer les décisions institutionnelles. |
+| **Sunu Orientation** | Coordonner les mises en relation avec le réseau de structures humaines. |
+| **Sunu Ressources** | Garder la maîtrise de la qualité des connaissances utilisées par l'IA. |
+| **Sunu Tech** | Garantir la performance, la sécurité et la fiabilité de la plateforme. |
+
+Chaque espace a ses propres utilisateurs, permissions et données. Ils partagent un même socle
+technique et une même identité visuelle.
+
+### Principes de conception
+
+| Principe | Ce qu'il signifie dans SunuSafeguard |
+|---|---|
+| Sécurité dès la conception | Chaque parcours est pensé pour la sécurité de la personne : sortie rapide, mode discret, règles d'urgence prioritaires. |
+| Confidentialité dès la conception | Minimisation des données : aucune conversation conservée, aucun compte obligatoire, statistiques anonymes uniquement. |
+| IA centrée sur l'humain | L'IA accompagne les personnes et les professionnel·les sans remplacer leur jugement. |
+| Humain dans la boucle | Les situations qui demandent une personne sont orientées vers des structures humaines, avec consentement. |
+| Connaissances validées | Les réponses reposent sur des documents validés par des expert·es, avec leurs sources. |
+| Inclusion numérique | Mobile d'abord, langage simple, français et wolof, saisie vocale, fonctionne avec une connexion faible. |
+| Redevabilité | Chaque action d'administration est tracée dans un journal d'audit. |
+
+---
+
+## Études et conception
+
+### Documents de référence
+
+La plateforme a été conçue à partir de deux cahiers des charges rédigés pour le projet :
+
+| Document | Contenu |
+|---|---|
+| **Cahier des charges fonctionnel et technique** (19 chapitres) | Contexte et vision, les quatre tableaux de bord vue par vue, l'espace public, rôles et permissions, architecture IA et RAG, architecture multilingue, modèle de données, sécurité et protection des personnes, exigences non fonctionnelles, API, critères de recette, gouvernance |
+| **Cahier des charges de l'application mobile** | Les cinq espaces mobiles (Écoute, Réponse, Ressources, Session, Discret), règles de confidentialité sur le téléphone, voix, usage hors connexion |
+
+Chaque exigence de ces documents est tracée dans le code et la documentation (les références de type
+« CDC §9.2 » dans le code renvoient au chapitre correspondant).
+
+### Choix de conception et leurs raisons
+
+| Choix | Raison |
+|---|---|
+| **Aucun compte nécessaire** pour utiliser l'assistant ou l'annuaire | Une personne en danger doit pouvoir demander de l'aide sans laisser d'identité. Le compte est facultatif, seulement pour suivre ses demandes depuis plusieurs appareils. |
+| **Aucune conversation conservée** | Protège les personnes si un appareil ou le serveur était compromis, et installe la confiance. |
+| **Règles d'urgence déterministes** avant l'IA | Une urgence ne doit jamais dépendre de l'humeur d'un modèle de langage. Les règles sont prévisibles et testables. |
+| **Réponses uniquement à partir de documents validés** | Évite toute information inventée sur des sujets sensibles comme le droit, la santé et les violences. |
+| **IA locale et open source** (Ollama, Whisper) | Aucun service payant, aucun message envoyé à un fournisseur étranger, maîtrise complète des données. |
+| **Repli par extraits** | L'assistant continue de fonctionner même si le modèle de langage s'arrête. |
+| **Le wolof traité avec honnêteté** | Les petits modèles ouverts n'écrivent pas encore un wolof fiable. L'assistant comprend les questions en wolof et répond en français simple, précédé d'une phrase wolof validée, plutôt que de produire un wolof incorrect. |
+| **Sortie rapide et mode discret** | Une personne peut être surveillée. Un geste masque tout ; l'application mobile devient une vraie calculatrice. |
+| **Consentement avant orientation, coordonnées chiffrées** | La personne garde la maîtrise de ce qui est transmis, à qui et pour combien de temps. |
+| **Seuil de publication N ≥ 5** | Empêche d'identifier quelqu'un à travers les statistiques d'une petite région. |
+| **Permissions contrôlées par le serveur** | La sécurité ne peut pas dépendre de ce qu'affiche l'interface. |
+
+### Identité visuelle
+
+La charte « Teranga » (du nom de la valeur sénégalaise d'hospitalité) vise un lieu sûr, accueillant
+et institutionnel :
+
+- une palette bleu nuit, sable chaud et sarcelle, avec l'ocre pour la chaleur et le rouge réservé
+  **uniquement** à la sortie rapide et aux numéros d'urgence ;
+- Fraunces pour les titres et Plus Jakarta Sans pour le texte, embarquées pour ne charger aucune
+  ressource tierce ;
+- un logo représentant un cœur où le soleil se lève sur la mer, et des arches évoquant la porte d'une
+  maison (*kër*) ;
+- le mode sombre par défaut, plus discret sur un téléphone.
+
+La charte complète se trouve dans [`docs/user-guides/charte-ui.md`](docs/user-guides/charte-ui.md).
+
+### Contenus et annuaire
+
+- La base de connaissances couvre l'écoute psychosociale, les violences conjugales et les droits, le
+  cyberharcèlement, les violences économiques, l'hébergement, la santé reproductive, le stress, le
+  soutien à un proche, les idées suicidaires, les ressources au Sénégal et la confidentialité.
+- L'annuaire comprend de vraies structures sénégalaises, dont l'AJS Grand-Yoff, la Maison Rose
+  (Guédiawaye), La Palabre (Thiès), le CLVF (Kédougou) et le CEGID. Leurs coordonnées sont vérifiées
+  auprès de chaque structure avant leur raccordement au service de mise en relation.
+
+### Gouvernance
+
+| Domaine | Responsabilité |
+|---|---|
+| Architecture et développement | GREEN T SARL |
+| Infrastructure et cybersécurité | Équipe technique GREEN T |
+| Gouvernance des contenus | Expert·es habilité·es |
+| Validation psychosociale | Professionnel·les compétent·es |
+| Validation juridique | Expert·es juridiques |
+| Validation linguistique | Spécialistes du français et du wolof |
+| Fiches des structures | Structures partenaires |
+| Protection des personnes | Responsables et professionnel·les habilité·es |
 
 ---
 
@@ -470,6 +624,55 @@ curl -X POST http://localhost:8000/api/chat \
 
 ---
 
+## Développement
+
+### Les étapes de construction
+
+| Étape | Ce qui a été livré |
+|---|---|
+| 1. Cahier des charges | Cahier des charges fonctionnel et technique, puis cahier des charges mobile |
+| 2. Socle | Backend FastAPI, modèle de données et migrations, contrôle d'accès par rôle, site public, les quatre tableaux de bord |
+| 3. Moteur IA | Détection de langue, règles de sécurité, RAG avec sources citées, modèle de langage local, contrôle final des réponses, repli par extraits |
+| 4. Qualité de la recherche | Recherche hybride sémantique et par mots-clés, calibrage automatique du seuil sur un jeu de questions de référence, outils d'évaluation |
+| 5. Sécurité et exploitation | Double authentification, gestion des comptes, limitation de débit, chiffrement des données d'orientation, rapports PDF et Excel, purge automatique, supervision |
+| 6. Application mobile | Application Expo pour Android et iOS, même design que le site, mode discret, annuaire hors connexion, reconnaissance vocale locale en français et en wolof |
+| 7. Contrôle d'accès et essais | Trois profils principaux, inscription publique, déconnexion côté serveur, essais de bout en bout sur téléphone et sur le site |
+
+### Pratiques d'ingénierie
+
+- **Tests automatisés** pour chaque engagement de sécurité et de confidentialité (pytest pour le
+  backend et le moteur IA, Jest pour l'application mobile, vérification TypeScript pour le site).
+- **Migrations de base de données versionnées** avec Alembic.
+- **Permissions définies dans le code**, dans un fichier unique et auditable.
+- **Configuration par variables d'environnement**, sans aucun secret dans le dépôt.
+- **Environnements reproductibles** : scripts locaux pour Windows et Unix, Docker Compose pour la
+  pile complète.
+- **Observabilité** : métriques Prometheus, état des services, état du moteur IA et journal d'audit.
+
+---
+
+## Résultats des essais
+
+Des essais de bout en bout ont été menés le 2 novembre 2026 sur l'application mobile, le site et l'API.
+
+| N° | Essai | Résultat | Observations |
+|---|---|---|---|
+| 1 | Inscription et connexion | Réussi | Compte créé dans l'application, connexion automatique, déconnexion puis reconnexion. Le compte reçoit toujours le profil « Utilisateur ». |
+| 2 | Parcours vocal (français) | Réussi | Question parlée transcrite mot pour mot, puis réponse sourcée. |
+| 3 | Parcours écrit | Réussi | Même question écrite dans l'application et sur le site. |
+| 4 | Français et wolof | Partiellement réussi | Les deux langues sont reconnues. En wolof, la réponse commence par une phrase en wolof et se poursuit en français, car les ressources validées sont en français. |
+| 5 | Réponse fondée sur les ressources | Réussi | La réponse cite son document source. |
+| 6 | Question hors périmètre | Réussi | Aucune réponse inventée, annuaire proposé ; une demande de diagnostic est orientée vers un professionnel de santé. |
+| 7 | Mise en relation avec consentement | Réussi | Annuaire, fiche, « Être rappelée », case de consentement (bouton inactif tant qu'elle n'est pas cochée), code de suivi, statut réel lu sur le serveur. Essai mené avec une structure de test : les vraies structures sont proposées par appel téléphonique tant qu'elles n'ont pas de compte sur la plateforme. Sans consentement, la demande est refusée. |
+| 8 | Sécurité des rôles | Réussi | 33 contrôles d'accès sur 33 conformes, y compris par adresse directe et par appel d'API. |
+| C1 | Confidentialité entre comptes | Réussi | Le compte B ne voit pas la demande du compte A ; un partenaire ne voit que les demandes de sa structure. |
+| C2 | Déconnexion | Réussi | Après déconnexion, l'ancien jeton est refusé par le serveur. |
+| C3 | Stabilité | Réussi | 5 questions sur 5 ont reçu une réponse, aucune erreur pendant toute la campagne. |
+
+Sur un ordinateur portable sans carte graphique, une réponse prend de 12 à 57 secondes. Un serveur
+dimensionné pour le modèle de langage réduit fortement ce délai.
+
+---
 ## Tests
 
 ```bash

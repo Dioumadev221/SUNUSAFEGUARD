@@ -1,0 +1,30 @@
+{
+ "login_pro": {
+  "status": 200,
+  "has_token": true,
+  "mfa_required": true
+ },
+ "me_pro": {
+  "status": 200,
+  "role": "super_admin"
+ },
+ "login_mauvais_mdp": {
+  "status": 401,
+  "body": {
+   "detail": "Identifiants invalides"
+  }
+ },
+ "inscription": {
+  "identifiant": "test-unicef-1102111832@exemple.test",
+  "status": 201,
+  "has_token": true
+ },
+ "connexion_apres_inscription": {
+  "status": 200,
+  "has_token": true
+ },
+ "me_utilisatrice": {
+  "status": 200,
+  "role": "utilisateur"
+ }
+}

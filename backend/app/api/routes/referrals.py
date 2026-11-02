@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.deps import require
+from app.api.deps import get_current_user, get_optional_user, require
+from app.core.permissions import is_global
 from app.core.config import get_settings
 from app.core.security import decrypt, encrypt
 from app.db.session import get_db
@@ -28,7 +29,7 @@ PUBLIC_LABELS = {
 
 
 @router.post("", response_model=ReferralCreated, status_code=201)
-def create_referral(data: ReferralIn, db: Session = Depends(get_db)):
+def create_referral(data: ReferralIn, db: Session = Depends(get_db), owner: User | None = Depends(get_optional_user)):
     """Mise en relation volontaire. Sans consentement explicite, rien n'est transmis."""
     if not data.consent:
         raise HTTPException(400, "Le consentement explicite est requis pour transmettre une demande.")
@@ -40,7 +41,8 @@ def create_referral(data: ReferralIn, db: Session = Depends(get_db)):
         raise HTTPException(409, "Cette structure ne reçoit pas encore de demandes en ligne. Appelez-la directement.")
     code = "SSG-" + secrets.token_hex(4).upper()
     ref = ReferralRequest(public_code=code, organization_id=org.id, category=data.category, region=data.region,
-                          status="transmise", consent_given=True, contact_encrypted=encrypt(data.contact))
+                          status="transmise", consent_given=True, contact_encrypted=encrypt(data.contact),
+                          user_id=owner.id if owner else None)
     db.add(ref)
     db.flush()
     db.add(ReferralEvent(referral_id=ref.id, status="en_attente_consentement", note="Orientation proposée"))
@@ -59,6 +61,14 @@ def public_status(code: str, db: Session = Depends(get_db)):
     return {"code": ref.public_code, "status": ref.status, "label": PUBLIC_LABELS.get(ref.status, ref.status)}
 
 
+@router.get("/mine")
+def my_referrals(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Demandes du compte connecté, et uniquement les siennes (isolation entre comptes)."""
+    q = select(ReferralRequest).where(ReferralRequest.user_id == user.id).order_by(ReferralRequest.id.desc())
+    return [{"code": r.public_code, "organization": r.organization.name, "status": r.status,
+             "label": PUBLIC_LABELS.get(r.status, r.status), "created_at": r.created_at} for r in db.scalars(q)]
+
+
 def _serialize(ref: ReferralRequest, with_contact: bool) -> dict:
     return {
         "id": ref.id, "public_code": ref.public_code, "organization": ref.organization.name,
@@ -72,7 +82,7 @@ def _serialize(ref: ReferralRequest, with_contact: bool) -> dict:
 @router.get("")
 def list_referrals(user: User = Depends(require("referrals:manage")), db: Session = Depends(get_db)):
     q = select(ReferralRequest).order_by(ReferralRequest.id.desc())
-    if user.role != "super_admin":
+    if not is_global(user.role):
         q = q.where(ReferralRequest.organization_id == user.organization_id)
     # Le contact déchiffré n'est visible que de la structure destinataire.
     return [_serialize(r, with_contact=user.organization_id == r.organization_id) for r in db.scalars(q)]
@@ -82,7 +92,7 @@ def list_referrals(user: User = Depends(require("referrals:manage")), db: Sessio
 def update_status(ref_id: int, data: ReferralStatusIn, user: User = Depends(require("referrals:manage")),
                   db: Session = Depends(get_db)):
     ref = db.get(ReferralRequest, ref_id)
-    if not ref or (user.role != "super_admin" and ref.organization_id != user.organization_id):
+    if not ref or (not is_global(user.role) and ref.organization_id != user.organization_id):
         raise HTTPException(404, "Demande introuvable")
     ref.status = data.status
     db.add(ReferralEvent(referral_id=ref.id, status=data.status, actor_id=user.id, note=data.note))
@@ -98,7 +108,7 @@ def update_status(ref_id: int, data: ReferralStatusIn, user: User = Depends(requ
 def delays(user: User = Depends(require("referrals:manage")), db: Session = Depends(get_db)):
     """Délais agrégés transmission → réception → prise en charge (en heures)."""
     q = select(ReferralRequest)
-    if user.role != "super_admin":
+    if not is_global(user.role):
         q = q.where(ReferralRequest.organization_id == user.organization_id)
     to_recv, to_conf, by_status = [], [], {}
     for ref in db.scalars(q):
@@ -123,7 +133,7 @@ def alerts(user: User = Depends(require("referrals:manage")), db: Session = Depe
     hours = get_settings().referral_alert_hours
     limit = datetime.now(timezone.utc) - timedelta(hours=hours)
     q = select(ReferralRequest).where(ReferralRequest.status == "transmise")
-    if user.role != "super_admin":
+    if not is_global(user.role):
         q = q.where(ReferralRequest.organization_id == user.organization_id)
     late = []
     for ref in db.scalars(q):

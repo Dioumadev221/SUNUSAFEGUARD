@@ -103,12 +103,13 @@ function DirectoryManager() {
     reload();
   }
 
-  const canEdit = user?.role === "super_admin" || user?.role === "responsable_partenaire";
+  const isGlobal = user?.role === "super_admin" || user?.role === "admin_operationnel";
+  const canEdit = isGlobal || user?.role === "responsable_partenaire";
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm muted">La disponibilité déclarée n'est jamais présentée au public comme une garantie d'accueil.</p>
-        {user?.role === "super_admin" && !editing && <button className="btn-primary" onClick={() => setEditing("new")}><Plus size={16} /> Nouvelle structure</button>}
+        {isGlobal && !editing && <button className="btn-primary" onClick={() => setEditing("new")}><Plus size={16} /> Nouvelle structure</button>}
       </div>
       {editing && <OrgEditor initial={editing === "new" ? undefined : editing} onSave={save} onCancel={() => setEditing(null)} />}
       <ErrorNote error={error} />
@@ -118,7 +119,7 @@ function DirectoryManager() {
           <table className="table">
             <thead><tr><th>Structure</th><th>Disponibilité</th><th>Places</th><th>Fiche</th><th /></tr></thead>
             <tbody>
-              {data.map((org) => <OrgRow key={org.id} org={org} canValidate={user?.role === "super_admin"} canEdit={canEdit}
+              {data.map((org) => <OrgRow key={org.id} org={org} canValidate={isGlobal} canEdit={canEdit}
                 onEdit={() => setEditing(org)} onUpdate={update} onValidate={validate} />)}
             </tbody>
           </table>

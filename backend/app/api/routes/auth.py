@@ -2,17 +2,17 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from jwt import PyJWTError
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, token_payload
 from app.core import totp
 from app.core.config import get_settings
-from app.core.permissions import MFA_REQUIRED_ROLES, dashboards_for
+from app.core.permissions import MFA_REQUIRED_ROLES, PUBLIC_ROLE, dashboards_for
 from app.core.security import create_access_token, decode_token, hash_password, password_problems, verify_password
 from app.db.session import get_db
-from app.models import User
-from app.schemas import LoginIn, MfaCodeIn, MfaVerifyIn, PasswordChangeIn, TokenOut, UserOut
+from app.models import RevokedToken, User
+from app.schemas import LoginIn, RegisterIn, MfaCodeIn, MfaVerifyIn, PasswordChangeIn, TokenOut, UserOut
 from app.services.audit import audit, security_event
 
 router = APIRouter(prefix="/auth", tags=["Authentication API"])
@@ -58,6 +58,34 @@ def login(data: LoginIn, db: Session = Depends(get_db)):
         token, _ = create_access_token(str(user.id), user.role, scope="mfa", minutes=5)
         return TokenOut(mfa_required=True, mfa_token=token)
     return _issue(db, user)
+
+
+@router.post("/register", response_model=TokenOut, status_code=201)
+def register(data: RegisterIn, db: Session = Depends(get_db)):
+    """Inscription publique : le compte reçoit toujours le rôle `utilisateur`, sans aucun
+    accès à l'administration. Les comptes professionnels sont créés par un administrateur."""
+    email = data.email.strip().lower()
+    if db.scalar(select(User).where(User.email == email)):
+        raise HTTPException(409, "Un compte existe déjà avec cet identifiant")
+    if problems := password_problems(data.password):
+        raise HTTPException(422, "Mot de passe trop faible : " + ", ".join(problems))
+    user = User(email=email, full_name=data.full_name.strip() or "Utilisateur", role=PUBLIC_ROLE,
+                password_hash=hash_password(data.password))
+    db.add(user)
+    db.flush()
+    return _issue(db, user)
+
+
+@router.post("/logout", status_code=204)
+def logout(payload: dict = Depends(token_payload), db: Session = Depends(get_db)):
+    """Ferme la session côté serveur : le jeton est refusé jusqu'à son expiration."""
+    if payload.get("jti") and not db.get(RevokedToken, payload["jti"]):
+        db.add(RevokedToken(jti=payload["jti"], expires_at=datetime.fromtimestamp(payload["exp"], timezone.utc)))
+        user = db.get(User, int(payload["sub"]))
+        if user:
+            audit(db, user, "logout")
+        db.execute(delete(RevokedToken).where(RevokedToken.expires_at < datetime.now(timezone.utc)))
+        db.commit()
 
 
 @router.post("/mfa/verify", response_model=TokenOut)

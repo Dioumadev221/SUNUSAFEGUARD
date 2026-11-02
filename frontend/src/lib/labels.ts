@@ -42,7 +42,9 @@ export const DOC_STATUS: Record<string, string> = {
 };
 
 export const ROLE_LABELS: Record<string, string> = {
-  super_admin: "Super administrateur",
+  super_admin: "Super administrateur GREEN T",
+  admin_operationnel: "Administrateur opérationnel",
+  utilisateur: "Utilisateur",
   admin_technique: "Administrateur technique",
   responsable_institutionnel: "Responsable institutionnel",
   analyste: "Analyste",

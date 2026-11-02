@@ -1,5 +1,6 @@
 import { api } from "./api";
 import { getItem, KEYS, setItem } from "./secure";
+import type { ServerReferral } from "./auth.service";
 import type { ReferralCreated, ReferralStatus, StoredReferral } from "@/types";
 
 const CLOSED = new Set(["cloturee", "annulee", "non_prise_en_charge"]);
@@ -69,6 +70,19 @@ export async function refreshReferral(code: string): Promise<StoredReferral[]> {
   );
   await saveReferrals(next);
   return next;
+}
+
+/** Ajoute au carnet local les demandes du compte enregistrées sur le serveur (autre téléphone, réinstallation). */
+export async function mergeServerReferrals(server: ServerReferral[]): Promise<StoredReferral[]> {
+  const list = await loadReferrals();
+  const known = new Set(list.map((r) => r.code));
+  const now = new Date().toISOString();
+  for (const r of server) {
+    if (known.has(r.code)) continue;
+    list.push({ code: r.code, createdAt: r.created_at, organization: r.organization, status: r.status, label: r.label, checkedAt: now });
+  }
+  await saveReferrals(list);
+  return list;
 }
 
 export async function removeReferral(code: string): Promise<StoredReferral[]> {

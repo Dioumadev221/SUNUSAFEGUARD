@@ -6,6 +6,7 @@ import { Chip } from "@/components/common/ui";
 import VoiceWaveform from "./VoiceWaveform";
 import { ApiError } from "@/services/api";
 import { deleteRecording, registerRecording, stopSpeaking, transcribe } from "@/services/voice.service";
+import { useSession } from "@/store/session";
 import { fonts, palette, useColors } from "@/theme";
 
 type Status = "ready" | "listening" | "processing" | "error";
@@ -15,14 +16,26 @@ const BARS = 28;
 /**
  * Grand bouton micro (CDC mobile §3.1 B) : appuyer pour parler, appuyer pour arrêter.
  * L'audio est transcrit sur le serveur (Whisper local, gratuit), puis le fichier est effacé du téléphone.
- * Le texte reconnu est placé dans le champ de saisie : l'utilisatrice le relit avant d'envoyer.
+ * Le texte reconnu est envoyé à l'assistant et la réponse est lue à voix haute (parcours A du CDC).
  */
-export default function VoiceButton({ onTranscript, onUseText }: { onTranscript: (text: string) => void; onUseText: () => void }) {
+export default function VoiceButton({
+  onTranscript,
+  onUseText,
+  compact,
+  onError,
+}: {
+  onTranscript: (text: string) => void;
+  onUseText?: () => void;
+  /** Petit bouton à côté du champ de saisie, pour continuer la conversation à la voix. */
+  compact?: boolean;
+  onError?: (message: string | null) => void;
+}) {
   const c = useColors();
   const recorder = useAudioRecorder({ ...RecordingPresets.HIGH_QUALITY, isMeteringEnabled: true });
   const recState = useAudioRecorderState(recorder, 120);
   const [status, setStatus] = useState<Status>("ready");
-  const [language, setLanguage] = useState<"fr" | "wo">("fr");
+  const language = useSession((s) => s.voiceLang);
+  const setLanguage = useSession((s) => s.setVoiceLang);
   const [message, setMessage] = useState<string | null>(null);
   const [levels, setLevels] = useState<number[]>(() => Array(BARS).fill(-60));
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -34,6 +47,11 @@ export default function VoiceButton({ onTranscript, onUseText }: { onTranscript:
     }
   }, [recState.metering, status]);
 
+  const report = (m: string | null) => {
+    setMessage(m);
+    onError?.(m);
+  };
+
   useEffect(() => () => registerRecording(null), []);
 
   const reset = () => {
@@ -42,12 +60,12 @@ export default function VoiceButton({ onTranscript, onUseText }: { onTranscript:
   };
 
   const start = async () => {
-    setMessage(null);
+    report(null);
     stopSpeaking();
     const perm = await AudioModule.requestRecordingPermissionsAsync();
     if (!perm.granted) {
       setStatus("error");
-      setMessage("L'accès au micro a été refusé. Vous pouvez l'autoriser dans les réglages du téléphone, ou écrire votre question.");
+      report("L'accès au micro a été refusé. Vous pouvez l'autoriser dans les réglages du téléphone, ou écrire votre question.");
       return;
     }
     try {
@@ -66,7 +84,7 @@ export default function VoiceButton({ onTranscript, onUseText }: { onTranscript:
       timer.current = setTimeout(() => void stop(), MAX_MS);
     } catch {
       setStatus("error");
-      setMessage("Le micro n'a pas pu démarrer. Réessayez ou écrivez votre question.");
+      report("Le micro n'a pas pu démarrer. Réessayez ou écrivez votre question.");
     }
   };
 
@@ -83,14 +101,14 @@ export default function VoiceButton({ onTranscript, onUseText }: { onTranscript:
       const result = await transcribe(uri, language);
       if (!result.text) {
         setStatus("error");
-        setMessage("Je n'ai rien entendu. Parlez un peu plus près du téléphone et réessayez.");
+        report("Je n'ai rien entendu. Parlez un peu plus près du téléphone et réessayez.");
         return;
       }
       setStatus("ready");
       onTranscript(result.text);
     } catch (e) {
       setStatus("error");
-      setMessage(e instanceof ApiError ? e.message : "La reconnaissance vocale n'a pas fonctionné. Réessayez ou écrivez votre question.");
+      report(e instanceof ApiError ? e.message : "La reconnaissance vocale n'a pas fonctionné. Réessayez ou écrivez votre question.");
     } finally {
       void deleteRecording(uri);
     }
@@ -105,8 +123,27 @@ export default function VoiceButton({ onTranscript, onUseText }: { onTranscript:
     error: message ?? "",
   }[status];
 
-  return (
-    <View style={{ alignItems: "center", gap: 14 }}>
+  if (compact) {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={listening ? "Arrêter et envoyer le message vocal" : "Parler"}
+        disabled={processing}
+        onPress={() => void (listening ? stop() : start())}
+        style={[styles.small, { backgroundColor: listening ? palette.alert : c.accentSoft }]}
+      >
+        {processing ? (
+          <ActivityIndicator color={c.accent} />
+        ) : listening ? (
+          <Square size={16} color="#FFFFFF" fill="#FFFFFF" />
+        ) : (
+          <Mic size={20} color={c.accentSoftText} />
+        )}
+      </Pressable>
+    );
+  }
+
+  return (    <View style={{ alignItems: "center", gap: 14 }}>
       <View style={[styles.outer, { backgroundColor: c.dark ? "rgba(242,196,109,0.12)" : "rgba(242,196,109,0.45)" }]}>
         <View style={[styles.inner, { borderColor: listening ? c.accent : c.dark ? "rgba(79,209,190,0.2)" : "rgba(14,124,112,0.18)" }]}>
           <Pressable
@@ -152,7 +189,7 @@ export default function VoiceButton({ onTranscript, onUseText }: { onTranscript:
         </View>
       )}
 
-      {status === "error" && (
+      {status === "error" && !!onUseText && (
         <Pressable accessibilityRole="button" onPress={onUseText} hitSlop={8}>
           <Text style={{ fontFamily: fonts.semibold, fontSize: 15, color: c.accent, textDecorationLine: "underline" }}>Écrire ma question</Text>
         </Pressable>
@@ -165,4 +202,5 @@ const styles = StyleSheet.create({
   outer: { width: 216, height: 216, borderRadius: 108, alignItems: "center", justifyContent: "center" },
   inner: { width: 184, height: 184, borderRadius: 92, borderWidth: 10, alignItems: "center", justifyContent: "center" },
   mic: { width: 140, height: 140, borderRadius: 70, alignItems: "center", justifyContent: "center" },
+  small: { width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center" },
 });

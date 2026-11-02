@@ -2,6 +2,7 @@ import base64
 import hashlib
 import hmac
 import os
+import secrets
 from datetime import datetime, timedelta, timezone
 
 import jwt
@@ -31,7 +32,7 @@ def create_access_token(subject: str, role: str, scope: str = "access", minutes:
     s = get_settings()
     minutes = minutes or s.jwt_expire_minutes
     expires = datetime.now(timezone.utc) + timedelta(minutes=minutes)
-    token = jwt.encode({"sub": subject, "role": role, "scope": scope, "exp": expires}, s.jwt_secret, algorithm="HS256")
+    token = jwt.encode({"sub": subject, "role": role, "scope": scope, "exp": expires, "jti": secrets.token_hex(16)}, s.jwt_secret, algorithm="HS256")
     return token, minutes * 60
 
 

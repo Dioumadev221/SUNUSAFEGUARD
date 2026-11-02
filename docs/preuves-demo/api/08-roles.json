@@ -1,0 +1,320 @@
+{
+ "controles": [
+  {
+   "compte": "anonyme",
+   "requete": "GET /users",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 401,
+   "ok": true
+  },
+  {
+   "compte": "anonyme",
+   "requete": "GET /referrals",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 401,
+   "ok": true
+  },
+  {
+   "compte": "anonyme",
+   "requete": "GET /metrics/overview",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 401,
+   "ok": true
+  },
+  {
+   "compte": "anonyme",
+   "requete": "GET /audit",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 401,
+   "ok": true
+  },
+  {
+   "compte": "impact@sunusafeguard.local",
+   "requete": "GET /metrics/overview",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "impact@sunusafeguard.local",
+   "requete": "GET /users",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "impact@sunusafeguard.local",
+   "requete": "GET /knowledge/documents",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "impact@sunusafeguard.local",
+   "requete": "GET /audit",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "impact@sunusafeguard.local",
+   "requete": "GET /referrals",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "partenaire@sunusafeguard.local",
+   "requete": "GET /referrals",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "partenaire@sunusafeguard.local",
+   "requete": "GET /users",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "partenaire@sunusafeguard.local",
+   "requete": "GET /audit",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "partenaire@sunusafeguard.local",
+   "requete": "GET /metrics/overview",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "partenaire@sunusafeguard.local",
+   "requete": "GET /monitoring/ai",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "utilisateur@sunusafeguard.local",
+   "requete": "GET /auth/me",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "utilisateur@sunusafeguard.local",
+   "requete": "GET /users",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "utilisateur@sunusafeguard.local",
+   "requete": "GET /audit",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "utilisateur@sunusafeguard.local",
+   "requete": "GET /metrics/overview",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "utilisateur@sunusafeguard.local",
+   "requete": "GET /referrals",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "utilisateur@sunusafeguard.local",
+   "requete": "GET /knowledge/documents",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "utilisateur@sunusafeguard.local",
+   "requete": "GET /monitoring/ai",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "expert@sunusafeguard.local",
+   "requete": "GET /knowledge/documents",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "expert@sunusafeguard.local",
+   "requete": "GET /users",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "expert@sunusafeguard.local",
+   "requete": "GET /audit",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "expert@sunusafeguard.local",
+   "requete": "GET /referrals",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "tech@sunusafeguard.local",
+   "requete": "GET /monitoring/ai",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "tech@sunusafeguard.local",
+   "requete": "GET /referrals",
+   "attendu": [
+    401,
+    403
+   ],
+   "obtenu": 403,
+   "ok": true
+  },
+  {
+   "compte": "superadmin@sunusafeguard.local",
+   "requete": "GET /users",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "superadmin@sunusafeguard.local",
+   "requete": "GET /audit",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "superadmin@sunusafeguard.local",
+   "requete": "GET /metrics/overview",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "superadmin@sunusafeguard.local",
+   "requete": "GET /referrals",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "superadmin@sunusafeguard.local",
+   "requete": "GET /knowledge/documents",
+   "attendu": [
+    200
+   ],
+   "obtenu": 200,
+   "ok": true
+  },
+  {
+   "compte": "partenaire@sunusafeguard.local",
+   "requete": "GET /users (périmètre)",
+   "attendu": "uniquement sa structure",
+   "obtenu": "2 compte(s), 0 hors structure",
+   "ok": true
+  }
+ ]
+}

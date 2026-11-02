@@ -13,6 +13,7 @@ import {
 } from "@expo-google-fonts/plus-jakarta-sans";
 import StealthInterface from "@/components/security/StealthInterface";
 import { queryClient, restoreStealth } from "@/services/session.service";
+import { restoreAccount } from "@/services/auth.service";
 import { getItem, KEYS } from "@/services/secure";
 import { stopRecording, stopSpeaking } from "@/services/voice.service";
 import { useSession } from "@/store/session";
@@ -35,6 +36,7 @@ export default function RootLayout() {
     // Si la sortie rapide était active à la fermeture, l'app rouvre sur la calculatrice.
     void Promise.all([
       restoreStealth(),
+      restoreAccount(),
       getItem(KEYS.autoRead).then((v) => useSession.getState().setAutoRead(v === "1")),
       getItem(KEYS.theme).then((v) => useSession.getState().setThemeMode(v === "light" ? "light" : "dark")),
     ]).finally(() => setReady(true));

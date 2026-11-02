@@ -1,0 +1,39 @@
+{
+ "question_lue": "Mon mari me frappe, est-ce que je peux porter plainte ?",
+ "audio": "02-question-voix-fr.mp3",
+ "transcription": {
+  "status": 200,
+  "body": {
+   "text": "Mon mari me frappe, est-ce que je peux porter plainte ?",
+   "language": "fr",
+   "duration": 3.6,
+   "seconds": 36.7
+  },
+  "secondes": 38.99
+ },
+ "reponse": {
+  "status": 200,
+  "body": {
+   "answer": "[1] Si votre mari vous frappe, vous avez le droit de porter plainte. Il s'agit d'une décision personnelle que vous pouvez prendre. Vous pouvez être accompagnée par une association, une boutique de droit ou une maison de justice.",
+   "language": "fr",
+   "category": "violences_physiques_verbales",
+   "sources": [
+    {
+     "ref": 1,
+     "document_id": 2,
+     "title": "Violences physiques et verbales — vos droits au Sénégal",
+     "source": "GREEN T — synthèse de démonstration (Code pénal, loi n° 99-05)",
+     "section": "Porter plainte : une décision personnelle · Le certificat médical",
+     "score": 0.569
+    }
+   ],
+   "grounded": true,
+   "show_emergency": false,
+   "suggest_directory": true,
+   "safety_action": "allow",
+   "disclaimer": "Assistant d'information automatisé. Il ne remplace pas un·e professionnel·le et ne contacte personne à votre place.",
+   "generated": true
+  },
+  "secondes": 17.85
+ }
+}

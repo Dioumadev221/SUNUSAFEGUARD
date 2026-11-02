@@ -1,0 +1,29 @@
+{
+ "structure_reelle": {
+  "nom": "Association des Juristes Sénégalaises (AJS) — Boutique de droit",
+  "status": 409,
+  "body": {
+   "detail": "Cette structure ne reçoit pas encore de demandes en ligne. Appelez-la directement."
+  }
+ },
+ "sans_consentement": {
+  "status": 400,
+  "body": {
+   "detail": "Le consentement explicite est requis pour transmettre une demande."
+  }
+ },
+ "structure_demo": {
+  "nom": "Centre d'écoute Jàmm (DÉMO)",
+  "creation": {
+   "status": 404,
+   "body": {
+    "detail": "Structure introuvable"
+   }
+  },
+  "vue_par_partenaire": false,
+  "suivi_par_code": {
+   "status": null,
+   "body": null
+  }
+ }
+}

@@ -1,0 +1,127 @@
+{
+ "partenaire_org": 1,
+ "nb_demandes_visibles": 8,
+ "demandes_autres_structures": 0,
+ "extrait": [
+  {
+   "id": 19,
+   "public_code": "SSG-F028EE39",
+   "organization": "Centre d'écoute Jàmm (DÉMO)",
+   "organization_id": 1,
+   "category": "ecoute_psychosociale",
+   "region": "Dakar",
+   "status": "transmise",
+   "created_at": "2026-11-02T11:16:20.267048",
+   "updated_at": "2026-11-02T11:16:20.267044",
+   "contact": "77 000 00 00",
+   "events": [
+    {
+     "status": "en_attente_consentement",
+     "note": "Orientation proposée",
+     "created_at": "2026-11-02T11:16:20.271533"
+    },
+    {
+     "status": "transmise",
+     "note": "Consentement donné, demande transmise",
+     "created_at": "2026-11-02T11:16:20.271536"
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "public_code": "SSG-494BBBF5",
+   "organization": "Centre d'écoute Jàmm (DÉMO)",
+   "organization_id": 1,
+   "category": "ecoute_psychosociale",
+   "region": "Dakar",
+   "status": "transmise",
+   "created_at": "2026-11-02T11:10:10.889965",
+   "updated_at": "2026-11-02T11:10:10.889960",
+   "contact": "77 000 00 00",
+   "events": [
+    {
+     "status": "en_attente_consentement",
+     "note": "Orientation proposée",
+     "created_at": "2026-11-02T11:10:10.892264"
+    },
+    {
+     "status": "transmise",
+     "note": "Consentement donné, demande transmise",
+     "created_at": "2026-11-02T11:10:10.892268"
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "public_code": "SSG-7DADDC4E",
+   "organization": "Centre d'écoute Jàmm (DÉMO)",
+   "organization_id": 1,
+   "category": "ecoute_psychosociale",
+   "region": "Dakar",
+   "status": "transmise",
+   "created_at": "2026-11-02T11:07:56.172252",
+   "updated_at": "2026-11-02T11:07:56.172248",
+   "contact": "77 000 00 00",
+   "events": [
+    {
+     "status": "en_attente_consentement",
+     "note": "Orientation proposée",
+     "created_at": "2026-11-02T11:07:56.176608"
+    },
+    {
+     "status": "transmise",
+     "note": "Consentement donné, demande transmise",
+     "created_at": "2026-11-02T11:07:56.176611"
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "public_code": "SSG-79421601",
+   "organization": "Centre d'écoute Jàmm (DÉMO)",
+   "organization_id": 1,
+   "category": "ecoute_psychosociale",
+   "region": "Dakar",
+   "status": "transmise",
+   "created_at": "2026-11-02T10:59:03.143368",
+   "updated_at": "2026-11-02T10:59:03.143365",
+   "contact": "TEST UNICEF — structure de démonstration",
+   "events": [
+    {
+     "status": "en_attente_consentement",
+     "note": "Orientation proposée",
+     "created_at": "2026-11-02T10:59:03.144902"
+    },
+    {
+     "status": "transmise",
+     "note": "Consentement donné, demande transmise",
+     "created_at": "2026-11-02T10:59:03.144905"
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "public_code": "SSG-B759BE22",
+   "organization": "Centre d'écoute Jàmm (DÉMO)",
+   "organization_id": 1,
+   "category": "ecoute_psychosociale",
+   "region": "Dakar",
+   "status": "transmise",
+   "created_at": "2026-11-02T10:58:56.966025",
+   "updated_at": "2026-11-02T10:58:56.966022",
+   "contact": "TEST UNICEF — ne pas rappeler",
+   "events": [
+    {
+     "status": "en_attente_consentement",
+     "note": "Orientation proposée",
+     "created_at": "2026-11-02T10:58:56.971286"
+    },
+    {
+     "status": "transmise",
+     "note": "Consentement donné, demande transmise",
+     "created_at": "2026-11-02T10:58:56.971289"
+    }
+   ]
+  }
+ ]
+}

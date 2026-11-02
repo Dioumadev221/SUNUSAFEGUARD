@@ -49,7 +49,8 @@ export default function ResponseScreen() {
     if (messages.length || pending) setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 120);
   }, [messages.length, pending]);
 
-  const send = async (raw?: string) => {
+  // Question dite au micro : envoyée tout de suite, et la réponse est lue à voix haute (parcours A du CDC).
+  const send = async (raw?: string, spoken = false) => {
     const q = (raw ?? draft).trim();
     if (!q || pending) return; // protection contre les doubles envois
     setError(null);
@@ -60,7 +61,7 @@ export default function ResponseScreen() {
       const response = await ask(q);
       const id = `a${Date.now()}`;
       addMessage({ id, role: "assistant", response });
-      if (useSession.getState().autoRead) {
+      if (spoken || useSession.getState().autoRead) {
         speak(forSpeech(response.answer), { onStart: () => setSpeaking(id), onEnd: () => setSpeaking(null) });
       }
     } catch (e) {
@@ -99,6 +100,9 @@ export default function ResponseScreen() {
           style={[styles.input, { color: c.text }]}
           accessibilityLabel="Votre message"
         />
+        {!empty && !draft.trim() && (
+          <VoiceButton compact onTranscript={(text) => void send(text, true)} onError={setError} />
+        )}
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Envoyer"
@@ -142,11 +146,7 @@ export default function ResponseScreen() {
             <View style={{ paddingTop: 22, paddingBottom: 6 }}>
               <VoiceButton
                 onUseText={() => inputRef.current?.focus()}
-                onTranscript={(text) => {
-                  // Le texte reconnu est à relire : il est placé dans le champ, pas envoyé.
-                  setDraft(text);
-                  setTimeout(() => inputRef.current?.focus(), 100);
-                }}
+                onTranscript={(text) => void send(text, true)}
               />
             </View>
             <Text style={[styles.kicker, { color: palette.slate400 }]}>POUR COMMENCER</Text>

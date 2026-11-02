@@ -1,0 +1,33 @@
+{
+  "question": "Je me sens triste et angoissée depuis des semaines, que faire ?",
+  "duree_s": 56.2,
+  "reponse": {
+    "answer": "Je comprends que vous vous sentez triste et angoissée depuis des semaines. Il est important de prendre soin de votre bien-être psychologique. [1] Il est normal de ressentir ces émotions après des situations difficiles. [2] Pour aider au quotidien, parlez-en à quelqu'un de confiance et pratiquez des activités qui vous apaisent, comme des activités physiques ou l'écriture. Si ces sentiments persistent, il peut être bénéfique de consulter un professionnel pour obtenir un accompagnement.",
+    "language": "fr",
+    "category": "ecoute_psychosociale",
+    "sources": [
+      {
+        "ref": 1,
+        "document_id": 1,
+        "title": "Prendre soin de son bien-être psychologique",
+        "source": "GREEN T — fiche de démonstration",
+        "section": "Reconnaître les signes de détresse · Ce qui peut aider au quotidien",
+        "score": 0.5019
+      },
+      {
+        "ref": 2,
+        "document_id": 10,
+        "title": "Gérer le stress quotidien",
+        "source": "Contenu de démonstration adapté de fiches d'hygiène de vie psychosociale",
+        "section": "Quelques pistes concrètes · Quand consulter",
+        "score": 0.4468
+      }
+    ],
+    "grounded": true,
+    "show_emergency": false,
+    "suggest_directory": false,
+    "safety_action": "allow",
+    "disclaimer": "Assistant d'information automatisé. Il ne remplace pas un·e professionnel·le et ne contacte personne à votre place.",
+    "generated": true
+  }
+}

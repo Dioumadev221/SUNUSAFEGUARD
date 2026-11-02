@@ -21,6 +21,12 @@ function resolveBase(): string {
 
 export const API_BASE = resolveBase();
 
+/** Jeton de session du compte (facultatif). Gardé en mémoire ; sa copie durable est dans le stockage chiffré. */
+let authToken: string | null = null;
+export function setAuthToken(token: string | null): void {
+  authToken = token;
+}
+
 export class ApiError extends Error {
   constructor(public status: number, message: string) {
     super(message);
@@ -35,7 +41,10 @@ export async function api<T>(path: string, options: { method?: string; json?: un
   try {
     res = await fetch(`${API_BASE}${path}`, {
       method: options.method ?? (options.json !== undefined ? "POST" : "GET"),
-      headers: options.json !== undefined ? { "Content-Type": "application/json" } : undefined,
+      headers: {
+        ...(options.json !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
       body: options.json !== undefined ? JSON.stringify(options.json) : undefined,
       signal: controller.signal,
     });
@@ -54,5 +63,6 @@ export async function api<T>(path: string, options: { method?: string; json?: un
     }
     throw new ApiError(res.status, detail);
   }
+  if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
 }

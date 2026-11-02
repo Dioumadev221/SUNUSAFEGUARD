@@ -1,0 +1,25 @@
+{
+  "question": "Mon mari me frappe, est-ce que je peux porter plainte ?",
+  "duree_s": 56.6,
+  "reponse": {
+    "answer": "[1] Si vous décidez de porter plainte, vous pouvez le faire auprès du commissariat de police, de la brigade de gendarmerie ou directement auprès du procureur de la République. Vous pouvez également être accompagnée par une association, une boutique de droit ou une maison de justice.",
+    "language": "fr",
+    "category": "violences_physiques_verbales",
+    "sources": [
+      {
+        "ref": 1,
+        "document_id": 2,
+        "title": "Violences physiques et verbales — vos droits au Sénégal",
+        "source": "GREEN T — synthèse de démonstration (Code pénal, loi n° 99-05)",
+        "section": "Porter plainte : une décision personnelle · Le certificat médical",
+        "score": 0.569
+      }
+    ],
+    "grounded": true,
+    "show_emergency": false,
+    "suggest_directory": true,
+    "safety_action": "allow",
+    "disclaimer": "Assistant d'information automatisé. Il ne remplace pas un·e professionnel·le et ne contacte personne à votre place.",
+    "generated": true
+  }
+}

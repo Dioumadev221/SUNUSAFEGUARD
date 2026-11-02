@@ -13,6 +13,12 @@ class LoginIn(BaseModel):
     password: str
 
 
+class RegisterIn(BaseModel):
+    email: str = Field(min_length=3, max_length=200, description="E-mail ou identifiant choisi")
+    password: str = Field(max_length=200)
+    full_name: str = Field(default="", max_length=200, description="Prénom ou pseudonyme, facultatif")
+
+
 class UserOut(ORM):
     id: int
     email: str

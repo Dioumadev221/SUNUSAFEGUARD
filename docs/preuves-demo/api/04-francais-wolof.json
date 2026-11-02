@@ -1,0 +1,54 @@
+{
+ "fr": {
+  "question": "Je me sens triste et angoissée, à qui parler ?",
+  "status": 200,
+  "secondes": 49.98,
+  "reponse": {
+   "answer": "[1] Prendre soin de son bien-être psychologique — Ce qui peut aider au quotidien. Parlons de cela. Tu peux parler à une personne de confiance comme ton ami, ton parent ou ton enseignant. C'est une bonne façon de se sentir moins seul. Tu peux aussi essayer de garder des repères simples, comme tes horaires de repas et de sommeil. Écrire ce que tu ressens peut aussi être bénéfique.",
+   "language": "fr",
+   "category": "ecoute_psychosociale",
+   "sources": [
+    {
+     "ref": 1,
+     "document_id": 1,
+     "title": "Prendre soin de son bien-être psychologique",
+     "source": "GREEN T — fiche de démonstration",
+     "section": "Ce qui peut aider au quotidien · Reconnaître les signes de détresse",
+     "score": 0.4983
+    }
+   ],
+   "grounded": true,
+   "show_emergency": false,
+   "suggest_directory": false,
+   "safety_action": "allow",
+   "disclaimer": "Assistant d'information automatisé. Il ne remplace pas un·e professionnel·le et ne contacte personne à votre place.",
+   "generated": true
+  }
+ },
+ "wo": {
+  "question": "Sama jëkkër dafay dóor, lan laa war def ?",
+  "status": 200,
+  "secondes": 38.42,
+  "reponse": {
+   "answer": "Maa ngi lay tontu ci français ngir xibaar bi wóor. Su la soxla, laajal ndimbal ci kenn ku xam wolof.\n\n[1] Sama, dafaay dóor lan laa war def, laa laa dafaay. Laa laa war def laa laa dafaay, laa laa war def laa laa dafaay.",
+   "language": "wo",
+   "category": "violences_physiques_verbales",
+   "sources": [
+    {
+     "ref": 1,
+     "document_id": 2,
+     "title": "Violences physiques et verbales — vos droits au Sénégal",
+     "source": "GREEN T — synthèse de démonstration (Code pénal, loi n° 99-05)",
+     "section": "Ce que dit la loi · La violence n'est jamais normale",
+     "score": 0.4283
+    }
+   ],
+   "grounded": true,
+   "show_emergency": false,
+   "suggest_directory": true,
+   "safety_action": "allow",
+   "disclaimer": "Assistant d'information automatisé. Il ne remplace pas un·e professionnel·le et ne contacte personne à votre place.",
+   "generated": true
+  }
+ }
+}

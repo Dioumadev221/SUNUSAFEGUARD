@@ -3,6 +3,7 @@ import { useSession } from "@/store/session";
 import { stopRecording, stopSpeaking } from "./voice.service";
 import { deleteItem, getItem, KEYS, setItem } from "./secure";
 import { clearDirectoryCache } from "./resources.service";
+import { logout } from "./auth.service";
 
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 60_000, gcTime: 10 * 60_000 } },
@@ -48,6 +49,7 @@ export async function restoreStealth(): Promise<void> {
  * transmise à une structure : celle-ci reste chez la structure.
  */
 export async function panicWipe(): Promise<void> {
+  if (useSession.getState().account) await logout();
   stopSpeaking();
   stopRecording();
   useSession.getState().clearConversation();

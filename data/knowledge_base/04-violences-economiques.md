@@ -1,6 +1,6 @@
 ---
 title: Violences économiques — reconnaître et agir
-source: GREEN T — fiche de démonstration
+source: GREEN T — fiche d'information
 category: violences_economiques
 language: fr
 status: publie

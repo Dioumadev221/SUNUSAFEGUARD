@@ -1,8 +1,8 @@
 ---
 id: kb-001
 title: "Comprendre le bien-être psychosocial"
-type: demo
-source: "Contenu de démonstration adapté de cadres conceptuels de l'OMS sur la santé mentale"
+type: fiche
+source: "GREEN T — fiche d'information adaptée de cadres conceptuels de l'OMS sur la santé mentale"
 verified: false
 last_reviewed: "2026-10-27"
 ---

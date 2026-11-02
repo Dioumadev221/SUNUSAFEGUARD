@@ -1,6 +1,6 @@
 ---
 title: Hébergement d'urgence et orientation vers les structures d'aide
-source: GREEN T — fiche de démonstration
+source: GREEN T — fiche d'information
 category: hebergement_protection
 language: fr
 status: publie

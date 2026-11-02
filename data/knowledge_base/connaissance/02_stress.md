@@ -1,8 +1,8 @@
 ---
 id: kb-002
 title: "Gérer le stress quotidien"
-type: demo
-source: "Contenu de démonstration adapté de fiches d'hygiène de vie psychosociale"
+type: fiche
+source: "GREEN T — fiche d'information adaptée de fiches d'hygiène de vie psychosociale"
 verified: false
 last_reviewed: "2026-10-27"
 ---

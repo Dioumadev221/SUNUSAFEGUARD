@@ -1,28 +1,36 @@
 ---
 id: kb-005
-title: "Où chercher de l'aide au Sénégal (cadre général)"
-type: demo
-source: "Contenu de démonstration — à compléter après vérification sur le terrain"
+title: "Où chercher de l'aide au Sénégal"
+type: fiche
+source: "GREEN T — fiche d'information"
 verified: false
-last_reviewed: "2026-10-27"
+last_reviewed: "2026-11-02"
 ---
 
-# Où chercher de l'aide au Sénégal (cadre général)
+# Où chercher de l'aide au Sénégal
 
-SunuSafeguard AI ne liste pas, dans cette version prototype, de coordonnées précises de services d'urgence ou de soutien. Les contacts spécifiques ne seront affichés qu'après vérification sur le terrain. Cette fiche rappelle simplement les types de ressources qui existent généralement.
+Vous n'avez pas à affronter seule ce que vous vivez. Voici des ressources qui existent partout au Sénégal. L'annuaire de SunuSafeguard AI donne les coordonnées vérifiées des structures proches de chez vous.
 
-## Services de santé publique
+## En cas de danger immédiat
 
-Le système de santé sénégalais comprend des postes et cases de santé de quartier, des centres de santé urbains, et des hôpitaux régionaux et nationaux (à Dakar, Saint-Louis, Thiès, Ziguinchor, etc.). Ces structures disposent généralement d'un médecin généraliste qui peut orienter vers un accompagnement psychosocial.
+Appelez la police secours au 17, les sapeurs-pompiers au 18 ou le SAMU au 1515. Si vous le pouvez, rejoignez un lieu sûr ou une personne de confiance.
 
-## Secteur spécialisé en santé mentale
+## Pour un enfant ou une adolescente en danger
 
-La psychiatrie est présente dans certains grands hôpitaux (par exemple à Dakar). Le ministère de la Santé et de l'Action sociale publie périodiquement des annuaires de services. Les associations et ONG actives en santé mentale peuvent également orienter.
+Allô 116 est une ligne d'écoute et de protection de l'enfance, gérée par le Centre Ginddi. Elle s'adresse aux enfants comme aux parents : composez le 116.
 
-## Soutien communautaire
+## Pour connaître vos droits, gratuitement
 
-Les associations de quartier, les groupements de femmes, les institutions religieuses et les mutuelles de santé constituent souvent un premier filet de soutien. Le travail social de proximité est assuré par des travailleurs sociaux formés, en particulier dans les centres sociaux et certaines ONG.
+L'Association des Juristes Sénégalaises (AJS) propose une assistance juridique gratuite par téléphone au numéro vert 800 805 805. Ses boutiques de droit accueillent gratuitement à Dakar (Médina, Pikine, Gueule Tapée-Fass-Colobane), Thiès, Kaolack, Kolda, Kébémer, Sédhiou, Ziguinchor et Kédougou. Des juristes formées à l'écoute vous conseillent sur la famille, les violences, le travail ou le foncier.
 
-## Ce que SunuSafeguard AI ne fait pas
+## Pour un abri ou un accompagnement après des violences
 
-SunuSafeguard AI ne prétend pas que les services existent à proximité de chaque utilisateur. Il ne fournit pas non plus de numéros d'urgence non vérifiés. Pour obtenir une orientation précise, l'utilisateur est invité à se rapprocher d'un poste de santé de son quartier ou de la mairie de sa commune.
+Des centres accueillent les femmes et les filles victimes de violences, comme la Maison Rose à Guédiawaye ou le centre La Palabre près de Thiès. Ils proposent hébergement, écoute et suivi médical, social et juridique.
+
+## Pour votre santé et votre santé mentale
+
+Le poste ou le centre de santé de votre quartier est une bonne première porte : le personnel peut vous écouter et vous orienter. La psychiatrie publique est présente notamment au Centre hospitalier national psychiatrique de Thiaroye et au service de psychiatrie de l'hôpital de Fann à Dakar.
+
+## Le soutien de proximité
+
+Les associations de quartier, les groupements de femmes, les centres sociaux et les travailleurs sociaux sont souvent un premier soutien précieux. Parler à une personne de confiance peut déjà alléger ce que vous portez.

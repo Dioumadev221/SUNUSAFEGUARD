@@ -1,6 +1,6 @@
 ---
 title: Cyberharcèlement et violences numériques
-source: GREEN T — fiche de démonstration (loi n° 2008-11 sur la cybercriminalité)
+source: GREEN T — fiche d'information (loi n° 2008-11 sur la cybercriminalité)
 category: cyberharcelement
 language: fr
 status: publie

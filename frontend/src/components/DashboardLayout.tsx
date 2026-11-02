@@ -50,8 +50,7 @@ export default function DashboardLayout() {
           })}
           <NavLink to="/espace/compte" className={item}><UserCog size={18} strokeWidth={1.8} /> {tx("Mon compte", "My account")}</NavLink>
         </nav>
-        <LanguageSwitch className="mt-auto hidden self-start border-white/15 text-sand-100/80 hover:border-white/40 md:inline-flex" />
-        <div className="hidden items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:flex">
+        <div className="mt-auto hidden items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:flex">
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ochre-light font-display text-sm font-semibold text-night">{initials}</span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-semibold">{clean(user.full_name)}</span>
@@ -62,6 +61,10 @@ export default function DashboardLayout() {
       </aside>
       <main className="min-w-0 flex-1 px-4 py-6 md:px-10 md:py-10">
         <div className="mx-auto max-w-6xl">
+          {/* Langue d'affichage : en haut à droite, comme sur le site public. */}
+          <div className="-mt-2 mb-4 hidden justify-end md:flex">
+            <LanguageSwitch className="border-night/10 text-slate-600 hover:border-night/30 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/30" />
+          </div>
           {user.mfa_setup_required && current !== "compte" && (
             <NavLink to="/espace/compte" className="mb-6 flex items-center gap-2 rounded-2xl bg-warn/10 px-4 py-2.5 text-sm text-warn">
               <ShieldAlert size={16} /> {tx("Activez la double authentification pour sécuriser votre compte", "Turn on two-factor authentication to secure your account")} <span className="ml-auto font-semibold">{tx("Activer →", "Turn on →")}</span>
